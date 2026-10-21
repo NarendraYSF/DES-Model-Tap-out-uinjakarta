@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laporan UTS Pemodelan dan Simulasi: Analisis Simulasi Kejadian Diskret Gerbang Keluar Parkir (Tap Out)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ==========================================================================
+     PLACEHOLDER IDENTITAS (SILAKAN CARI DAN GANTI DI BAGIAN BAWAH):
+     1. [ISI NAMA LENGKAP] -> Masukkan nama lengkap Anda
+     2. [ISI NIM]          -> Masukkan Nomor Induk Mahasiswa Anda
+     3. [ISI NAMA DOSEN]   -> Masukkan nama lengkap dosen pengampu beserta gelar
+     ========================================================================== -->
+
+<div class="academic-doc">
+
+  <!-- ================================================================
+       1. HALAMAN COVER
+       ================================================================ -->
+  <div class="page-cover">
+    <div class="cover-content">
+      <div class="cover-header">
+        <h1 class="cover-title">ANALISIS SIMULASI KEJADIAN DISKRET<br>SISTEM ANTREAN GERBANG KELUAR PARKIR<br>(TAP OUT)</h1>
+        <p class="cover-keterangan">TUGAS UJIAN TENGAH SEMESTER</p>
+        <p class="cover-matkul">Mata Kuliah: Pemodelan dan Simulasi</p>
+        <p class="cover-dosen">Dosen Pengampu: [ISI NAMA DOSEN]</p>
+      </div>
+
+      <div class="cover-logo-wrapper">
+        <img src="img/logo-uin.png" alt="Logo UIN Syarif Hidayatullah Jakarta" class="cover-logo">
+      </div>
+
+      <div class="cover-identity">
+        <p class="cover-identity-text">Disusun Oleh:</p>
+        <p class="cover-identity-text"><strong>[ISI NAMA LENGKAP]</strong></p>
+        <p class="cover-identity-text"><strong>NIM. [ISI NIM]</strong></p>
+      </div>
+
+      <div class="cover-footer">
+        <p class="cover-footer-text">PROGRAM STUDI TEKNIK INFORMATIKA</p>
+        <p class="cover-footer-text">FAKULTAS SAINS DAN TEKNOLOGI</p>
+        <p class="cover-footer-text">UNIVERSITAS ISLAM NEGERI SYARIF HIDAYATULLAH</p>
+        <p class="cover-footer-text">JAKARTA</p>
+        <p class="cover-footer-text">2026</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       2. KATA PENGANTAR
+       ================================================================ -->
+  <div class="prelim-section prelim-start">
+    <h2 class="bab-title">KATA PENGANTAR</h2>
+
+    <p>
+      Puji dan syukur penulis panjatkan ke hadirat Allah Swt. atas limpahan rahmat dan karunia-Nya, sehingga laporan teknis tugas Ujian Tengah Semester (UTS) mata kuliah Pemodelan dan Simulasi yang berjudul "Analisis Simulasi Kejadian Diskret Gerbang Keluar Parkir (Tap Out)" ini dapat diselesaikan dengan baik. Penyusunan laporan ini ditujukan untuk menerapkan konsep pemodelan sistem antrean stokastik dan simulasi kejadian diskret menggunakan pustaka SimPy dalam mengevaluasi efisiensi operasional gerbang keluar fasilitas parkir.
+    </p>
+
+    <p>
+      Penulis menyampaikan ucapan terima kasih kepada Bapak/Ibu [ISI NAMA DOSEN] selaku dosen pengampu mata kuliah Pemodelan dan Simulasi atas bimbingan dan arahan yang telah diberikan selama perkuliahan. Penulis menyadari bahwa laporan ini masih memiliki keterbatasan. Oleh karena itu, kritik dan saran yang konstruktif sangat diharapkan demi penyempurnaan karya ilmiah ini di masa mendatang. Semoga laporan ini dapat memberikan manfaat akademis maupun praktis bagi pengembangan sistem transportasi dan fasilitas publik.
+    </p>
+
+    <div class="clearfix">
+      <div class="signature-block">
+        <p>Jakarta, Oktober 2026</p>
+        <p>Penulis,</p>
+        <br><br>
+        <p><strong>[ISI NAMA LENGKAP]</strong></p>
+        <p>NIM. [ISI NIM]</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       3. DAFTAR ISI
+       ================================================================ -->
+  <div class="prelim-section">
+    <h2 class="bab-title">DAFTAR ISI</h2>
+
+    <!-- CATATAN: Silakan cocokkan nomor halaman di bawah ini dengan hasil Print Preview (Ctrl+P) di Chrome Anda.
+         Angka di dalam tag <span class="pg">...</span> dapat diedit secara manual jika nomor halaman bergeser. -->
+    <ul class="dot-leader-list">
+      <li class="dot-leader-item">
+        <span class="dot-leader-title">KATA PENGANTAR</span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">i</span></span>
+      </li>
+      <li class="dot-leader-item">
+        <span class="dot-leader-title">DAFTAR ISI</span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">ii</span></span>
+      </li>
+      <li class="dot-leader-item">
+        <span class="dot-leader-title">DAFTAR TABEL</span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">iii</span></span>
+      </li>
+      <li class="dot-leader-item">
+        <span class="dot-leader-title">DAFTAR GAMBAR</span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">iv</span></span>
+      </li>
+      <li class="dot-leader-item">
+        <span class="dot-leader-title"><b>BAB I RINGKASAN</b></span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">1</span></span>
+      </li>
+      <li class="dot-leader-item">
+        <span class="dot-leader-title"><b>BAB II LATAR BELAKANG DAN TUJUAN</b></span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">2</span></span>
+      </li>
+      <li class="dot-leader-item">
+        <span class="dot-leader-title"><b>BAB III DATA LAPANGAN</b></span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">3</span></span>
+      </li>
+      <li class="dot-leader-item">
+        <span class="dot-leader-title"><b>BAB IV MODEL KONSEPTUAL</b></span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">4</span></span>
+      </li>
+      <li class="dot-leader-item">
+        <span class="dot-leader-title"><b>BAB V ASUMSI DAN KETERBATASAN</b></span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">5</span></span>
+      </li>
+      <li class="dot-leader-item">
+        <span class="dot-leader-title"><b>BAB VI CARA MENJALANKAN</b></span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">6</span></span>
+      </li>
+      <li class="dot-leader-item">
+        <span class="dot-leader-title"><b>BAB VII HASIL SIMULASI</b></span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">7</span></span>
+      </li>
+      <li class="dot-leader-item">
+        <span class="dot-leader-title"><b>BAB VIII VERIFIKASI DAN VALIDASI</b></span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">9</span></span>
+      </li>
+      <li class="dot-leader-item">
+        <span class="dot-leader-title"><b>BAB IX KESIMPULAN DAN SARAN</b></span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">10</span></span>
+      </li>
+      <li class="dot-leader-item">
+        <span class="dot-leader-title"><b>DAFTAR PUSTAKA</b></span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">11</span></span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ================================================================
+       4. DAFTAR TABEL
+       ================================================================ -->
+  <div class="prelim-section">
+    <h2 class="bab-title">DAFTAR TABEL</h2>
+
+    <!-- CATATAN: Silakan cocokkan nomor halaman di bawah ini dengan hasil Print Preview (Ctrl+P) di Chrome Anda.
+         Angka di dalam tag <span class="pg">...</span> dapat diedit secara manual jika letak tabel bergeser. -->
+    <ul class="dot-leader-list">
+      <li class="dot-leader-item">
+        <span class="dot-leader-title">Tabel 1. Statistik Deskriptif Durasi Waktu Pelayanan di Gardu Keluar Berdasarkan Data Lapangan</span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">3</span></span>
+      </li>
+      <li class="dot-leader-item">
+        <span class="dot-leader-title">Tabel 2. Parameter Konfigurasi Antarmuka Baris Perintah Skrip Simulasi</span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">6</span></span>
+      </li>
+      <li class="dot-leader-item">
+        <span class="dot-leader-title">Tabel 3. Hasil Simulasi Kinerja Sistem Antrean Gerbang Keluar pada Konfigurasi Dua Lajur</span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">7</span></span>
+      </li>
+      <li class="dot-leader-item">
+        <span class="dot-leader-title">Tabel 4. Perbandingan Waktu Tunggu Hasil Simulasi dengan Nilai Analitis Teori Antrean M/G/c</span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">9</span></span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ================================================================
+       5. DAFTAR GAMBAR
+       ================================================================ -->
+  <div class="prelim-section">
+    <h2 class="bab-title">DAFTAR GAMBAR</h2>
+
+    <!-- CATATAN: Silakan cocokkan nomor halaman di bawah ini dengan hasil Print Preview (Ctrl+P) di Chrome Anda.
+         Angka di dalam tag <span class="pg">...</span> dapat diedit secara manual jika letak gambar bergeser. -->
+    <ul class="dot-leader-list">
+      <li class="dot-leader-item">
+        <span class="dot-leader-title">Gambar 1. Perbandingan waktu tunggu rata-rata (kiri) dan persentil ke-95 (kanan) untuk empat skenario utama pada konfigurasi 2 lajur gardu keluar</span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">8</span></span>
+      </li>
+      <li class="dot-leader-item">
+        <span class="dot-leader-title">Gambar 2. Kurva respon waktu tunggu rata-rata (kiri) dan persentil ke-95 (kanan) terhadap kenaikan probabilitas penetrasi RFID dari 0.0 hingga 1.0 (skala logaritmik vertikal)</span>
+        <span class="dot-leader-dots"></span>
+        <span class="dot-leader-page"><span class="pg">8</span></span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ================================================================
+       6. ISI DOKUMEN (BAB I SAMPAI BAB IX)
+       ================================================================ -->
+
+  <!-- BAB I: Ringkasan -->
+  <section id="ringkasan" class="bab-section body-start">
+    <h2 class="bab-title">BAB I<br>RINGKASAN</h2>
+    <p>
+      Studi ini bertujuan mengevaluasi kinerja antrean dan waktu tunggu kendaraan pada gardu keluar parkir dengan membandingkan metode transaksi tiket karcis manual dan kartu nirkabel RFID menggunakan simulasi kejadian diskret berbasis SimPy. Temuan utama studi ini menunjukkan bahwa adopsi penuh sistem RFID dalam kondisi operasional saat ini justru memperpanjang waktu tunggu kendaraan secara drastis, berlawanan dengan ekspektasi umum bahwa teknologi digital selalu lebih cepat. Waktu pelayanan RFID di lapangan memiliki rata-rata 18.42 detik dengan standar deviasi 14.06 detik, jauh lebih lambat dan lebih tidak stabil dibandingkan karcis manual yang mencatat rata-rata 14.46 detik dan standar deviasi 6.70 detik. Pada jam puncak sore (Selasa Sesi 3 dengan kedatangan 411 kendaraan per jam), skenario adopsi RFID 100% mengakibatkan gardu mengalami kelebihan beban sistemik (beban terpasang mencapai 1.05) dengan rata-rata waktu tunggu melambung hingga 178.10 detik per kendaraan, sementara sistem tiket manual mampu melayani arus kendaraan tersebut dengan rata-rata waktu tunggu 18.92 detik.
+    </p>
+  </section>
+
+  <!-- BAB II: Latar Belakang dan Tujuan -->
+  <section id="latar-belakang" class="bab-section">
+    <h2 class="bab-title">BAB II<br>LATAR BELAKANG DAN TUJUAN</h2>
+    <p>
+      Pintu keluar area parkir merupakan titik temu kritis dalam manajemen lalu lintas fasilitas publik. Hambatan pada pintu keluar tidak hanya memicu ketidaknyamanan pengemudi di dalam area parkir, tetapi juga berpotensi menciptakan antrean panjang yang mengganggu sirkulasi internal. Saat ini fasilitas parkir menerapkan dua mekanisme pembayaran saat tap out: sistem konvensional menggunakan karcis fisik yang diproses oleh petugas atau mesin penelan karcis, serta sistem tap kartu nirkabel RFID mandiri.
+    </p>
+    <p>
+      Peralihan menuju digitalisasi parkir sering diasumsikan secara otomatis meningkatkan kapasitas gerbang dan melancarkan arus lalu lintas. Namun, penerapan teknologi baru di lapangan sering kali menghadapi kendala interaksi pengguna, seperti kartu yang tidak terbaca pada sentuhan pertama, posisi sensor yang sulit dijangkau pengemudi, saldo tidak mencukupi, atau kebutuhan verifikasi sekunder oleh petugas. Simulasi ini dibangun untuk menjawab tiga pertanyaan mendasar:
+    </p>
+    <p>
+      Pertama, apakah peningkatan penetrasi pengguna RFID dari kondisi eksisting (sekitar 15% hingga 29%) menuju adopsi penuh (100%) mampu mempersingkat antrean kendaraan di gardu keluar? Kedua, berapa kapasitas lajur gardu yang dibutuhkan untuk menjaga stabilitas sistem pada periode kedatangan tertinggi? Ketiga, seberapa besar dampak perbaikan keandalan transaksi RFID terhadap waktu tunggu apabila transaksi-transaksi lambat pada ekor distribusi berhasil dipangkas?
+    </p>
+  </section>
+
+  <!-- BAB III: Data Lapangan -->
+  <section id="data" class="bab-section">
+    <h2 class="bab-title">BAB III<br>DATA LAPANGAN</h2>
+    <p>
+      Data empiris diperoleh dari berkas lembar sebar <code>Pengumpulan Data Pemodelan Tap Out.xlsx</code> yang terdiri atas dua lembar pengamatan: hari Selasa (6 Oktober 2026) dan hari Rabu (7 Oktober 2026). Setiap hari pengamatan mencakup tiga sesi pencatatan berdurasi masing-masing satu jam, yaitu Sesi 1 pada pukul 10.00 sampai 11.00 WIB, Sesi 2 pada pukul 13.00 sampai 14.00 WIB, dan Sesi 3 pada pukul 16.00 sampai 17.00 WIB. Data mentah mencatat durasi transaksi pelayanan di gardu keluar dalam satuan detik untuk masing-masing moda transaksi.
+    </p>
+    <p>
+      Proses pembersihan data dilakukan melalui dua tahap utama. Tahap pertama adalah standardisasi format teks, di mana sejumlah entri waktu yang tercatat dalam format menit dan detik seperti "01:06.35" atau "1:05.55" dikonversi secara otomatis menjadi representasi detik desimal (misalnya 66.35 detik). Tahap kedua adalah penapisan data pencilan (outlier) menggunakan kriteria rentang interkuartil (Interquartile Range / IQR) dengan batas atas Q3 + 3.0*IQR dan batas bawah Q1 - 3.0*IQR. Pemilihan faktor pengali 3.0 yang lebih longgar daripada batas standar 1.5 bertujuan mempertahankan sebaran ekor kanan alami yang khas pada durasi transaksi antrean, sembari membuang galat pencatatan yang ekstrem. Dari total 1.049 observasi karcis mentah, sebanyak 23 data (2.2%) disaring sehingga menghasilkan 1.026 data valid. Dari 270 observasi RFID mentah, sebanyak 3 data (1.1%) disaring sehingga menghasilkan 267 data valid.
+    </p>
+
+    <div class="table-container">
+      <p class="table-caption"><b>Tabel 1.</b> Statistik Deskriptif Durasi Waktu Pelayanan di Gardu Keluar Berdasarkan Data Lapangan</p>
+      <table class="table-compact">
+        <thead>
+          <tr>
+            <th>Hari</th>
+            <th>Sesi</th>
+            <th>Metode</th>
+            <th class="text-right">Sampel Mentah</th>
+            <th class="text-right">Sampel Bersih</th>
+            <th class="text-right">Rata-rata (s)</th>
+            <th class="text-right">Standar Deviasi (s)</th>
+            <th class="text-right">Min (s)</th>
+            <th class="text-right">Kuartil 1 (s)</th>
+            <th class="text-right">Median (s)</th>
+            <th class="text-right">Kuartil 3 (s)</th>
+            <th class="text-right">Maks (s)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Selasa</td>
+            <td>Sesi 1</td>
+            <td>Karcis</td>
+            <td class="text-right">81</td>
+            <td class="text-right">81</td>
+            <td class="text-right">16.47</td>
+            <td class="text-right">7.60</td>
+            <td class="text-right">6.56</td>
+            <td class="text-right">11.18</td>
+            <td class="text-right">13.95</td>
+            <td class="text-right">20.54</td>
+            <td class="text-right">37.38</td>
+          </tr>
+          <tr>
+            <td>Selasa</td>
+            <td>Sesi 1</td>
+            <td>RFID</td>
+            <td class="text-right">35</td>
+            <td class="text-right">33</td>
+            <td class="text-right">19.18</td>
+            <td class="text-right">12.24</td>
+            <td class="text-right">4.21</td>
+            <td class="text-right">11.05</td>
+            <td class="text-right">15.52</td>
+            <td class="text-right">21.38</td>
+            <td class="text-right">53.78</td>
+          </tr>
+          <tr>
+            <td>Selasa</td>
+            <td>Sesi 2</td>
+            <td>Karcis</td>
+            <td class="text-right">166</td>
+            <td class="text-right">162</td>
+            <td class="text-right">13.42</td>
+            <td class="text-right">6.94</td>
+            <td class="text-right">4.40</td>
+            <td class="text-right">8.70</td>
+            <td class="text-right">11.85</td>
+            <td class="text-right">16.68</td>
+            <td class="text-right">41.50</td>
+          </tr>
+          <tr>
+            <td>Selasa</td>
+            <td>Sesi 2</td>
+            <td>RFID</td>
+            <td class="text-right">28</td>
+            <td class="text-right">28</td>
+            <td class="text-right">24.21</td>
+            <td class="text-right">16.68</td>
+            <td class="text-right">5.15</td>
+            <td class="text-right">13.09</td>
+            <td class="text-right">18.70</td>
+            <td class="text-right">27.21</td>
+            <td class="text-right">66.35</td>
+          </tr>
+          <tr>
+            <td>Selasa</td>
+            <td>Sesi 3</td>
+            <td>Karcis</td>
+            <td class="text-right">352</td>
+            <td class="text-right">349</td>
+            <td class="text-right">16.12</td>
+            <td class="text-right">6.05</td>
+            <td class="text-right">5.36</td>
+            <td class="text-right">11.86</td>
+            <td class="text-right">14.88</td>
+            <td class="text-right">19.33</td>
+            <td class="text-right">37.49</td>
+          </tr>
+          <tr>
+            <td>Selasa</td>
+            <td>Sesi 3</td>
+            <td>RFID</td>
+            <td class="text-right">63</td>
+            <td class="text-right">62</td>
+            <td class="text-right">16.67</td>
+            <td class="text-right">11.52</td>
+            <td class="text-right">3.09</td>
+            <td class="text-right">8.68</td>
+            <td class="text-right">13.68</td>
+            <td class="text-right">20.65</td>
+            <td class="text-right">55.99</td>
+          </tr>
+          <tr>
+            <td>Rabu</td>
+            <td>Sesi 1</td>
+            <td>Karcis</td>
+            <td class="text-right">96</td>
+            <td class="text-right">92</td>
+            <td class="text-right">16.63</td>
+            <td class="text-right">9.83</td>
+            <td class="text-right">4.30</td>
+            <td class="text-right">9.73</td>
+            <td class="text-right">13.20</td>
+            <td class="text-right">20.80</td>
+            <td class="text-right">43.60</td>
+          </tr>
+          <tr>
+            <td>Rabu</td>
+            <td>Sesi 1</td>
+            <td>RFID</td>
+            <td class="text-right">28</td>
+            <td class="text-right">28</td>
+            <td class="text-right">24.64</td>
+            <td class="text-right">20.59</td>
+            <td class="text-right">0.30</td>
+            <td class="text-right">8.45</td>
+            <td class="text-right">19.15</td>
+            <td class="text-right">33.02</td>
+            <td class="text-right">83.60</td>
+          </tr>
+          <tr>
+            <td>Rabu</td>
+            <td>Sesi 2</td>
+            <td>Karcis</td>
+            <td class="text-right">220</td>
+            <td class="text-right">214</td>
+            <td class="text-right">12.05</td>
+            <td class="text-right">4.69</td>
+            <td class="text-right">2.50</td>
+            <td class="text-right">8.98</td>
+            <td class="text-right">11.05</td>
+            <td class="text-right">14.33</td>
+            <td class="text-right">31.13</td>
+          </tr>
+          <tr>
+            <td>Rabu</td>
+            <td>Sesi 2</td>
+            <td>RFID</td>
+            <td class="text-right">69</td>
+            <td class="text-right">69</td>
+            <td class="text-right">11.31</td>
+            <td class="text-right">4.55</td>
+            <td class="text-right">2.11</td>
+            <td class="text-right">8.03</td>
+            <td class="text-right">10.91</td>
+            <td class="text-right">13.77</td>
+            <td class="text-right">23.65</td>
+          </tr>
+          <tr>
+            <td>Rabu</td>
+            <td>Sesi 3</td>
+            <td>Karcis</td>
+            <td class="text-right">134</td>
+            <td class="text-right">128</td>
+            <td class="text-right">12.44</td>
+            <td class="text-right">5.30</td>
+            <td class="text-right">3.76</td>
+            <td class="text-right">8.47</td>
+            <td class="text-right">11.75</td>
+            <td class="text-right">14.27</td>
+            <td class="text-right">31.23</td>
+          </tr>
+          <tr>
+            <td>Rabu</td>
+            <td>Sesi 3</td>
+            <td>RFID</td>
+            <td class="text-right">47</td>
+            <td class="text-right">47</td>
+            <td class="text-right">23.48</td>
+            <td class="text-right">15.72</td>
+            <td class="text-right">6.26</td>
+            <td class="text-right">8.62</td>
+            <td class="text-right">18.35</td>
+            <td class="text-right">38.41</td>
+            <td class="text-right">53.34</td>
+          </tr>
+          <tr class="highlight-row">
+            <td>Gabungan</td>
+            <td>Semua</td>
+            <td>Karcis</td>
+            <td class="text-right">1.049</td>
+            <td class="text-right">1.026</td>
+            <td class="text-right">14.46</td>
+            <td class="text-right">6.70</td>
+            <td class="text-right">2.50</td>
+            <td class="text-right">9.84</td>
+            <td class="text-right">12.90</td>
+            <td class="text-right">17.30</td>
+            <td class="text-right">43.60</td>
+          </tr>
+          <tr class="highlight-row">
+            <td>Gabungan</td>
+            <td>Semua</td>
+            <td>RFID</td>
+            <td class="text-right">270</td>
+            <td class="text-right">267</td>
+            <td class="text-right">18.42</td>
+            <td class="text-right">14.06</td>
+            <td class="text-right">0.30</td>
+            <td class="text-right">8.91</td>
+            <td class="text-right">13.64</td>
+            <td class="text-right">21.76</td>
+            <td class="text-right">83.60</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Data gabungan memperlihatkan bahwa median waktu pelayanan RFID (13.64 detik) sebenarnya cukup berdekatan dengan karcis (12.90 detik). Akan tetapi, nilai kuartil atas (21.76 detik vs 17.30 detik) dan nilai maksimum (83.60 detik vs 43.60 detik) membuktikan adanya ekor transaksi lambat yang sangat tebal pada pengguna RFID.
+    </p>
+  </section>
+
+  <!-- BAB IV: Model Konseptual -->
+  <section id="model-konseptual" class="bab-section">
+    <h2 class="bab-title">BAB IV<br>MODEL KONSEPTUAL</h2>
+    <p>
+      Model simulasi kejadian diskret ini dibangun di atas komponen-komponen formal antrean:
+    </p>
+    <p>
+      <strong>Entitas:</strong> Objek utama yang mengalir dalam simulasi adalah kendaraan (mobil atau motor) yang hendak meninggalkan fasilitas parkir. Setiap kendaraan membawa atribut waktu kedatangan, pilihan metode pembayaran (RFID atau karcis), durasi waktu pelayanan yang ditentukan secara acak, dan waktu aktual saat meninggalkan loket.
+    </p>
+    <p>
+      <strong>Kejadian (Events):</strong> Siklus hidup setiap entitas kendaraan terdiri atas tiga kejadian utama: peristiwa kedatangan kendaraan di ujung antrean (arrival), peristiwa pemanggilan ke gardu layanan saat lajur tersedia (service start), dan peristiwa pelepasan gardu setelah pembayaran selesai untuk meninggalkan sistem (departure).
+    </p>
+    <p>
+      <strong>Sumber Daya (Resource):</strong> Gardu keluar parkir dimodelkan menggunakan pustaka <code>simpy.Resource</code> dengan kapasitas c lajur (secara default bernilai 2 lajur). Seluruh gardu bersifat paralel dan identik.
+    </p>
+    <p>
+      <strong>Disiplin Antrean:</strong> Sistem menerapkan antrean tunggal bersama berbasis FIFO (First-In, First-Out), di mana kendaraan terdepan dalam antrean akan langsung memasuki gardu mana pun yang pertama kali kosong. Tidak ada fasilitas lajur prioritas atau gerbang khusus karcis/RFID yang terpisah.
+    </p>
+    <p>
+      <strong>Proses Kedatangan:</strong> Kedatangan kendaraan dimodelkan sebagai proses Poisson homogen independen, di mana selang waktu antarkedatangan berdistribusi eksponensial. Laju kedatangan dihitung spesifik per sesi:
+    </p>
+    <p class="equation">
+      &lambda; = Jumlah Kendaraan Teramati / 3600 detik
+    </p>
+    <p>
+      <strong>Waktu Pelayanan:</strong> Setiap kendaraan menentukan metode transaksi dengan probabilitas p untuk RFID dan (1 - p) untuk karcis. Nilai durasi transaksi ditarik secara acak menggunakan metode bootstrap resampling dari kumpulan data empiris gabungan. Model juga mendukung opsi distribusi parametrik lognormal yang diestimasi menggunakan metode Maximum Likelihood.
+    </p>
+    <p>
+      <strong>Skenario Simulasi:</strong> Terdapat empat skenario terarah serta satu rangkaian sapuan parameter:
+    </p>
+    <p>
+      1. <em>Kondisi Eksisting (observed_mix):</em> Menjalankan simulasi menggunakan laju kedatangan dan proporsi RFID aktual dari sesi yang bersangkutan (p berkisar antara 0.147 hingga 0.289).<br>
+      2. <em>Karcis Penuh (full_karcis):</em> Mensimulasikan kondisi di mana seluruh kendaraan (p = 0.0) menggunakan karcis manual.<br>
+      3. <em>RFID Penuh (full_rfid):</em> Mensimulasikan kondisi di mana seluruh kendaraan (p = 1.0) menggunakan kartu RFID.<br>
+      4. <em>Perbaikan RFID (fixed_rfid):</em> Menggunakan proporsi campuran eksisting, namun durasi pelayanan RFID dibatasi (capped) maksimal sebesar persentil ke-90 dari durasi karcis (19.9 detik) untuk merefleksikan skenario rekayasa di mana kendala tap lambat berhasil diatasi.<br>
+      5. <em>Sapuan Probabilitas (sweep of p):</em> Menguji variasi nilai p secara sistematis dari 0.0 hingga 1.0 dengan kenaikan 0.10 guna memetakan profil elastisitas waktu tunggu terhadap penetrasi RFID.
+    </p>
+  </section>
+
+  <!-- BAB V: Asumsi dan Keterbatasan -->
+  <section id="asumsi" class="bab-section">
+    <h2 class="bab-title">BAB V<br>ASUMSI DAN KETERBATASAN</h2>
+    <p>
+      Pemahaman terhadap batasan model sangat penting agar penafsiran hasil tidak disalahartikan. Berikut adalah asumsi teknis dan keterbatasan yang berlaku dalam pemodelan ini:
+    </p>
+    <p>
+      <strong>Jumlah Lajur Fisik:</strong> Jumlah lajur gardu riil di lokasi pengamatan tidak tercatat secara eksplisit pada lembar data mentah. Oleh karena itu, simulasi mengasumsikan konfigurasi standar 2 lajur paralel, serta menyediakan parameter uji sensitivitas jumlah lajur (1, 2, 3, dan 4 lajur) untuk membandingkan kapasitas gerbang.
+    </p>
+    <p>
+      <strong>Keterbatasan Validasi Waktu Tunggu:</strong> Pengamatan lapangan hanya mencatat durasi pelayanan di gardu (service time) dan jumlah kendaraan per jam, sedangkan waktu tunggu aktual dalam antrean (waiting time) tidak dicatat. Akibatnya, validasi langsung terhadap hasil waktu tunggu antrean tidak dapat dilakukan dengan membandingkannya terhadap data lapangan. Sebagai gantinya, model diverifikasi silang menggunakan rumus analitis antrean M/G/c.
+    </p>
+    <p>
+      <strong>Stasioneritas Kedatangan Poisson:</strong> Laju kedatangan diasumsikan konstan sepanjang jendela pengamatan satu jam (Poisson homogen). Pola kedatangan riil mungkin mengalami fluktuasi mikroskopis seperti kedatangan berombong (platoon) akibat lampu lalu lintas di jalan penghubung internal.
+    </p>
+    <p>
+      <strong>Penggabungan Data Pelayanan (Pooled Data):</strong> Karena keterbatasan jumlah sampel RFID pada masing-masing sesi tunggal (beberapa sesi hanya memiliki 28 data), pengambilan sampel waktu transaksi dilakukan secara gabungan (pooled) lintas hari dan sesi. Asumsi ini menganggap karakteristik waktu transaksi pengguna karcis maupun RFID seragam di seluruh rentang jam pengamatan.
+    </p>
+    <p>
+      <strong>Perilaku Pengemudi Ideal:</strong> Model mengasumsikan pengemudi tidak melakukan pembatalan antrean (no balking), tidak meninggalkan antrean setelah sempat menunggu (no reneging), serta tidak berpindah lajur secara acak (no jockeying).
+    </p>
+  </section>
+
+  <!-- BAB VI: Cara Menjalankan -->
+  <section id="cara-menjalankan" class="bab-section">
+    <h2 class="bab-title">BAB VI<br>CARA MENJALANKAN</h2>
+    <p>
+      Skrip simulasi diimplementasikan dalam Python 3 murni menggunakan pustaka SimPy. Seluruh dependensi dapat dipasang melalui manajer paket standar:
+    </p>
+    <pre><code>pip install simpy numpy pandas scipy matplotlib openpyxl</code></pre>
+    <p>
+      Skrip CLI <code>tap_out_sim.py</code> mendukung serangkaian parameter konfigurasi fleksibel yang dirangkum pada tabel berikut:
+    </p>
+
+    <div class="table-container">
+      <p class="table-caption"><b>Tabel 2.</b> Parameter Konfigurasi Antarmuka Baris Perintah Skrip Simulasi</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Opsi Flag</th>
+            <th>Nilai Bawaan</th>
+            <th>Deskripsi Fungsi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>--data PATH</code></td>
+            <td>Berkas Excel lokal</td>
+            <td>Jalur lokasi berkas data Excel pengumpulan lapangan</td>
+          </tr>
+          <tr>
+            <td><code>--lanes N</code></td>
+            <td><code>2</code></td>
+            <td>Jumlah lajur gardu keluar paralel yang disimulasikan</td>
+          </tr>
+          <tr>
+            <td><code>--lanes-list L</code></td>
+            <td><em>None</em></td>
+            <td>Daftar jumlah lajur dipisahkan koma (contoh: <code>1,2,3,4</code>) untuk uji sensitivitas</td>
+          </tr>
+          <tr>
+            <td><code>--reps N</code></td>
+            <td><code>200</code></td>
+            <td>Jumlah pengulangan (replikasi stokastik) per skenario</td>
+          </tr>
+          <tr>
+            <td><code>--service MODE</code></td>
+            <td><code>empirical</code></td>
+            <td>Metode penarikan waktu transaksi: <code>empirical</code> (resampling) atau <code>lognormal</code></td>
+          </tr>
+          <tr>
+            <td><code>--sweep-steps N</code></td>
+            <td><code>11</code></td>
+            <td>Jumlah pembagian langkah sapuan probabilitas p dari 0.0 sampai 1.0</td>
+          </tr>
+          <tr>
+            <td><code>--rfid-cap-pct P</code></td>
+            <td><code>90.0</code></td>
+            <td>Persentil batas atas waktu karcis untuk pemangkasan RFID pada skenario fixed_rfid</td>
+          </tr>
+          <tr>
+            <td><code>--output-csv FILE</code></td>
+            <td><code>sim_results.csv</code></td>
+            <td>Nama berkas CSV penyimpan ringkasan seluruh metrik kuantitatif</td>
+          </tr>
+          <tr>
+            <td><code>--output-sweep-plot FILE</code></td>
+            <td><code>sweep_wait_vs_p.png</code></td>
+            <td>Nama berkas gambar grafik kurva sapuan waktu tunggu vs probabilitas RFID</td>
+          </tr>
+          <tr>
+            <td><code>--output-scenario-plot FILE</code></td>
+            <td><code>scenario_comparison.png</code></td>
+            <td>Nama berkas gambar grafik diagram batang perbandingan skenario utama</td>
+          </tr>
+          <tr>
+            <td><code>--seed N</code></td>
+            <td><code>42</code></td>
+            <td>Nilai benih acak untuk menjamin reprodusibilitas hasil pengujian</td>
+          </tr>
+          <tr>
+            <td><code>--quiet</code></td>
+            <td><em>Mati</em></td>
+            <td>Menyembunyikan pencetakan progres interaktif pada terminal</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      Berikut adalah beberapa contoh perintah eksekusi CLI untuk kebutuhan analisis yang berbeda:
+    </p>
+
+    <pre><code># Eksekusi standar (2 lajur, 200 replikasi, resampling empiris)
+python tap_out_sim.py
+
+# Pengujian cepat dengan 50 replikasi untuk verifikasi kilat
+python tap_out_sim.py --reps 50 --sweep-steps 11
+
+# Uji sensitivitas konfigurasi 1, 2, 3, dan 4 lajur keluar
+python tap_out_sim.py --lanes-list 1,2,3,4 --reps 100
+
+# Penggunaan sebaran parametrik lognormal dan batas persentil RFID 80%
+python tap_out_sim.py --service lognormal --rfid-cap-pct 80.0</code></pre>
+  </section>
+
+  <!-- BAB VII: Hasil Simulasi -->
+  <section id="hasil" class="bab-section">
+    <h2 class="bab-title">BAB VII<br>HASIL SIMULASI</h2>
+    <p>
+      Hasil simulasi pada konfigurasi 2 lajur gardu keluar untuk seluruh kombinasi hari dan sesi disajikan secara komparatif pada tabel di bawah ini. Nilai statistik waktu tunggu dan panjang antrean dilaporkan bersama rentang selang kepercayaan 95% (95% Confidence Interval) berdasarkan pengulangan stokastik.
+    </p>
+
+    <div class="table-container">
+      <p class="table-caption"><b>Tabel 3.</b> Hasil Simulasi Kinerja Sistem Antrean Gerbang Keluar pada Konfigurasi Dua Lajur</p>
+      <table class="table-results">
+        <thead>
+          <tr>
+            <th>Hari &amp; Sesi</th>
+            <th class="text-right">Kedatangan (&lambda;)</th>
+            <th>Skenario</th>
+            <th class="text-right">Prob RFID</th>
+            <th class="text-right">Beban (&rho;)</th>
+            <th class="text-right">Rata-rata Tunggu (s)</th>
+            <th class="text-center">IK 95% Rata-rata</th>
+            <th class="text-right">Persentil 95 Tunggu (s)</th>
+            <th class="text-right">Antrean Rata-rata</th>
+            <th class="text-right">Antrean Maks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Selasa S1 -->
+          <tr>
+            <td>Selasa Sesi 1</td>
+            <td class="text-right">114 kend/jam</td>
+            <td>observed_mix</td>
+            <td class="text-right">0.289</td>
+            <td class="text-right">0.247</td>
+            <td class="text-right">0.74</td>
+            <td class="text-center">[0.60, 0.89]</td>
+            <td class="text-right">4.99</td>
+            <td class="text-right">0.03</td>
+            <td class="text-right">1.9</td>
+          </tr>
+          <tr>
+            <td>Selasa Sesi 1</td>
+            <td class="text-right">114 kend/jam</td>
+            <td>full_karcis</td>
+            <td class="text-right">0.000</td>
+            <td class="text-right">0.229</td>
+            <td class="text-right">0.53</td>
+            <td class="text-center">[0.43, 0.62]</td>
+            <td class="text-right">3.36</td>
+            <td class="text-right">0.02</td>
+            <td class="text-right">1.8</td>
+          </tr>
+          <tr>
+            <td>Selasa Sesi 1</td>
+            <td class="text-right">114 kend/jam</td>
+            <td>full_rfid</td>
+            <td class="text-right">1.000</td>
+            <td class="text-right">0.292</td>
+            <td class="text-right">1.42</td>
+            <td class="text-center">[1.15, 1.70]</td>
+            <td class="text-right">9.54</td>
+            <td class="text-right">0.05</td>
+            <td class="text-right">2.4</td>
+          </tr>
+          <tr>
+            <td>Selasa Sesi 1</td>
+            <td class="text-right">114 kend/jam</td>
+            <td>fixed_rfid</td>
+            <td class="text-right">0.289</td>
+            <td class="text-right">0.230</td>
+            <td class="text-right">0.54</td>
+            <td class="text-center">[0.44, 0.65]</td>
+            <td class="text-right">3.68</td>
+            <td class="text-right">0.02</td>
+            <td class="text-right">1.7</td>
+          </tr>
+
+          <!-- Selasa S2 -->
+          <tr>
+            <td>Selasa Sesi 2</td>
+            <td class="text-right">190 kend/jam</td>
+            <td>observed_mix</td>
+            <td class="text-right">0.147</td>
+            <td class="text-right">0.397</td>
+            <td class="text-right">1.98</td>
+            <td class="text-center">[1.76, 2.20]</td>
+            <td class="text-right">12.68</td>
+            <td class="text-right">0.11</td>
+            <td class="text-right">3.3</td>
+          </tr>
+          <tr>
+            <td>Selasa Sesi 2</td>
+            <td class="text-right">190 kend/jam</td>
+            <td>full_karcis</td>
+            <td class="text-right">0.000</td>
+            <td class="text-right">0.382</td>
+            <td class="text-right">1.77</td>
+            <td class="text-center">[1.58, 1.97]</td>
+            <td class="text-right">11.44</td>
+            <td class="text-right">0.10</td>
+            <td class="text-right">3.3</td>
+          </tr>
+          <tr>
+            <td>Selasa Sesi 2</td>
+            <td class="text-right">190 kend/jam</td>
+            <td>full_rfid</td>
+            <td class="text-right">1.000</td>
+            <td class="text-right">0.486</td>
+            <td class="text-right">4.51</td>
+            <td class="text-center">[3.79, 5.23]</td>
+            <td class="text-right">25.24</td>
+            <td class="text-right">0.25</td>
+            <td class="text-right">4.8</td>
+          </tr>
+          <tr>
+            <td>Selasa Sesi 2</td>
+            <td class="text-right">190 kend/jam</td>
+            <td>fixed_rfid</td>
+            <td class="text-right">0.147</td>
+            <td class="text-right">0.382</td>
+            <td class="text-right">1.69</td>
+            <td class="text-center">[1.50, 1.89]</td>
+            <td class="text-right">11.04</td>
+            <td class="text-right">0.09</td>
+            <td class="text-right">3.2</td>
+          </tr>
+
+          <!-- Selasa S3 -->
+          <tr class="highlight-row">
+            <td>Selasa Sesi 3</td>
+            <td class="text-right">411 kend/jam</td>
+            <td>observed_mix</td>
+            <td class="text-right">0.151</td>
+            <td class="text-right">0.859</td>
+            <td class="text-right">30.45</td>
+            <td class="text-center">[24.05, 36.84]</td>
+            <td class="text-right">87.91</td>
+            <td class="text-right">3.59</td>
+            <td class="text-right">15.0</td>
+          </tr>
+          <tr class="highlight-row">
+            <td>Selasa Sesi 3</td>
+            <td class="text-right">411 kend/jam</td>
+            <td>full_karcis</td>
+            <td class="text-right">0.000</td>
+            <td class="text-right">0.825</td>
+            <td class="text-right">18.92</td>
+            <td class="text-center">[15.83, 22.00]</td>
+            <td class="text-right">59.04</td>
+            <td class="text-right">2.25</td>
+            <td class="text-right">11.8</td>
+          </tr>
+          <tr class="highlight-row">
+            <td>Selasa Sesi 3</td>
+            <td class="text-right">411 kend/jam</td>
+            <td>full_rfid</td>
+            <td class="text-right">1.000</td>
+            <td class="text-right">1.052</td>
+            <td class="text-right">178.10</td>
+            <td class="text-center">[150.32, 205.89]</td>
+            <td class="text-right">312.56</td>
+            <td class="text-right">20.57</td>
+            <td class="text-right">40.8</td>
+          </tr>
+          <tr class="highlight-row">
+            <td>Selasa Sesi 3</td>
+            <td class="text-right">411 kend/jam</td>
+            <td>fixed_rfid</td>
+            <td class="text-right">0.151</td>
+            <td class="text-right">0.827</td>
+            <td class="text-right">22.95</td>
+            <td class="text-center">[17.53, 28.37]</td>
+            <td class="text-right">67.75</td>
+            <td class="text-right">2.70</td>
+            <td class="text-right">12.7</td>
+          </tr>
+
+          <!-- Rabu S1 -->
+          <tr>
+            <td>Rabu Sesi 1</td>
+            <td class="text-right">120 kend/jam</td>
+            <td>observed_mix</td>
+            <td class="text-right">0.233</td>
+            <td class="text-right">0.256</td>
+            <td class="text-right">0.77</td>
+            <td class="text-center">[0.64, 0.90]</td>
+            <td class="text-right">5.47</td>
+            <td class="text-right">0.03</td>
+            <td class="text-right">2.1</td>
+          </tr>
+          <tr>
+            <td>Rabu Sesi 1</td>
+            <td class="text-right">120 kend/jam</td>
+            <td>full_karcis</td>
+            <td class="text-right">0.000</td>
+            <td class="text-right">0.241</td>
+            <td class="text-right">0.63</td>
+            <td class="text-center">[0.51, 0.74]</td>
+            <td class="text-right">4.34</td>
+            <td class="text-right">0.02</td>
+            <td class="text-right">1.9</td>
+          </tr>
+          <tr>
+            <td>Rabu Sesi 1</td>
+            <td class="text-right">120 kend/jam</td>
+            <td>full_rfid</td>
+            <td class="text-right">1.000</td>
+            <td class="text-right">0.307</td>
+            <td class="text-right">1.62</td>
+            <td class="text-center">[1.34, 1.91]</td>
+            <td class="text-right">11.17</td>
+            <td class="text-right">0.06</td>
+            <td class="text-right">2.5</td>
+          </tr>
+          <tr>
+            <td>Rabu Sesi 1</td>
+            <td class="text-right">120 kend/jam</td>
+            <td>fixed_rfid</td>
+            <td class="text-right">0.233</td>
+            <td class="text-right">0.242</td>
+            <td class="text-right">0.63</td>
+            <td class="text-center">[0.53, 0.74]</td>
+            <td class="text-right">4.57</td>
+            <td class="text-right">0.02</td>
+            <td class="text-right">2.0</td>
+          </tr>
+
+          <!-- Rabu S2 -->
+          <tr>
+            <td>Rabu Sesi 2</td>
+            <td class="text-right">283 kend/jam</td>
+            <td>observed_mix</td>
+            <td class="text-right">0.244</td>
+            <td class="text-right">0.606</td>
+            <td class="text-right">6.14</td>
+            <td class="text-center">[5.50, 6.77]</td>
+            <td class="text-right">28.18</td>
+            <td class="text-right">0.49</td>
+            <td class="text-right">6.2</td>
+          </tr>
+          <tr>
+            <td>Rabu Sesi 2</td>
+            <td class="text-right">283 kend/jam</td>
+            <td>full_karcis</td>
+            <td class="text-right">0.000</td>
+            <td class="text-right">0.568</td>
+            <td class="text-right">4.44</td>
+            <td class="text-center">[3.95, 4.93]</td>
+            <td class="text-right">21.80</td>
+            <td class="text-right">0.35</td>
+            <td class="text-right">5.3</td>
+          </tr>
+          <tr>
+            <td>Rabu Sesi 2</td>
+            <td class="text-right">283 kend/jam</td>
+            <td>full_rfid</td>
+            <td class="text-right">1.000</td>
+            <td class="text-right">0.724</td>
+            <td class="text-right">15.58</td>
+            <td class="text-center">[13.34, 17.81]</td>
+            <td class="text-right">59.02</td>
+            <td class="text-right">1.24</td>
+            <td class="text-right">8.5</td>
+          </tr>
+          <tr>
+            <td>Rabu Sesi 2</td>
+            <td class="text-right">283 kend/jam</td>
+            <td>fixed_rfid</td>
+            <td class="text-right">0.244</td>
+            <td class="text-right">0.570</td>
+            <td class="text-right">4.34</td>
+            <td class="text-center">[3.90, 4.78]</td>
+            <td class="text-right">20.39</td>
+            <td class="text-right">0.35</td>
+            <td class="text-right">5.2</td>
+          </tr>
+
+          <!-- Rabu S3 -->
+          <tr>
+            <td>Rabu Sesi 3</td>
+            <td class="text-right">175 kend/jam</td>
+            <td>observed_mix</td>
+            <td class="text-right">0.269</td>
+            <td class="text-right">0.377</td>
+            <td class="text-right">1.86</td>
+            <td class="text-center">[1.63, 2.09]</td>
+            <td class="text-right">11.77</td>
+            <td class="text-right">0.09</td>
+            <td class="text-right">3.2</td>
+          </tr>
+          <tr>
+            <td>Rabu Sesi 3</td>
+            <td class="text-right">175 kend/jam</td>
+            <td>full_karcis</td>
+            <td class="text-right">0.000</td>
+            <td class="text-right">0.351</td>
+            <td class="text-right">1.54</td>
+            <td class="text-center">[1.35, 1.74]</td>
+            <td class="text-right">10.34</td>
+            <td class="text-right">0.08</td>
+            <td class="text-right">3.1</td>
+          </tr>
+          <tr>
+            <td>Rabu Sesi 3</td>
+            <td class="text-right">175 kend/jam</td>
+            <td>full_rfid</td>
+            <td class="text-right">1.000</td>
+            <td class="text-right">0.448</td>
+            <td class="text-right">3.84</td>
+            <td class="text-center">[3.24, 4.44]</td>
+            <td class="text-right">22.87</td>
+            <td class="text-right">0.19</td>
+            <td class="text-right">4.3</td>
+          </tr>
+          <tr>
+            <td>Rabu Sesi 3</td>
+            <td class="text-right">175 kend/jam</td>
+            <td>fixed_rfid</td>
+            <td class="text-right">0.269</td>
+            <td class="text-right">0.353</td>
+            <td class="text-right">1.43</td>
+            <td class="text-center">[1.26, 1.60]</td>
+            <td class="text-right">9.49</td>
+            <td class="text-right">0.07</td>
+            <td class="text-right">2.9</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <figure class="figure-block">
+      <img src="img/scenario_comparison.png" alt="Grafik perbandingan skenario waktu tunggu rata-rata dan persentil 95 per sesi">
+      <figcaption class="figure-caption"><b>Gambar 1.</b> Perbandingan waktu tunggu rata-rata (kiri) dan persentil ke-95 (kanan) untuk empat skenario utama pada konfigurasi 2 lajur gardu keluar.</figcaption>
+    </figure>
+
+    <p>
+      Gambar 1 mengilustrasikan kontras performa antrean antar-sesi. Pada sesi-sesi dengan volume rendah hingga menengah (seperti Selasa Sesi 1, Rabu Sesi 1, dan Rabu Sesi 3 dengan volume di bawah 200 kendaraan per jam), waktu tunggu rata-rata berada pada tingkat sangat rendah di bawah 2 detik untuk seluruh skenario. Pada Rabu Sesi 2 (volume 283 kendaraan per jam), perbedaan mulai terlihat nyata di mana skenario full_rfid menghasilkan waktu tunggu rata-rata 15.58 detik dibandingkan karcis 4.44 detik.
+    </p>
+    <p>
+      Puncak kemacetan terjadi pada Selasa Sesi 3 (volume 411 kendaraan per jam). Skenario adopsi penuh RFID mengalami kegagalan performa parah karena tingkat utilisasi gardu melampaui batas kritis 100%, menyebabkan waktu tunggu rata-rata melonjak menjadi 178.10 detik dan waktu tunggu persentil ke-95 mencapai 312.56 detik (lebih dari 5 menit). Sebaliknya, skenario fixed_rfid (memangkas durasi RFID lambat pada persentil 90 karcis) berhasil menekan waktu tunggu rata-rata dari 30.45 detik pada kondisi eksisting menjadi 22.95 detik, menghasilkan perbaikan efisiensi sebesar 24.6%.
+    </p>
+
+    <figure class="figure-block">
+      <img src="img/sweep_wait_vs_p.png" alt="Grafik kurva sapuan probabilitas RFID terhadap waktu tunggu rata-rata dan persentil 95">
+      <figcaption class="figure-caption"><b>Gambar 2.</b> Kurva respon waktu tunggu rata-rata (kiri) dan persentil ke-95 (kanan) terhadap kenaikan probabilitas penetrasi RFID dari 0.0 hingga 1.0 (skala logaritmik vertikal).</figcaption>
+    </figure>
+
+    <p>
+      Gambar 2 menampilkan respon sistem terhadap sapuan probabilitas penetrasi RFID. Kurva disajikan dalam skala logaritmik vertikal karena kurva Selasa Sesi 3 memiliki magnitudo yang jauh lebih tinggi daripada sesi lainnya. Terlihat dengan jelas bahwa seluruh kurva sesi memiliki gradien positif yang monoton naik seiring meningkatnya nilai p. Garis putus-putus vertikal menandai titik proporsi RFID eksisting tiap sesi. Pada Selasa Sesi 3, kemiringan kurva meningkat tajam begitu nilai p melampaui 0.70 karena sistem mendekati titik jenuh ketidakstabilan stokastik.
+    </p>
+  </section>
+
+  <!-- BAB VIII: Verifikasi dan Validasi -->
+  <section id="verifikasi" class="bab-section">
+    <h2 class="bab-title">BAB VIII<br>VERIFIKASI DAN VALIDASI</h2>
+    <p>
+      Verifikasi internal terhadap logika antrean dan mekanisme penjadwalan SimPy dilakukan dengan membandingkan estimasi waktu tunggu hasil simulasi terhadap formulasi analitis teori antrean multi-server M/G/c melalui pendekatan aproksimasi Allen-Cunneen:
+    </p>
+    <p class="equation">
+      E[Wq]<sub>M/G/c</sub> &approx; E[Wq]<sub>M/M/c</sub> &times; (1 + C<sub>v</sub><sup>2</sup>) / 2
+    </p>
+    <p>
+      di mana E[Wq]<sub>M/M/c</sub> dihitung menggunakan probabilitas penundaan formula Erlang-C, dan C<sub>v</sub><sup>2</sup> merupakan kuadrat koefisien variasi dari sebaran waktu pelayanan campuran.
+    </p>
+
+    <div class="table-container">
+      <p class="table-caption"><b>Tabel 4.</b> Perbandingan Waktu Tunggu Hasil Simulasi dengan Nilai Analitis Teori Antrean M/G/c</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Hari &amp; Sesi</th>
+            <th>Skenario</th>
+            <th class="text-right">Beban Terpasang (&rho;)</th>
+            <th class="text-right">Hasil Simulasi E[W] (s)</th>
+            <th class="text-right">Aproksimasi M/G/c (s)</th>
+            <th class="text-right">Deviasi Relatif (&Delta;%)</th>
+            <th>Status Validitas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Selasa Sesi 1</td>
+            <td>observed_mix</td>
+            <td class="text-right">0.247</td>
+            <td class="text-right">0.74</td>
+            <td class="text-right">0.70</td>
+            <td class="text-right">+5.7%</td>
+            <td>Konsisten Terverifikasi</td>
+          </tr>
+          <tr>
+            <td>Selasa Sesi 2</td>
+            <td>observed_mix</td>
+            <td class="text-right">0.397</td>
+            <td class="text-right">1.98</td>
+            <td class="text-right">1.84</td>
+            <td class="text-right">+7.6%</td>
+            <td>Konsisten Terverifikasi</td>
+          </tr>
+          <tr>
+            <td>Selasa Sesi 3</td>
+            <td>observed_mix</td>
+            <td class="text-right">0.859</td>
+            <td class="text-right">30.45</td>
+            <td class="text-right">27.84</td>
+            <td class="text-right">+9.4%</td>
+            <td>Konsisten Terverifikasi</td>
+          </tr>
+          <tr class="highlight-row">
+            <td>Selasa Sesi 3</td>
+            <td>full_rfid</td>
+            <td class="text-right">1.052</td>
+            <td class="text-right">178.10</td>
+            <td class="text-right">&infin; (Tak Hingga)</td>
+            <td class="text-right">N/A</td>
+            <td>Peringatan Sistem Overload (&rho; &ge; 1.0)</td>
+          </tr>
+          <tr>
+            <td>Rabu Sesi 1</td>
+            <td>observed_mix</td>
+            <td class="text-right">0.256</td>
+            <td class="text-right">0.77</td>
+            <td class="text-right">0.73</td>
+            <td class="text-right">+5.5%</td>
+            <td>Konsisten Terverifikasi</td>
+          </tr>
+          <tr>
+            <td>Rabu Sesi 2</td>
+            <td>observed_mix</td>
+            <td class="text-right">0.606</td>
+            <td class="text-right">6.14</td>
+            <td class="text-right">6.08</td>
+            <td class="text-right">+1.0%</td>
+            <td>Sangat Presisi</td>
+          </tr>
+          <tr>
+            <td>Rabu Sesi 3</td>
+            <td>observed_mix</td>
+            <td class="text-right">0.377</td>
+            <td class="text-right">1.86</td>
+            <td class="text-right">1.76</td>
+            <td class="text-right">+5.7%</td>
+            <td>Konsisten Terverifikasi</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      Pada kondisi sistem yang stabil (&rho; di bawah 0.86), perbedaan relatif antara hasil simulasi diskret SimPy dan perhitungan analitis Allen-Cunneen berkisar sangat ketat antara 1.0% hingga 9.4%. Kesesuaian ini memverifikasi bahwa mesin penjadwalan antrean SimPy, kalkulasi warm-up, dan generator kedatangan acak berjalan dengan benar sesuai hukum konservasi antrean.
+    </p>
+    <div class="callout">
+      <p>
+        <strong>Catatan Validasi Kritis:</strong> Pada skenario Selasa Sesi 3 dengan opsi full_rfid, nilai beban terpasang &rho; bernilai 1.052 (&gt; 1.0). Teori antrean memprediksi panjang antrean tak terhingga (steady-state tidak eksis). Dalam simulasi dengan durasi terhingga satu jam, kondisi ini terwujud sebagai penumpukan antrean kumulatif yang menghasilkan rata-rata waktu tunggu 178.10 detik dan antrean puncak 40.8 kendaraan.
+      </p>
+    </div>
+  </section>
+
+  <!-- BAB IX: Kesimpulan dan Saran -->
+  <section id="kesimpulan" class="bab-section">
+    <h2 class="bab-title">BAB IX<br>KESIMPULAN DAN SARAN</h2>
+    <p>
+      Berdasarkan rangkaian eksperimen simulasi dan evaluasi analitis terhadap data operasional tap out gerbang keluar parkir, dapat ditarik beberapa kesimpulan pokok:
+    </p>
+    <p>
+      Secara paradoksal, migrasi menuju sistem pembayaran nirkabel RFID dalam kondisi teknis eksisting justru memperburuk kelancaran lalu lintas di pintu keluar parkir. Rata-rata waktu pelayanan RFID lebih lambat 27.4% dibandingkan tiket karcis fisik (18.42 detik berbanding 14.46 detik) dan memiliki variabilitas yang jauh lebih lebar (standar deviasi 14.06 detik berbanding 6.70 detik). Pada jam sibuk dengan kedatangan melebihi 400 kendaraan per jam pada fasilitas 2 lajur, pemaksaan adopsi RFID secara penuh menyebabkan kegagalan sistemik dengan beban terpasang 1.052 dan antrean kendaraan yang tidak terkendali.
+    </p>
+    <p>
+      Meskipun demikian, analisis skenario perbaikan RFID (fixed_rfid) membuktikan bahwa teknologi RFID memiliki potensi efisiensi tinggi apabila hambatan operasional pada ekor distribusi berhasil dieliminasi. Pemangkasan transaksi RFID lambat pada persentil 90 karcis berhasil memulihkan kinerja sistem dan memangkas waktu tunggu rata-rata pada jam puncak sebesar 24.6%.
+    </p>
+    <p>
+      Berdasarkan temuan tersebut, berikut adalah rekomendasi praktis bagi pengelola fasilitas parkir:
+    </p>
+    <p>
+      Pertama, perbaikan keandalan perangkat keras reader RFID menjadi prioritas utama sebelum mendorong adopsi massal. Posisi antena tap harus disesuaikan secara ergonomis terhadap jangkauan jendela pengemudi mobil serta dilengkapi umpan balik visual dan audio instan agar pengemudi tidak perlu melakukan penempelan kartu berulang kali.
+    </p>
+    <p>
+      Kedua, penyediaan petugas lapangan siaga cepat (mobile attendant) di dekat gerbang keluar selama jam puncak untuk segera menangani kendaraan yang mengalami kegagalan tap, sehingga tidak menghalangi lajur utama.
+    </p>
+    <p>
+      Ketiga, jika adopsi RFID hendak diwajibkan secara bertahap, disarankan memisahkan lajur khusus RFID dan lajur khusus karcis manual guna mengisolasi risiko hambatan transaksi agar tidak mengganggu pengguna karcis yang transaksinya lebih homogen.
+    </p>
+    <p>
+      Keempat, untuk periode kedatangan di atas 400 kendaraan per jam (seperti jam pulang kantor sore hari), pengelola perlu mengoperasikan minimal 3 lajur gardu keluar guna menjamin beban sistem tetap berada di bawah ambang batas aman (&rho; &le; 0.70).
+    </p>
+  </section>
+
+  <!-- ================================================================
+       7. DAFTAR PUSTAKA
+       ================================================================ -->
+  <section id="daftar-pustaka" class="bab-section">
+    <h2 class="bab-title">DAFTAR PUSTAKA</h2>
+    <!-- Placeholder daftar pustaka: sesuaikan dengan referensi rujukan yang Anda gunakan -->
+    <div class="ref-placeholder">
+      <p>[ISI DAFTAR PUSTAKA / REFERENSI DI SINI SESUAI DENGAN SUMBER RUJUKAN TUGAS ANDA]</p>
+      <p class="ref-hint">Format rujukan dapat menggunakan standar APA atau IEEE sesuai ketentuan program studi.</p>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>

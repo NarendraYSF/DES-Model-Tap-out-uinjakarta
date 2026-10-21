@@ -1,0 +1,592 @@
+/* ==========================================================================
+   Dokumentasi Akademis Simulasi Tap Out Gerbang Keluar Parkir (SimPy)
+   Format Siap Cetak (A4, Times New Roman 12pt, Spasi 1.5, Margin 4-3-3-3)
+   File: docs/style.css
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Konfigurasi Halaman Cetak W3C (@page)
+   Margin: Kiri 4 cm, Atas 3 cm, Kanan 3 cm, Bawah 3 cm
+   Penomoran:
+     - cover_page : Tanpa nomor halaman
+     - prelim_page: Angka romawi kecil (i, ii, iii) di tengah bawah
+     - body_page  : Angka arab (1, 2, 3) di tengah bawah
+   -------------------------------------------------------------------------- */
+
+@page {
+  size: A4;
+  margin-top: 3cm;
+  margin-right: 3cm;
+  margin-bottom: 3cm;
+  margin-left: 4cm;
+}
+
+@page cover_page {
+  size: A4;
+  margin: 3cm 3.5cm 3cm 3.5cm; /* Margin kiri dan kanan simetris agar tepat di tengah halaman cetak */
+  @bottom-center {
+    content: none;
+  }
+}
+
+@page prelim_page {
+  size: A4;
+  margin-top: 3cm;
+  margin-right: 3cm;
+  margin-bottom: 3cm;
+  margin-left: 4cm;
+  @bottom-center {
+    content: counter(page, lower-roman);
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12pt;
+  }
+}
+
+@page body_page {
+  size: A4;
+  margin-top: 3cm;
+  margin-right: 3cm;
+  margin-bottom: 3cm;
+  margin-left: 4cm;
+  @bottom-center {
+    content: counter(page, decimal);
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12pt;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. Reset & Standarisasi Tipografi
+   -------------------------------------------------------------------------- */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 12pt;
+  background-color: #e2e8f0; /* Latar belakang abu-abu untuk pratinjau layar */
+}
+
+body {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 12pt;
+  line-height: 1.5;
+  color: #000000;
+  background-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+/* Kontainer Lembar Kerja A4 untuk Tampilan Layar */
+.academic-doc {
+  width: 21cm;
+  margin: 24px auto;
+  padding: 3cm 3cm 3cm 4cm; /* Padding mensimulasikan margin cetak saat di layar */
+  background-color: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* --------------------------------------------------------------------------
+   3. Format Paragraf dan Teks
+   -------------------------------------------------------------------------- */
+
+p {
+  text-align: justify;
+  text-justify: inter-word;
+  line-height: 1.5;
+  text-indent: 1.25cm;
+  margin-bottom: 0;
+  orphans: 3;
+  widows: 3;
+}
+
+p.no-indent {
+  text-indent: 0;
+}
+
+/* --------------------------------------------------------------------------
+   4. Judul Bagian dan Bab
+   -------------------------------------------------------------------------- */
+
+.bab-title {
+  font-size: 12pt;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 18pt;
+  line-height: 1.5;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+.sub-title {
+  font-size: 12pt;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 14pt;
+  margin-bottom: 6pt;
+  line-height: 1.5;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+/* --------------------------------------------------------------------------
+   5. Pembagian Halaman (Page Breaks & Named Pages)
+   -------------------------------------------------------------------------- */
+
+.page-cover {
+  page: cover_page;
+  break-after: page;
+  page-break-after: always;
+}
+
+.prelim-section {
+  page: prelim_page;
+  break-before: page;
+  page-break-before: always;
+}
+
+.prelim-start {
+  counter-reset: page 1;
+}
+
+.bab-section {
+  page: body_page;
+  break-before: page;
+  page-break-before: always;
+}
+
+.body-start {
+  counter-reset: page 1;
+}
+
+/* --------------------------------------------------------------------------
+   6. Halaman Cover
+   -------------------------------------------------------------------------- */
+
+.page-cover {
+  page: cover_page;
+  break-after: page;
+  page-break-after: always;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center !important;
+}
+
+@media screen {
+  .page-cover {
+    margin-left: -0.5cm;
+    width: calc(100% + 1cm);
+  }
+}
+
+.cover-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center !important;
+  width: 100%;
+  min-height: 23cm;
+  margin: 0 auto;
+}
+
+.cover-header,
+.cover-logo-wrapper,
+.cover-identity,
+.cover-footer {
+  width: 100%;
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.cover-title {
+  font-size: 15pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  line-height: 1.4;
+  margin-bottom: 16pt;
+  text-align: center !important;
+  text-indent: 0 !important;
+  width: 100%;
+}
+
+.cover-content p,
+.cover-header p,
+.cover-identity p,
+.cover-footer p,
+.cover-identity-text,
+.cover-footer-text,
+.cover-keterangan,
+.cover-matkul,
+.cover-dosen {
+  text-align: center !important;
+  text-justify: auto !important;
+  text-indent: 0 !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  width: 100%;
+}
+
+.cover-keterangan {
+  font-size: 12pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 4pt;
+}
+
+.cover-matkul {
+  font-size: 12pt;
+  margin-bottom: 4pt;
+}
+
+.cover-dosen {
+  font-size: 12pt;
+  margin-bottom: 0.8cm;
+}
+
+.cover-logo-wrapper {
+  margin: 0.6cm auto;
+  text-align: center !important;
+  width: 100%;
+}
+
+.cover-logo {
+  width: 3.5cm;
+  height: auto;
+  display: block;
+  margin: 0 auto !important;
+}
+
+.cover-identity {
+  margin-bottom: 1cm;
+}
+
+.cover-identity p {
+  font-size: 12pt;
+  line-height: 1.5;
+}
+
+.cover-footer {
+  margin-bottom: 0.5cm;
+}
+
+.cover-footer p {
+  font-size: 12pt;
+  font-weight: bold;
+  line-height: 1.35;
+}
+
+/* --------------------------------------------------------------------------
+   7. Kata Pengantar
+   -------------------------------------------------------------------------- */
+
+.signature-block {
+  margin-top: 24pt;
+  float: right;
+  text-align: left;
+  line-height: 1.5;
+}
+
+.signature-block p {
+  text-indent: 0;
+}
+
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+/* --------------------------------------------------------------------------
+   8. Daftar Isi, Daftar Tabel, Daftar Gambar (Dot Leader)
+   -------------------------------------------------------------------------- */
+
+.dot-leader-list {
+  list-style: none;
+  padding: 0;
+  margin: 12pt 0;
+}
+
+.dot-leader-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  line-height: 1.6;
+  margin-bottom: 5pt;
+  font-size: 12pt;
+}
+
+.dot-leader-item.level-sub {
+  padding-left: 1.25cm;
+}
+
+.dot-leader-title {
+  flex-shrink: 0;
+  max-width: 82%;
+}
+
+.dot-leader-dots {
+  flex-grow: 1;
+  border-bottom: 1px dotted #000000;
+  margin: 0 6px;
+  position: relative;
+  top: -4px;
+}
+
+.dot-leader-page {
+  flex-shrink: 0;
+  text-align: right;
+  min-width: 1.8rem;
+}
+
+.dot-leader-page .pg {
+  font-weight: normal;
+}
+
+/* --------------------------------------------------------------------------
+   9. Tabel Akademik
+   -------------------------------------------------------------------------- */
+
+.table-container {
+  margin: 14pt 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  width: 100%;
+}
+
+.table-caption {
+  font-size: 12pt;
+  text-align: center;
+  margin-bottom: 6pt;
+  text-indent: 0;
+  line-height: 1.5;
+}
+
+.table-caption b, .table-caption strong {
+  font-weight: bold;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10pt;
+  line-height: 1.3;
+  margin: 0 auto;
+  border: 1px solid #000000;
+  background-color: #ffffff;
+}
+
+thead {
+  display: table-header-group;
+}
+
+tr {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+th, td {
+  border: 1px solid #000000;
+  padding: 4.5pt 5pt;
+  vertical-align: middle;
+}
+
+thead th {
+  background-color: #f2f2f2 !important;
+  color: #000000 !important;
+  font-weight: bold;
+  text-align: center;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+tbody tr {
+  background-color: #ffffff !important;
+}
+
+/* Baris penekanan khusus (misal: gabungan atau overload) */
+tr.highlight-row {
+  font-weight: bold;
+}
+
+td.text-right, th.text-right {
+  text-align: right;
+}
+
+td.text-center, th.text-center {
+  text-align: center;
+}
+
+/* Pengaturan tabel lebar (12 kolom) agar pas dalam 14 cm area cetak */
+.table-compact {
+  font-size: 8pt;
+  line-height: 1.2;
+}
+
+.table-compact th, .table-compact td {
+  padding: 3pt 2pt;
+}
+
+.table-compact th {
+  font-size: 7.5pt;
+}
+
+/* Pengaturan tabel hasil simulasi (10 kolom) */
+.table-results {
+  font-size: 8.5pt;
+  line-height: 1.2;
+}
+
+.table-results th, .table-results td {
+  padding: 3.5pt 2.5pt;
+}
+
+/* --------------------------------------------------------------------------
+   10. Gambar & Visual
+   -------------------------------------------------------------------------- */
+
+figure.figure-block {
+  margin: 18pt 0;
+  text-align: center;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+figure.figure-block img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.figure-caption {
+  font-size: 12pt;
+  text-align: center;
+  margin-top: 6pt;
+  font-style: normal;
+  text-indent: 0;
+  line-height: 1.5;
+}
+
+.figure-caption b, .figure-caption strong {
+  font-weight: bold;
+}
+
+/* --------------------------------------------------------------------------
+   11. Persamaan Matematika
+   -------------------------------------------------------------------------- */
+
+.equation {
+  text-align: center;
+  margin: 12pt 0;
+  font-style: italic;
+  font-size: 12pt;
+  text-indent: 0;
+}
+
+/* --------------------------------------------------------------------------
+   12. Blok Kode (pre & code)
+   -------------------------------------------------------------------------- */
+
+pre {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 10pt;
+  line-height: 1.4;
+  background-color: #f9f9f9 !important;
+  color: #000000 !important;
+  border: 1px solid #000000;
+  padding: 8pt 10pt;
+  margin: 12pt 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 10pt;
+}
+
+/* --------------------------------------------------------------------------
+   13. Kotak Peringatan / Callout
+   -------------------------------------------------------------------------- */
+
+.callout {
+  border: 1px solid #000000;
+  background: none !important;
+  color: #000000 !important;
+  padding: 8pt 12pt;
+  margin: 14pt 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.callout p {
+  text-indent: 0;
+  margin: 0;
+  text-align: justify;
+}
+
+/* --------------------------------------------------------------------------
+   14. Daftar Pustaka Placeholder
+   -------------------------------------------------------------------------- */
+
+.ref-placeholder {
+  border: 1px dashed #666666;
+  padding: 16pt;
+  margin: 18pt 0;
+  background-color: #fafafa;
+  text-align: center;
+}
+
+.ref-placeholder p {
+  text-indent: 0;
+  text-align: center;
+  margin-bottom: 6pt;
+  font-size: 11pt;
+}
+
+.ref-placeholder .ref-hint {
+  font-style: italic;
+  color: #444444;
+  font-size: 10pt;
+}
+
+/* --------------------------------------------------------------------------
+   15. Mode Cetak (@media print)
+   Menghapus dekorasi layar, sidebar, dan bayangan
+   -------------------------------------------------------------------------- */
+
+@media print {
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .academic-doc {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  .sidebar, .site-brand, .nav-menu {
+    display: none !important;
+  }
+}

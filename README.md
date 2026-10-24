@@ -74,8 +74,8 @@ python tap_out_sim_v3.py --warmup 300
 | `sim_results_v3.csv` | All scenarios × session with per-gate metrics, 95% CIs, M/G/c |
 | `scenario_comparison.png` | Grouped bar chart: mean wait by scenario per session |
 | `sweep_wait_vs_shift.png` | Shift sweep: mean/P95 wait vs % Karcis shifted to RFID (log y) |
-| `fit_table.csv` | Distribution fit results (AIC, KS) per method |
-| `fit_karcis.png` / `fit_rfid.png` | Histogram + QQ plots for Karcis / RFID |
+| `fit_table.csv` | Distribution fit results (AIC, KS) per method — normal, lognormal, gamma, Weibull |
+| `fit_karcis.png` / `fit_rfid.png` | Histogram + QQ plots (incl. Normal) for Karcis / RFID |
 | `reconciliation.csv` | Raw vs cleaning workbook counts |
 | `validation.csv` | M/G/c vs simulation, throughput checks |
 
@@ -101,8 +101,10 @@ RFID vehicles   ──→ [RFID Gate:   simpy.Resource(rfid_lanes)]  ──→ e
 - **Two independent gates**, each with its own FIFO queue.
 - **Poisson arrivals**: λ = N_before_IQR / 3600 s per method per session.
   Counts *before* outlier removal are used because outliers are real vehicles.
-- **Service times**: Empirical resampling from pooled cleaned data, or
-  best-fit parametric distribution (lognormal, gamma, or Weibull).
+- **Service times**: **Empirical resampling** from pooled cleaned data (primary
+  model — Normal distribution rejected at all levels by KS test).
+  Lognormal best-fit parametric distribution available as comparison model
+  via `--service fitted` (KS D ≈ 0.02–0.06). Also tested: gamma, Weibull.
 - **200 replications** with common random numbers; 95% confidence intervals.
 
 ## Analytical Validation (M/G/c)
@@ -130,8 +132,10 @@ flagged.  Throughput is compared to observed vehicle counts.
 4. **Kruskal-Wallis confirms** that both Karcis and RFID service times differ
    significantly across sessions (p < 10⁻¹⁵), supporting per-session analysis.
 
-5. **Lognormal is the best fit** for both Karcis (AIC 6089) and RFID (AIC 4304)
-   based on AIC and KS tests.
+5. **Normal distribution rejected** at all levels (KS test, p < 0.05).
+   **Empirical resampling is the primary service-time model**.
+   Lognormal provides the best parametric fit (lowest AIC; KS D ≈ 0.02–0.06)
+   and is available as a comparison model via `--service fitted`.
 
 ## Assumptions & Limitations
 
@@ -151,9 +155,11 @@ flagged.  Throughput is compared to observed vehicle counts.
    with an empty system, which reflects the real initial condition. A 300 s
    warm-up can be enabled to study the effect.
 
-5. **Service times pooled across sessions** for resampling. Although the
-   Kruskal-Wallis test shows session differences, pooling provides a larger
-   sample. The `--service fitted` option uses a parametric fit instead.
+5. **Service times pooled across sessions** for empirical resampling. Although
+   the Kruskal-Wallis test shows session differences, pooling provides a larger
+   sample. The `--service fitted` option uses the best-fit parametric
+   distribution (lognormal) as a comparison model — not as the primary model,
+   because Normal is rejected and even lognormal shows non-trivial KS D values.
 
 6. **No balking, reneging, or jockeying** modelled — vehicles wait in
    their assigned gate's queue until served.

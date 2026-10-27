@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulasi Tap-Out UIN Jakarta — Materi Presentasi (5 Slides)</title>
+<style>
+/* ================================================================
+   DESIGN SYSTEM — DARK PROFESSIONAL SLIDE DECK
+   ================================================================ */
+:root {
+  --bg: #070d1e;
+  --card: #0f172a;
+  --card2: #1e293b;
+  --border: rgba(148,163,184,.15);
+  --border2: rgba(148,163,184,.25);
+  --t1: #f8fafc;
+  --t2: #e2e8f0;
+  --t3: #94a3b8;
+  --t4: #64748b;
+  --green: #10b981;
+  --green2: #34d399;
+  --blue: #3b82f6;
+  --blue2: #60a5fa;
+  --amber: #f59e0b;
+  --amber2: #fbbf24;
+  --rose: #ef4444;
+  --rose2: #f87171;
+  --purple: #8b5cf6;
+  --cyan: #06b6d4;
+  --ff: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--ff);background:var(--bg);color:var(--t1);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px 10px 50px}
+
+/* ================================================================
+   TOP BAR
+   ================================================================ */
+.topbar{width:100%;max-width:1240px;display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:rgba(15,23,42,.85);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;margin-bottom:16px;z-index:100;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-badge{background:linear-gradient(135deg,#059669,#10b981);color:#fff;font-weight:700;font-size:10px;padding:3px 9px;border-radius:16px;letter-spacing:.5px;text-transform:uppercase}
+.brand-name{font-size:14px;font-weight:600;color:var(--t2)}
+.brand-name b{color:var(--green)}
+.nav{display:flex;align-items:center;gap:6px}
+.nav-btn{background:rgba(30,41,59,.8);border:1px solid var(--border);color:var(--t1);padding:7px 12px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s}
+.nav-btn:hover{background:rgba(51,65,85,.9);border-color:#64748b;transform:translateY(-1px)}
+.nav-btn.pri{background:linear-gradient(135deg,#059669,#10b981);border-color:transparent;color:#fff;font-weight:600}
+.dots{display:flex;gap:5px;margin:0 8px}
+.dot{width:9px;height:9px;border-radius:50%;background:rgba(148,163,184,.3);cursor:pointer;transition:all .2s}
+.dot.on{background:var(--green);width:22px;border-radius:8px;box-shadow:0 0 8px var(--green)}
+.mode{display:flex;background:rgba(15,23,42,.6);padding:3px;border-radius:8px;border:1px solid var(--border)}
+.mode button{background:0 0;border:0;color:var(--t3);padding:5px 10px;border-radius:5px;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s}
+.mode button.on{background:var(--card2);color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+
+/* ================================================================
+   SLIDE CARD (16:9)
+   ================================================================ */
+.wrap{width:100%;max-width:1200px;display:flex;flex-direction:column;gap:24px}
+.stage{width:100%}
+.slide{width:100%;aspect-ratio:16/9;background:linear-gradient(145deg,#0f172a,#1e293b);border:1px solid rgba(148,163,184,.2);border-radius:18px;box-shadow:0 20px 25px -5px rgba(0,0,0,.5),0 0 25px rgba(16,185,129,.1);padding:32px 40px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.slide::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px,rgba(148,163,184,.04) 1px,transparent 0);background-size:26px 26px;pointer-events:none;z-index:0}
+.slide .g1{position:absolute;top:-100px;right:-100px;width:300px;height:300px;pointer-events:none;z-index:0}
+.slide .g2{position:absolute;bottom:-120px;left:-80px;width:340px;height:340px;pointer-events:none;z-index:0}
+.sc{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;justify-content:space-between}
+
+/* ---- HEADER ---- */
+.sh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.sh-left{max-width:80%}
+.sh-cat{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--green);margin-bottom:4px}
+.sh-title{font-size:24px;font-weight:800;line-height:1.22;color:#fff;letter-spacing:-.3px}
+.sh-sub{font-size:12.5px;color:var(--t3);margin-top:3px;line-height:1.35}
+.sh-right{text-align:right}
+.sh-pill{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#34d399;font-size:11px;font-weight:700;padding:3px 10px;border-radius:16px}
+.sh-course{font-size:9.5px;color:var(--t4);margin-top:4px;font-weight:500}
+
+/* ---- BODY ---- */
+.sb{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;min-height:0}
+
+/* ---- FOOTER ---- */
+.sf{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid rgba(148,163,184,.1);font-size:10.5px;color:var(--t4)}
+.sf-l{display:flex;align-items:center;gap:6px}
+.sf-l span.sep{display:inline-block;width:3px;height:3px;border-radius:50%;background:var(--t4)}
+.sf-r{font-weight:500;color:var(--t3)}
+
+/* ================================================================
+   SLIDE 1 — S=(E,A,V,T)
+   ================================================================ */
+.seavt{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.sc1{background:rgba(15,23,42,.65);border:1px solid rgba(148,163,184,.12);border-radius:12px;padding:13px 12px;display:flex;flex-direction:column}
+.sc1.e{border-top:3px solid var(--blue)} .sc1.a{border-top:3px solid var(--green)} .sc1.v{border-top:3px solid var(--amber)} .sc1.t{border-top:3px solid var(--purple)}
+.sc1-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.sc1-let{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff}
+.e .sc1-let{background:linear-gradient(135deg,#1d4ed8,#3b82f6)} .a .sc1-let{background:linear-gradient(135deg,#059669,#10b981)} .v .sc1-let{background:linear-gradient(135deg,#d97706,#f59e0b)} .t .sc1-let{background:linear-gradient(135deg,#7c3aed,#8b5cf6)}
+.sc1-term{font-size:12.5px;font-weight:700;color:var(--t2)}
+.sc1 ul{list-style:none;display:flex;flex-direction:column;gap:5px;font-size:10.8px;color:#cbd5e1;line-height:1.3}
+.sc1 li{padding-left:10px;position:relative}
+.sc1 li::before{content:"▸";position:absolute;left:0;color:var(--t4);font-size:9px;top:1px}
+.sc1 li strong{color:#fff;font-weight:600}
+.archbox{width:100%;background:rgba(15,23,42,.45);border:1px dashed rgba(148,163,184,.18);border-radius:10px;padding:8px 14px;display:flex;align-items:center;justify-content:space-around;font-size:10.5px;color:#cbd5e1;flex-wrap:wrap;gap:4px}
+.arch-s{display:flex;align-items:center;gap:6px}
+.arch-ic{width:22px;height:22px;border-radius:50%;background:rgba(30,41,59,.9);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--green);flex-shrink:0}
+.arch-ar{color:var(--t4);font-size:12px}
+
+/* ================================================================
+   SLIDE 2 — 4 SCENARIO CARDS
+   ================================================================ */
+.scg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.scc{background:rgba(15,23,42,.7);border:1px solid rgba(148,163,184,.13);border-radius:12px;padding:12px;display:flex;flex-direction:column;justify-content:space-between}
+.scc.asis{border-top:3px solid var(--amber)}
+.scc.shift{border:1.5px solid rgba(239,68,68,.55);background:linear-gradient(180deg,rgba(239,68,68,.07) 0%,rgba(15,23,42,.8) 100%);box-shadow:0 0 14px rgba(239,68,68,.12)}
+.scc.frfid{border-top:3px solid var(--green)}
+.scc.fkarc{border-top:3px solid var(--blue)}
+.scc-n{font-size:12.5px;font-weight:700;color:#fff}
+.scc-lane{font-size:10px;color:var(--t3);margin-top:2px;display:inline-block;background:rgba(30,41,59,.8);padding:1px 6px;border-radius:3px}
+.scc-m{display:flex;flex-direction:column;gap:5px;margin:7px 0}
+.scc-r{display:flex;justify-content:space-between;align-items:center;font-size:10.5px;padding:3px 6px;background:rgba(15,23,42,.5);border-radius:5px;border:1px solid rgba(148,163,184,.06)}
+.scc-lab{color:var(--t3)}
+.scc-val{font-weight:700;font-size:11.5px;color:var(--t1)}
+.vd{color:var(--rose)!important;font-weight:800} .vw{color:var(--amber)!important;font-weight:700} .vs{color:var(--green)!important;font-weight:700}
+.scc-pill{font-size:9.5px;font-weight:700;text-transform:uppercase;padding:3px 7px;border-radius:10px;text-align:center;margin-top:3px}
+.pw{background:rgba(245,158,11,.14);color:var(--amber2);border:1px solid rgba(245,158,11,.3)}
+.pd{background:rgba(239,68,68,.18);color:var(--rose2);border:1px solid rgba(239,68,68,.4)}
+.ps{background:rgba(16,185,129,.14);color:var(--green2);border:1px solid rgba(16,185,129,.3)}
+.pi{background:rgba(59,130,246,.14);color:var(--blue2);border:1px solid rgba(59,130,246,.3)}
+.callout{background:linear-gradient(90deg,rgba(239,68,68,.1),rgba(16,185,129,.1));border-left:3px solid var(--rose);border-radius:0 9px 9px 0;padding:9px 14px;display:flex;gap:14px;font-size:11.5px;line-height:1.4;align-items:flex-start}
+.callout strong{color:#fff}
+.callout-r{border-left:1px solid rgba(255,255,255,.12);padding-left:12px;min-width:220px;font-size:10.5px;color:#cbd5e1}
+
+/* ================================================================
+   SLIDE 3 — CHART + REAL IMAGES
+   ================================================================ */
+.s3lay{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;height:100%;align-items:stretch}
+.chart-box{background:rgba(15,23,42,.7);border:1px solid rgba(148,163,184,.16);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column}
+.chart-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.chart-title{font-size:12px;font-weight:700;color:var(--t2)}
+.chart-tag{font-size:9.5px;background:rgba(59,130,246,.14);color:var(--blue2);padding:2px 7px;border-radius:8px;border:1px solid rgba(59,130,246,.3);cursor:pointer}
+.chart-img{width:100%;flex:1;min-height:0;overflow:hidden;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#0d1117}
+.chart-img img{width:100%;height:100%;object-fit:contain}
+.chart-leg{display:flex;justify-content:center;gap:14px;font-size:10px;color:var(--t3);padding-top:5px;border-top:1px solid rgba(148,163,184,.08)}
+.leg-i{display:flex;align-items:center;gap:5px}
+.leg-c{width:9px;height:9px;border-radius:2px}
+.pts{display:flex;flex-direction:column;gap:8px;justify-content:space-between}
+.pt{background:rgba(15,23,42,.6);border:1px solid rgba(148,163,184,.1);border-radius:9px;padding:9px 10px;display:flex;align-items:flex-start;gap:10px}
+.pt-ic{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:800;font-size:12px}
+.pt-ic.d{background:rgba(239,68,68,.16);color:var(--rose2);border:1px solid rgba(239,68,68,.35)}
+.pt-ic.s{background:rgba(16,185,129,.16);color:var(--green2);border:1px solid rgba(16,185,129,.35)}
+.pt-ic.i{background:rgba(59,130,246,.16);color:var(--blue2);border:1px solid rgba(59,130,246,.35)}
+.pt-ic.w{background:rgba(245,158,11,.16);color:var(--amber2);border:1px solid rgba(245,158,11,.35)}
+.pt-t{font-size:11px;line-height:1.3;color:#cbd5e1}
+.pt-t strong{color:#fff;font-size:11.5px;display:block;margin-bottom:1px}
+
+/* ================================================================
+   SLIDE 4 — FIT IMAGES + GOF TABLE
+   ================================================================ */
+.s4lay{display:grid;grid-template-columns:1fr 1fr;gap:14px;height:100%}
+.s4-img-col{display:flex;flex-direction:column;gap:10px}
+.s4-imgbox{background:rgba(15,23,42,.6);border:1px solid var(--border);border-radius:10px;padding:8px;flex:1;display:flex;flex-direction:column}
+.s4-imgbox .img-hdr{font-size:11px;font-weight:700;color:var(--t2);margin-bottom:4px;display:flex;justify-content:space-between;align-items:center}
+.s4-imgbox .img-hdr span{font-size:9.5px;color:var(--t4);font-weight:400}
+.s4-imgbox img{width:100%;flex:1;object-fit:contain;border-radius:6px;background:#fff;min-height:0}
+.s4-data-col{display:flex;flex-direction:column;gap:10px}
+.s4-card{background:rgba(15,23,42,.65);border:1px solid var(--border);border-radius:10px;padding:11px 12px;display:flex;flex-direction:column}
+.s4-card-hdr{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.s4-num{width:20px;height:20px;border-radius:5px;background:linear-gradient(135deg,#059669,#10b981);color:#fff;font-size:10.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.s4-card-title{font-size:12.5px;font-weight:700;color:#fff}
+.s4-card p{font-size:10.8px;color:#cbd5e1;line-height:1.35}
+.s4-card p strong{color:#fff}
+.s4-stat{display:inline-flex;align-items:center;gap:5px;font-size:10px;padding:3px 7px;border-radius:5px;background:rgba(30,41,59,.8);color:#93c5fd;margin-top:4px}
+.ks-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.22);border-radius:6px;padding:5px 8px;font-size:10px;color:#fca5a5;margin-top:4px}
+/* GOF mini-table */
+.gof-tbl{width:100%;border-collapse:collapse;font-size:10px;margin-top:6px}
+.gof-tbl th{background:rgba(30,41,59,.7);color:var(--t3);font-weight:600;padding:4px 6px;text-align:left;border-bottom:1px solid var(--border)}
+.gof-tbl td{padding:3px 6px;border-bottom:1px solid rgba(148,163,184,.06);color:#cbd5e1}
+.gof-tbl tr.best td{color:var(--green2);font-weight:600}
+.gof-tbl tr.reject td{color:var(--rose2)}
+.gof-tbl .r{text-align:right}
+
+/* ================================================================
+   SLIDE 5 — CONCLUSION 2-COL
+   ================================================================ */
+.s5lay{display:grid;grid-template-columns:1fr 1fr;gap:16px;height:100%}
+.s5-col{background:rgba(15,23,42,.65);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:space-between}
+.s5-col.left{border-top:3px solid var(--blue)}
+.s5-col.right{border-top:3px solid var(--green)}
+.s5-hdr{display:flex;align-items:center;gap:7px;margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid rgba(148,163,184,.1)}
+.s5-hdr h4{font-size:13px;font-weight:700;color:#fff}
+.s5-items{display:flex;flex-direction:column;gap:8px}
+.s5-i{display:flex;align-items:flex-start;gap:8px;font-size:11px;line-height:1.35;color:#cbd5e1}
+.s5-b{width:16px;height:16px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.s5-b.bl{background:rgba(59,130,246,.18);color:var(--blue2)}
+.s5-b.gr{background:rgba(16,185,129,.18);color:var(--green2)}
+.s5-i strong{color:#fff;font-weight:600}
+.s5-foot{font-size:10px;color:var(--t4);border-top:1px solid rgba(148,163,184,.08);padding-top:5px;margin-top:auto}
+
+/* ================================================================
+   NOTES DRAWER
+   ================================================================ */
+.notes{width:100%;max-width:1200px;background:rgba(15,23,42,.85);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:-8px}
+.notes-hdr{padding:10px 18px;background:rgba(30,41,59,.6);display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none}
+.notes-hdr-l{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--t2)}
+.notes-tag{background:rgba(16,185,129,.14);color:var(--green);font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+.notes-chev{color:var(--t3);transition:transform .3s}
+.notes.open .notes-chev{transform:rotate(180deg)}
+.notes-body{padding:16px 20px;font-size:12.5px;line-height:1.55;color:#cbd5e1;display:none;border-top:1px solid rgba(148,163,184,.08);background:rgba(11,19,43,.5)}
+.notes.open .notes-body{display:block}
+.nsl{margin-bottom:10px;position:relative;padding-left:16px}
+.nsl::before{content:"💬";position:absolute;left:0;font-size:10px;top:2px}
+.nsl strong{color:#fff}
+.cue{display:inline-block;background:rgba(245,158,11,.14);color:var(--amber2);font-size:10.5px;font-weight:600;padding:1px 5px;border-radius:3px;margin-right:5px}
+
+/* ================================================================
+   ALL-SLIDES MODE
+   ================================================================ */
+.all-grid{display:none;width:100%;flex-direction:column;gap:36px}
+body.viewall .stage,body.viewall .notes{display:none!important}
+body.viewall .all-grid{display:flex}
+.sl-wrap{display:flex;flex-direction:column;gap:10px}
+.sl-bar{display:flex;justify-content:space-between;align-items:center;padding:7px 14px;background:rgba(30,41,59,.6);border-radius:7px;font-size:11.5px;color:var(--t3)}
+.sl-bar strong{color:#fff}
+
+/* ================================================================
+   MODAL
+   ================================================================ */
+.modal{display:none;position:fixed;inset:0;background:rgba(7,13,30,.88);backdrop-filter:blur(10px);z-index:999;justify-content:center;align-items:center;padding:20px}
+.modal.on{display:flex}
+.modal-box{max-width:920px;width:100%;background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;position:relative}
+.modal-img{width:100%;max-height:76vh;object-fit:contain;border-radius:6px;background:#fff}
+.modal-close{align-self:flex-end;background:rgba(239,68,68,.18);border:1px solid rgba(239,68,68,.35);color:var(--rose2);padding:5px 12px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:600}
+.modal-cap{font-size:11px;color:#cbd5e1;text-align:center}
+
+/* PRINT */
+@media print{body{background:#fff!important;padding:0!important}.topbar,.notes,.dots,.nav,.mode{display:none!important}.all-grid{display:flex!important;gap:0!important}.slide{page-break-after:always;border:none!important;box-shadow:none!important;border-radius:0!important}}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-badge">UIN Jakarta · TI</span>
+    <div class="brand-name">Simulasi & Pemodelan Sistem: <b>Tap-Out Gate DES</b></div>
+  </div>
+  <div class="nav" id="navC">
+    <button class="nav-btn" id="prevB" onclick="go(-1)">◀ Prev</button>
+    <div class="dots" id="dots"></div>
+    <button class="nav-btn pri" id="nextB" onclick="go(1)">Next ▶</button>
+  </div>
+  <div class="mode">
+    <button class="on" id="mS" onclick="vm('s')">Slide</button>
+    <button id="mA" onclick="vm('a')">Semua (SS)</button>
+    <button onclick="window.print()">PDF</button>
+  </div>
+</header>
+
+<main class="wrap" id="wrap">
+  <!-- SINGLE VIEW -->
+  <section class="stage" id="stage"><div id="active"></div></section>
+
+  <!-- NOTES -->
+  <section class="notes open" id="nd">
+    <div class="notes-hdr" onclick="tN()">
+      <div class="notes-hdr-l">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Catatan Presenter & Naskah Bicara
+        <span class="notes-tag" id="nLabel">Slide 1/5</span>
+      </div>
+      <div class="notes-chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="notes-body" id="nBody"></div>
+  </section>
+
+  <!-- ALL VIEW -->
+  <section class="all-grid" id="allG"></section>
+</main>
+
+<!-- MODAL -->
+<div class="modal" id="modal" onclick="cM(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="cM()">Tutup ✕</button>
+    <img id="mImg" class="modal-img" src="" alt="Plot">
+    <div class="modal-cap" id="mCap"></div>
+  </div>
+</div>
+
+<script>
+// ================================================================
+// SLIDES DATA
+// ================================================================
+const S=[
+
+// ---- SLIDE 1: S=(E,A,V,T) ----
+{id:1,ref:"Slide 22",
+render:()=>`<div class="slide">
+<div class="g1" style="background:radial-gradient(circle,rgba(16,185,129,.2) 0%,transparent 70%)"></div>
+<div class="g2" style="background:radial-gradient(circle,rgba(59,130,246,.1) 0%,transparent 70%)"></div>
+<div class="sc">
+<div class="sh">
+ <div class="sh-left">
+  <div class="sh-cat">⬡ Formalisasi Model Sistem Antrean</div>
+  <h2 class="sh-title">Sistem Tap-Out: S = (E, A, V, T)</h2>
+  <p class="sh-sub">Model Simulasi Kejadian Diskret (DES) Dua Gerbang Dedikasi Independen — SimPy 4.1 Python</p>
+ </div>
+ <div class="sh-right"><span class="sh-pill">Slide 1 / 5</span><div class="sh-course">Simulasi & Pemodelan Sistem</div></div>
+</div>
+<div class="sb">
+ <div class="seavt">
+  <div class="sc1 e"><div class="sc1-top"><div class="sc1-let">E</div><span class="sc1-term">Entitas</span></div>
+   <ul>
+    <li><strong>Bergerak:</strong> Kendaraan Karcis manual & kendaraan kartu RFID</li>
+    <li><strong>Server:</strong> Gerbang Karcis (<strong>2 lajur</strong>) & Gerbang RFID (<strong>1 lajur</strong>)</li>
+    <li>Antrean FIFO terpisah per gerbang — tidak saling menghalangi</li>
+    <li>Total 3 lajur fisik terpasang (asumsi infrastruktur kampus)</li>
+   </ul>
+  </div>
+  <div class="sc1 a"><div class="sc1-top"><div class="sc1-let">A</div><span class="sc1-term">Aktivitas</span></div>
+   <ul>
+    <li><strong>Kedatangan:</strong> Proses Poisson homogen (λ = N/3.600 s)</li>
+    <li><strong>Antre:</strong> FIFO di lajur yang dialokasikan hingga gardu kosong</li>
+    <li><strong>Tap-Out:</strong> Transaksi karcis atau tap RFID (durasi stokastik)</li>
+    <li><strong>Keberangkatan:</strong> Palang terangkat → gardu terlepas → keluar sistem</li>
+   </ul>
+  </div>
+  <div class="sc1 v"><div class="sc1-top"><div class="sc1-let">V</div><span class="sc1-term">Variabel</span></div>
+   <ul>
+    <li><strong>Input:</strong> Laju kedatangan λ<sub>K</sub>, λ<sub>R</sub> dan distribusi durasi layanan empiris</li>
+    <li><strong>State:</strong> Panjang antrean L<sub>q</sub>(t), status gardu (idle/busy)</li>
+    <li><strong>Output:</strong> Waktu tunggu E[W<sub>q</sub>], P95, utilisasi ρ = λ·E[S] / c</li>
+    <li>Antrean rata-rata, antrean puncak, throughput kendaraan</li>
+   </ul>
+  </div>
+  <div class="sc1 t"><div class="sc1-top"><div class="sc1-let">T</div><span class="sc1-term">Waktu</span></div>
+   <ul>
+    <li><strong>Mekanisme:</strong> Next-event time-advance, satuan <strong>detik</strong></li>
+    <li><strong>Durasi sesi:</strong> 1 jam operasional = <strong>3.600 detik</strong></li>
+    <li><strong>Replikasi:</strong> <strong>200 kali</strong> per skenario (CRN, seed = 42)</li>
+    <li><strong>Statistik:</strong> Interval Kepercayaan 95% (t-Student)</li>
+   </ul>
+  </div>
+ </div>
+ <div class="archbox">
+  <div class="arch-s"><div class="arch-ic">1</div><span>Kedatangan (Poisson λ)</span></div>
+  <div class="arch-ar">→</div>
+  <div class="arch-s"><div class="arch-ic" style="color:var(--blue2)">2</div><span>Antrean FIFO Terpisah</span></div>
+  <div class="arch-ar">→</div>
+  <div class="arch-s"><div class="arch-ic" style="color:var(--green2)">3</div><span>Gardu (2K + 1R)</span></div>
+  <div class="arch-ar">→</div>
+  <div class="arch-s"><div class="arch-ic" style="color:#a78bfa">4</div><span>Keluar Sistem</span></div>
+  <div style="flex-basis:100%;height:0"></div>
+  <div style="font-size:9.5px;color:var(--t4);width:100%;text-align:center;margin-top:2px">Karcis ──→ [simpy.Resource(2)] ──→ exit &nbsp;&nbsp;│&nbsp;&nbsp; RFID ──→ [simpy.Resource(1)] ──→ exit &nbsp;&nbsp;│&nbsp;&nbsp; Layanan: Empirical Bootstrap Resampling dari 1.584 data bersih</div>
+ </div>
+</div>
+<div class="sf"><div class="sf-l"><span>Model DES SimPy 4.1</span><span class="sep"></span><span>Dua Gerbang Dedikasi Independen</span><span class="sep"></span><span>200 Replikasi Stokastik</span></div><div class="sf-r">Slide 22 · Input Data Modeling Tap-Out</div></div>
+</div></div>`,
+script:`<div class="nsl"><span class="cue">[PEMBUKA]</span> "Pada bagian ini saya mempresentasikan formalisasi model sistem tap-out menggunakan kerangka <strong>S = (E, A, V, T)</strong>."</div>
+<div class="nsl"><span class="cue">[E]</span> "<strong>Entitas:</strong> Terdapat dua jenis entitas bergerak — kendaraan Karcis dan RFID — serta server berupa 2 gerbang Karcis paralel dan 1 gerbang RFID tunggal. Masing-masing memiliki antrean FIFO yang terpisah secara fisik."</div>
+<div class="nsl"><span class="cue">[A]</span> "<strong>Aktivitas:</strong> Siklus hidup kendaraan dimulai dari kedatangan Poisson, masuk antrean, proses tap-out, lalu keluar. Durasi tap-out ditarik secara acak melalui <em>empirical resampling</em> dari 1.584 data bersih."</div>
+<div class="nsl"><span class="cue">[V]</span> "<strong>Variabel:</strong> Input berupa laju kedatangan λ per sesi dan distribusi durasi layanan. Status mencakup panjang antrean dan kondisi gardu. Output utama: waktu tunggu E[Wq], P95, dan utilisasi ρ."</div>
+<div class="nsl"><span class="cue">[T]</span> "<strong>Waktu:</strong> Simulasi berjalan dalam satuan detik, 3.600 detik per sesi. Dieksekusi 200 replikasi per skenario dengan interval kepercayaan 95%."</div>`
+},
+
+// ---- SLIDE 2: SKENARIO SELASA S3 ----
+{id:2,ref:"Slide 21",
+render:()=>`<div class="slide">
+<div class="g1" style="background:radial-gradient(circle,rgba(239,68,68,.18) 0%,transparent 70%)"></div>
+<div class="g2" style="background:radial-gradient(circle,rgba(16,185,129,.12) 0%,transparent 70%)"></div>
+<div class="sc">
+<div class="sh">
+ <div class="sh-left">
+  <div class="sh-cat">⏱ Sesi Puncak Tertinggi · Selasa 16.00–17.00 WIB</div>
+  <h2 class="sh-title">Skenario di Sesi Terpadat (Selasa Sesi 3)</h2>
+  <p class="sh-sub">Perbandingan 4 konfigurasi operasional pada beban puncak: 563 kendaraan/jam (352 Karcis + 211 RFID)</p>
+ </div>
+ <div class="sh-right"><span class="sh-pill" style="border-color:rgba(245,158,11,.4);color:#fbbf24;background:rgba(245,158,11,.1)">Slide 2 / 5</span><div class="sh-course">Volume: 563 Kend/Jam</div></div>
+</div>
+<div class="sb">
+ <div class="scg">
+  <div class="scc asis">
+   <div><div class="scc-n">As-is (Eksisting)</div><span class="scc-lane">2 Karcis + 1 RFID</span></div>
+   <div class="scc-m">
+    <div class="scc-r"><span class="scc-lab">Tunggu Karcis:</span><span class="scc-val vs">6,85 dtk</span></div>
+    <div class="scc-r"><span class="scc-lab">Tunggu RFID:</span><span class="scc-val vd">123,10 dtk</span></div>
+    <div class="scc-r"><span class="scc-lab">P95 RFID:</span><span class="scc-val vw">264,21 dtk</span></div>
+    <div class="scc-r"><span class="scc-lab">ρ Karcis / RFID:</span><span class="scc-val">0,68 / <span class="vw">0,99</span></span></div>
+    <div class="scc-r"><span class="scc-lab">Antrean RFID avg:</span><span class="scc-val">7,3 kendaraan</span></div>
+   </div>
+   <div class="scc-pill pw">Batas Kritis · Bottleneck</div>
+  </div>
+  <div class="scc shift">
+   <div><div class="scc-n" style="color:var(--rose2)">Geser 50% ke RFID</div><span class="scc-lane" style="color:#fca5a5">2 Karcis + 1 RFID</span></div>
+   <div class="scc-m">
+    <div class="scc-r"><span class="scc-lab">Tunggu Karcis:</span><span class="scc-val">1,14 dtk</span></div>
+    <div class="scc-r"><span class="scc-lab">Tunggu RFID:</span><span class="scc-val vd">794,19 dtk</span></div>
+    <div class="scc-r"><span class="scc-lab">P95 RFID:</span><span class="scc-val vd">1.510,66 dtk</span></div>
+    <div class="scc-r"><span class="scc-lab">ρ RFID:</span><span class="scc-val vd">1,808</span></div>
+    <div class="scc-r"><span class="scc-lab">Antrean RFID avg:</span><span class="scc-val vd">86 → maks 173</span></div>
+   </div>
+   <div class="scc-pill pd">KOLAPS SISTEMIK (ρ &gt; 1)</div>
+  </div>
+  <div class="scc frfid">
+   <div><div class="scc-n">Semua RFID (3 Lajur)</div><span class="scc-lane">0 Karcis + 3 RFID</span></div>
+   <div class="scc-m">
+    <div class="scc-r"><span class="scc-lab">Tunggu Karcis:</span><span class="scc-val" style="color:var(--t4)">— dtk</span></div>
+    <div class="scc-r"><span class="scc-lab">Tunggu RFID:</span><span class="scc-val vs">23,23 dtk</span></div>
+    <div class="scc-r"><span class="scc-lab">P95 RFID:</span><span class="scc-val">71,04 dtk</span></div>
+    <div class="scc-r"><span class="scc-lab">ρ RFID:</span><span class="scc-val vs">0,877</span></div>
+    <div class="scc-r"><span class="scc-lab">Antrean RFID avg:</span><span class="scc-val">3,7 kendaraan</span></div>
+   </div>
+   <div class="scc-pill ps">Stabil & Terkendali</div>
+  </div>
+  <div class="scc fkarc">
+   <div><div class="scc-n">Semua Karcis (3 Lajur)</div><span class="scc-lane">3 Karcis + 0 RFID</span></div>
+   <div class="scc-m">
+    <div class="scc-r"><span class="scc-lab">Tunggu Karcis:</span><span class="scc-val vs">5,01 dtk</span></div>
+    <div class="scc-r"><span class="scc-lab">Tunggu RFID:</span><span class="scc-val" style="color:var(--t4)">— dtk</span></div>
+    <div class="scc-r"><span class="scc-lab">P95 Karcis:</span><span class="scc-val">21,24 dtk</span></div>
+    <div class="scc-r"><span class="scc-lab">ρ Karcis:</span><span class="scc-val vs">0,722</span></div>
+    <div class="scc-r"><span class="scc-lab">Antrean Karcis avg:</span><span class="scc-val">0,8 kendaraan</span></div>
+   </div>
+   <div class="scc-pill pi">Sangat Longgar</div>
+  </div>
+ </div>
+ <div class="callout">
+  <div><strong>⚠ Temuan Kunci:</strong> Memindahkan kendaraan Karcis ke RFID tanpa menambah gardu fisik memicu <strong>ledakan antrean eksponensial</strong> (ρ = 1,81; tunggu ~13,2 menit; maks 173 kendaraan dalam kantung parkir). Shift 100% ke 1 lajur RFID → ρ = 2,63, tunggu ~18,4 menit.</div>
+  <div class="callout-r"><strong>Solusi:</strong> Adopsi RFID penuh <em>hanya</em> berhasil jika seluruh <strong>3 lajur fisik</strong> dikonversi menjadi gardu RFID paralel → tunggu turun drastis ke <strong>23,23 dtk</strong> (ρ = 0,88).</div>
+ </div>
+</div>
+<div class="sf"><div class="sf-l"><span>SimPy 200 Replikasi</span><span class="sep"></span><span>CI 95%</span><span class="sep"></span><span>Empirical Resampling</span><span class="sep"></span><span>Selasa Sore (Peak Hour)</span></div><div class="sf-r">Slide 21 · Scenario Comparison</div></div>
+</div></div>`,
+script:`<div class="nsl"><span class="cue">[TRANSISI]</span> "Selanjutnya, inti eksperimen: evaluasi skenario pada <strong>sesi terpadat</strong>, yaitu Selasa Sesi 3 pukul 16.00–17.00 WIB dengan volume 563 kendaraan per jam."</div>
+<div class="nsl"><span class="cue">[AS-IS]</span> "Pada kondisi eksisting, terjadi ketimpangan tajam: karcis hanya menunggu 6,85 detik (ρ = 0,68), sementara RFID 1 lajur sudah mencapai ρ = 0,986 dengan waktu tunggu rata-rata <strong>123,10 detik</strong> dan P95 mencapai 264 detik (hampir 4,5 menit). Gerbang RFID sudah menjadi <em>bottleneck</em> kritis."</div>
+<div class="nsl"><span class="cue">[GESER 50% — BAHAYA]</span> "Jika 50% arus karcis dialihkan ke RFID <em>tanpa menambah lajur</em>, sistem mengalami <strong>kolaps total</strong>. Utilisasi RFID melesat ke ρ = 1,808, waktu tunggu melonjak eksponensial ke <strong>794 detik (~13,2 menit)</strong>, P95 mencapai 1.510 detik (>25 menit), dan antrean puncak menumpuk hingga 173 kendaraan!"</div>
+<div class="nsl"><span class="cue">[SOLUSI 3 LAJUR]</span> "Namun, jika seluruh 3 lajur dikonversi menjadi RFID (full_rfid), waktu tunggu turun drastis ke <strong>23,23 detik</strong> dengan ρ = 0,877 yang sangat stabil. Sementara full_karcis 3 lajur menghasilkan 5,01 detik (ρ = 0,722)."</div>`
+},
+
+// ---- SLIDE 3: GRAFIK REAL IMAGES ----
+{id:3,ref:"Grafik Analisis",
+render:()=>`<div class="slide">
+<div class="g1" style="background:radial-gradient(circle,rgba(139,92,246,.15) 0%,transparent 70%)"></div>
+<div class="g2"></div>
+<div class="sc">
+<div class="sh">
+ <div class="sh-left">
+  <div class="sh-cat">📊 Visualisasi Hasil Simulasi · Grafik Penelitian</div>
+  <h2 class="sh-title">Dampak Pengalihan Arus & Perbandingan Skenario</h2>
+  <p class="sh-sub">Grafik sapuan pengalihan arus (traffic shift sweep) dan perbandingan waktu tunggu lintas sesi-skenario</p>
+ </div>
+ <div class="sh-right"><span class="sh-pill" style="border-color:rgba(59,130,246,.4);color:#60a5fa;background:rgba(59,130,246,.1)">Slide 3 / 5</span><div class="sh-course">Gambar 4.3 & 4.4</div></div>
+</div>
+<div class="sb">
+ <div class="s3lay">
+  <div style="display:flex;flex-direction:column;gap:10px">
+   <div class="chart-box" style="flex:1.15">
+    <div class="chart-hdr"><span class="chart-title">Gambar 4.4 — Sapuan Pengalihan Arus (Shift Sweep)</span><span class="chart-tag" onclick="oM('sweep_wait_vs_shift.png','Gambar 4.4 Kurva respon waktu tunggu vs % pengalihan Karcis→RFID (skala logaritmik)')">🔍 Perbesar</span></div>
+    <div class="chart-img"><img src="sweep_wait_vs_shift.png" alt="Sweep Wait vs Shift" onerror="this.src='docs/img/sweep_wait_vs_shift.png'"></div>
+    <div class="chart-leg">
+     <div class="leg-i"><span class="leg-c" style="background:var(--amber)"></span>Mean Wait</div>
+     <div class="leg-i"><span class="leg-c" style="background:var(--rose)"></span>P95 Wait</div>
+     <div class="leg-i"><span class="leg-c" style="background:var(--t4)"></span>Skala Log Y (detik)</div>
+    </div>
+   </div>
+   <div class="chart-box" style="flex:.85">
+    <div class="chart-hdr"><span class="chart-title">Gambar 4.3 — Perbandingan Skenario Lintas Sesi</span><span class="chart-tag" onclick="oM('scenario_comparison.png','Gambar 4.3 Perbandingan waktu tunggu rata-rata skenario utama per sesi')">🔍 Perbesar</span></div>
+    <div class="chart-img"><img src="scenario_comparison.png" alt="Scenario Comparison" onerror="this.src='docs/img/scenario_comparison.png'"></div>
+   </div>
+  </div>
+  <div class="pts">
+   <div class="pt"><div class="pt-ic d">!</div><div class="pt-t"><strong>Ledakan Non-Linier (ρ > 1)</strong>Saat utilisasi melampaui 1,0, waktu tunggu tidak naik proporsional tetapi meledak eksponensial. Selasa S3 shift_50: dari 123 dtk → 794 dtk. Shift_100: <strong>1.103 dtk (~18,4 mnt)</strong>, antrean maks 345 kendaraan.</div></div>
+   <div class="pt"><div class="pt-ic w">⇆</div><div class="pt-t"><strong>Asimetri Beban Antarlajur</strong>Pada shift_50, Karcis menganggur (1,1 dtk), sementara RFID menumpuk 86 kendaraan rata-rata dan 173 kendaraan puncak di area parkir — asimetri fatal yang menghancurkan sirkulasi kampus.</div></div>
+   <div class="pt"><div class="pt-ic s">✓</div><div class="pt-t"><strong>Efek Penurunan 97,9%</strong>Rekonfigurasi 3 lajur RFID (full_rfid) memangkas waktu tunggu dari 1.103 dtk menjadi <strong>23,23 dtk</strong>, memulihkan stabilitas. Artinya bottleneck bukan kartu RFID-nya, melainkan ketersediaan lajur fisik.</div></div>
+   <div class="pt"><div class="pt-ic i">≡</div><div class="pt-t"><strong>Konsistensi Lintas Sesi (Gambar 4.3)</strong>Pola bottleneck RFID konsisten di semua 6 sesi (Selasa S1-S3, Rabu S1-S3). Selasa S3 paling kritis karena volume tertinggi (563 kend/jam). Rabu S2 juga rentan (shift_50: ρ = 1,13).</div></div>
+  </div>
+ </div>
+</div>
+<div class="sf"><div class="sf-l"><span>sweep_wait_vs_shift.png</span><span class="sep"></span><span>scenario_comparison.png</span><span class="sep"></span><span>Output SimPy v3</span></div><div class="sf-r">Gambar 4.3 & 4.4 · Analisis Grafik</div></div>
+</div></div>`,
+script:`<div class="nsl"><span class="cue">[GRAFIK ATAS]</span> "Grafik pertama (Gambar 4.4) adalah kurva sapuan pengalihan arus dengan sumbu Y berskala logaritmik. Dapat dilihat bahwa begitu persentase pengalihan melewati ambang kritis, waktu tunggu RFID meledak secara eksponensial — bukan linier. Pada shift_50 Selasa S3, waktu tunggu melompat dari 123 ke 794 detik; pada shift_100, mencapai 1.103 detik."</div>
+<div class="nsl"><span class="cue">[GRAFIK BAWAH]</span> "Grafik kedua (Gambar 4.3) menampilkan perbandingan waktu tunggu rata-rata per gerbang untuk skenario utama (as_is, full_rfid, full_karcis) di seluruh 6 sesi. Pola ini konsisten: RFID 1 lajur selalu menjadi bottleneck, dan full_rfid 3 lajur selalu menghasilkan waktu tunggu rendah."</div>
+<div class="nsl"><span class="cue">[SIMPULKAN]</span> "Kunci dari kedua grafik ini: bottleneck bukan teknologi RFID-nya, melainkan kapasitas lajur fisik yang tidak proporsional. Rekonfigurasi ke 3 lajur RFID berhasil memangkas waktu tunggu sebesar 97,9%."</div>`
+},
+
+// ---- SLIDE 4: DATA EMPIRIS & GOODNESS-OF-FIT ----
+{id:4,ref:"Slide 23a",
+render:()=>`<div class="slide">
+<div class="g1"></div><div class="g2"></div>
+<div class="sc">
+<div class="sh">
+ <div class="sh-left">
+  <div class="sh-cat">📈 Uji Kebaikan Suai (Goodness-of-Fit) · Kolmogorov-Smirnov</div>
+  <h2 class="sh-title">Karakteristik Data Empiris & Uji Distribusi</h2>
+  <p class="sh-sub">Histogram + QQ-Plot dari 1.584 observasi bersih: Penolakan Normal, adopsi Empirical Resampling</p>
+ </div>
+ <div class="sh-right"><span class="sh-pill">Slide 4 / 5</span><div class="sh-course">Bootstrap Non-Parametrik</div></div>
+</div>
+<div class="sb">
+ <div class="s4lay">
+  <div class="s4-img-col">
+   <div class="s4-imgbox">
+    <div class="img-hdr">Histogram & QQ-Plot Karcis (N=992) <span>fit_karcis.png</span></div>
+    <img src="fit_karcis.png" alt="Fit Karcis" onclick="oM('fit_karcis.png','Histogram + QQ Plot distribusi waktu pelayanan Karcis (N=992)')" style="cursor:pointer" onerror="this.src='docs/img/fit_karcis.png'">
+   </div>
+   <div class="s4-imgbox">
+    <div class="img-hdr">Histogram & QQ-Plot RFID (N=592) <span>fit_rfid.png</span></div>
+    <img src="fit_rfid.png" alt="Fit RFID" onclick="oM('fit_rfid.png','Histogram + QQ Plot distribusi waktu pelayanan RFID (N=592) — ekor kanan lebih tebal')" style="cursor:pointer" onerror="this.src='docs/img/fit_rfid.png'">
+   </div>
+  </div>
+  <div class="s4-data-col">
+   <div class="s4-card">
+    <div class="s4-card-hdr"><div class="s4-num">1</div><h3 class="s4-card-title">Data Bersih: 1.584 Observasi</h3></div>
+    <p>Dari <strong>1.679 pengamatan</strong>, <strong>95 pencilan (5,66%)</strong> dibuang dengan metode 1,5×IQR per Hari×Sesi×Metode. Tersisa: <strong>992 Karcis</strong> + <strong>592 RFID</strong>.</p>
+    <div class="s4-stat">📊 Pencilan: 57 Karcis + 38 RFID = 95 data noise</div>
+   </div>
+   <div class="s4-card">
+    <div class="s4-card-hdr"><div class="s4-num" style="background:linear-gradient(135deg,#d97706,#f59e0b)">2</div><h3 class="s4-card-title">Durasi Right-Skewed & Disparitas RFID</h3></div>
+    <p>Rata-rata <strong>14,96 s</strong> > median <strong>12,75 s</strong>. RFID: <strong>16,82 s</strong> (σ=12,4; C<sub>v</sub>=0,74) vs Karcis: <strong>13,86 s</strong> (σ=5,9; C<sub>v</sub>=0,43). RFID <strong>21,4% lebih lambat</strong> dan <strong>4,4× lebih variatif</strong>.</p>
+   </div>
+   <div class="s4-card">
+    <div class="s4-card-hdr"><div class="s4-num" style="background:linear-gradient(135deg,#dc2626,#ef4444)">3</div><h3 class="s4-card-title">Normal Ditolak — Resampling Diadopsi</h3></div>
+    <table class="gof-tbl">
+     <thead><tr><th>Distribusi</th><th class="r">AIC (K)</th><th class="r">AIC (R)</th><th class="r">KS p-val</th><th>Status</th></tr></thead>
+     <tbody>
+      <tr class="reject"><td>Normal</td><td class="r">6.339</td><td class="r">4.665</td><td class="r">8,2×10⁻⁹</td><td><strong>DITOLAK</strong></td></tr>
+      <tr class="best"><td>Lognormal</td><td class="r">6.089</td><td class="r">4.304</td><td class="r">0,814</td><td>Terbaik (komparasi)</td></tr>
+      <tr><td>Gamma</td><td class="r">6.118</td><td class="r">4.325</td><td class="r">0,038</td><td>Ditolak</td></tr>
+      <tr><td>Weibull</td><td class="r">6.252</td><td class="r">4.379</td><td class="r">4,8×10⁻⁶</td><td>DITOLAK</td></tr>
+     </tbody>
+    </table>
+    <div class="ks-box">✦ Model primer: <strong>Empirical Bootstrap Resampling</strong> (mempertahankan fat-tail dan variabilitas lapangan 100% tanpa asumsi parametrik)</div>
+   </div>
+  </div>
+ </div>
+</div>
+<div class="sf"><div class="sf-l"><span>fit_karcis.png · fit_rfid.png</span><span class="sep"></span><span>fit_table.csv</span><span class="sep"></span><span>Uji KS, AIC, Kruskal-Wallis</span></div><div class="sf-r">Slide 23 (Bagian 1) · Data Modeling</div></div>
+</div></div>`,
+script:`<div class="nsl"><span class="cue">[GAMBAR KIRI]</span> "Perhatikan histogram dan QQ-plot di kolom kiri. Untuk Karcis (N=992), distribusi right-skewed terlihat jelas. Untuk RFID (N=592), ekor kanan jauh lebih tebal karena adanya transaksi tap berulang. QQ-plot membuktikan bahwa titik-titik menyimpang dari garis lurus Normal."</div>
+<div class="nsl"><span class="cue">[DATA KANAN]</span> "Tiga temuan kunci: Pertama, 95 pencilan (5,66%) telah disaring dengan metode IQR. Kedua, durasi RFID 21,4% lebih lambat dan 4,4 kali lebih variatif dari karcis. Ketiga, uji KS menolak distribusi Normal secara mutlak (p = 8,2×10⁻⁹ Karcis; p = 8,5×10⁻¹⁷ RFID). Lognormal adalah yang paling mendekati, namun simulasi utama menggunakan <strong>Empirical Resampling</strong> untuk menjaga keaslian data lapangan."</div>
+<div class="nsl"><span class="cue">[KRUSKAL-WALLIS]</span> "Tambahan: Uji Kruskal-Wallis membuktikan durasi pelayanan berbeda signifikan antar-sesi (H = 109,56, p < 10⁻²²), mendukung analisis per-sesi."</div>`
+},
+
+// ---- SLIDE 5: KESIMPULAN & REKOMENDASI ----
+{id:5,ref:"Slide 23b",
+render:()=>`<div class="slide">
+<div class="g1" style="background:radial-gradient(circle,rgba(16,185,129,.14) 0%,transparent 70%)"></div>
+<div class="g2"></div>
+<div class="sc">
+<div class="sh">
+ <div class="sh-left">
+  <div class="sh-cat">📋 Sintesis Akhir · Rekomendasi Kebijakan Parkir</div>
+  <h2 class="sh-title">Kesimpulan Pokok & Rekomendasi Manajerial</h2>
+  <p class="sh-sub">Rangkuman temuan simulasi 200 replikasi dan panduan aksi operasional gerbang keluar UIN Jakarta</p>
+ </div>
+ <div class="sh-right"><span class="sh-pill" style="border-color:rgba(16,185,129,.4);color:#34d399;background:rgba(16,185,129,.1)">Slide 5 / 5</span><div class="sh-course">Solusi Berbasis Data</div></div>
+</div>
+<div class="sb">
+ <div class="s5lay">
+  <div class="s5-col left">
+   <div>
+    <div class="s5-hdr"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><h4>Kesimpulan Pokok Pemodelan</h4></div>
+    <div class="s5-items">
+     <div class="s5-i"><div class="s5-b bl">1</div><div><strong>Data bersih 1.584 observasi</strong> dari 1.679 pengamatan, 95 pencilan (5,66%) dibuang dengan IQR. Model tervalidasi presisi terhadap M/G/c Allen-Cunneen (deviasi &lt; 10% pada seluruh sesi stabil).</div></div>
+     <div class="s5-i"><div class="s5-b bl">2</div><div><strong>Distribusi right-skewed, Normal ditolak</strong> (KS p = 8,2×10⁻⁹). Rata-rata 14,96 s > median 12,75 s. RFID 21,4% lebih lambat (16,8 vs 13,9 dtk) dan C<sub>v</sub> = 0,74 vs 0,43. Simulasi memakai Empirical Resampling.</div></div>
+     <div class="s5-i"><div class="s5-b bl">3</div><div><strong>RFID 1 lajur = bottleneck kritis</strong> pada Selasa S3: ρ = 0,99, tunggu 123 dtk. Shift 50% → ρ = 1,81, tunggu 794 dtk (~13 menit). Antrean tidak pernah mencapai steady-state.</div></div>
+     <div class="s5-i"><div class="s5-b bl">4</div><div><strong>3 lajur RFID = solusi terbukti:</strong> full_rfid menurunkan tunggu ke 23,23 dtk (ρ = 0,88). Full_karcis 3 lajur: 5,01 dtk (ρ = 0,72). Kunci sukses = kapasitas lajur fisik proporsional.</div></div>
+    </div>
+   </div>
+   <div class="s5-foot">Kruskal-Wallis H = 109,56 (p < 10⁻²²) — durasi pelayanan berbeda signifikan antar-sesi, mendukung analisis per-sesi.</div>
+  </div>
+  <div class="s5-col right">
+   <div>
+    <div class="s5-hdr"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><h4>Rekomendasi Manajerial</h4></div>
+    <div class="s5-items">
+     <div class="s5-i"><div class="s5-b gr">✓</div><div><strong>DILARANG wajib RFID sebelum tambah lajur:</strong> Menutup loket karcis dengan hanya 1 lajur RFID dipastikan melumpuhkan gerbang keluar pada jam sibuk. Kebijakan ini berisiko sistemik.</div></div>
+     <div class="s5-i"><div class="s5-b gr">✓</div><div><strong>Konfigurasi minimal 3 lajur RFID paralel:</strong> Apabila kampus menuju 100% cashless, wajib mengonversi seluruh 3 lajur gardu untuk menjamin ρ ≤ 0,88 pada jam puncak.</div></div>
+     <div class="s5-i"><div class="s5-b gr">✓</div><div><strong>Perbaikan ergonomi & sensor card reader:</strong> Reposisi tiang tap agar ergonomis dari jendela kendaraan. Lengkapi indikator audio-visual responsif untuk menekan transaksi lambat (fat-tail).</div></div>
+     <div class="s5-i"><div class="s5-b gr">✓</div><div><strong>Mobile marshal pada jam puncak (16.00–17.00):</strong> Tempatkan petugas ber-kartu master untuk evakuasi cepat kendaraan yang gagal tap, mencegah penumpukan ekor antrean.</div></div>
+     <div class="s5-i"><div class="s5-b gr">✓</div><div><strong>Riset lanjutan:</strong> Observasi waktu tunggu aktual, data weekend, dan pemodelan jockeying antar-lajur untuk verifikasi lapangan.</div></div>
+    </div>
+   </div>
+   <div class="s5-foot" style="color:var(--green2);font-weight:600">Rekomendasi operasional siap diimplementasikan oleh pihak fasilitas kampus.</div>
+  </div>
+ </div>
+</div>
+<div class="sf"><div class="sf-l"><span>Dokumentasi Akhir Simulasi & Pemodelan Sistem</span><span class="sep"></span><span>UIN Syarif Hidayatullah Jakarta</span></div><div class="sf-r">Slide 23 (Bagian 2) · Selesai</div></div>
+</div></div>`,
+script:`<div class="nsl"><span class="cue">[KESIMPULAN]</span> "Empat kesimpulan pokok: (1) Data bersih 1.584 observasi tervalidasi presisi terhadap M/G/c. (2) Normal ditolak, simulasi memakai Empirical Resampling. (3) RFID 1 lajur adalah bottleneck pada jam puncak: ρ = 0,99, dan mengalihkan arus tanpa menambah lajur memicu kolaps (ρ = 1,81). (4) Rekonfigurasi 3 lajur RFID terbukti stabil: tunggu turun ke 23,23 detik."</div>
+<div class="nsl"><span class="cue">[REKOMENDASI]</span> "Lima rekomendasi manajerial: Jangan mewajibkan RFID sebelum menambah lajur. Konversi minimal 3 lajur paralel jika menuju cashless campus. Perbaiki ergonomi dan sensor tap. Siagakan mobile marshal jam 16.00–17.00. Dan lakukan riset lanjutan termasuk observasi waktu tunggu aktual dan pemodelan jockeying."</div>
+<div class="nsl"><span class="cue">[PENUTUP]</span> "Demikian presentasi dari bagian skenario, formalisasi sistem, dan kesimpulan. Terima kasih atas perhatian, saya persilakan sesi diskusi."</div>`
+}
+];
+
+// ================================================================
+// CONTROLLER
+// ================================================================
+let ci=0;
+function rS(){
+ let c=document.getElementById("active"),nb=document.getElementById("nBody"),nl=document.getElementById("nLabel");
+ c.innerHTML=S[ci].render();
+ nb.innerHTML=S[ci].script;
+ nl.innerText="Slide "+(ci+1)+"/"+S.length+" ("+S[ci].ref+")";
+ document.querySelectorAll(".dot").forEach((d,i)=>{d.className=i===ci?"dot on":"dot"});
+ document.getElementById("prevB").style.opacity=ci===0?.4:1;
+ document.getElementById("nextB").style.opacity=ci===S.length-1?.4:1;
+}
+function go(d){let n=ci+d;if(n>=0&&n<S.length){ci=n;rS()}}
+function gS(i){ci=i;rS()}
+function tN(){document.getElementById("nd").classList.toggle("open")}
+function vm(m){
+ if(m==="a"){document.body.classList.add("viewall");document.getElementById("mA").classList.add("on");document.getElementById("mS").classList.remove("on");document.getElementById("navC").style.display="none";rAll()}
+ else{document.body.classList.remove("viewall");document.getElementById("mS").classList.add("on");document.getElementById("mA").classList.remove("on");document.getElementById("navC").style.display="flex";rS()}
+}
+function rAll(){
+ let g=document.getElementById("allG");g.innerHTML="";
+ S.forEach((s,i)=>{let w=document.createElement("div");w.className="sl-wrap";w.innerHTML='<div class="sl-bar"><span><strong>Slide '+(i+1)+'/'+S.length+':</strong> '+s.ref+'</span><span style="font-size:10px">Win+Shift+S untuk screenshot</span></div>'+s.render();g.appendChild(w)})
+}
+function oM(src,cap){document.getElementById("modal").classList.add("on");document.getElementById("mImg").src=src;document.getElementById("mImg").onerror=function(){this.src="docs/img/"+src};document.getElementById("mCap").innerText=cap}
+function cM(e){document.getElementById("modal").classList.remove("on")}
+document.addEventListener("keydown",e=>{if(document.body.classList.contains("viewall"))return;if(e.key==="ArrowRight"||e.key===" "||e.key==="PageDown"){e.preventDefault();go(1)}else if(e.key==="ArrowLeft"||e.key==="PageUp"){e.preventDefault();go(-1)}});
+window.addEventListener("DOMContentLoaded",()=>{let d=document.getElementById("dots");S.forEach((_,i)=>{let dot=document.createElement("span");dot.className=i===0?"dot on":"dot";dot.onclick=()=>gS(i);dot.title="Slide "+(i+1);d.appendChild(dot)});rS()});
+</script>
+</body>
+</html>

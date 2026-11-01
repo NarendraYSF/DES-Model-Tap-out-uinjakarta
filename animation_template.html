@@ -1,0 +1,3669 @@
+<!DOCTYPE html>
+<html lang="id" style="color-scheme: dark;">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#070a0e">
+<title>Konsol Operasi Tap-Out Gerbang UIN Jakarta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================================
+   CAMPUS TOLL OPERATIONS CONSOLE — DESIGN SYSTEM & TOKENS (V0 REDESIGN)
+   Aesthetic: Mission Control Telemetry HUD (Linear/Raycast Precision + Transit Telemetry)
+   ============================================================================ */
+:root {
+    --bg-tarmac: #070a0e;
+    --bg-radial: radial-gradient(circle at 50% -10%, #111a26 0%, #070a0e 75%);
+    --surface-deck: #0c1219;
+    --surface-card: #111924;
+    --surface-card-hover: #162130;
+    --surface-inner: #080d13;
+    --surface-glass: rgba(12, 18, 25, 0.88);
+
+    --border-dim: #182330;
+    --border-lane: #202e40;
+    --border-highlight: #344860;
+
+    --uin-moss: #15803d;
+    --uin-moss-bright: #22c55e;
+    --uin-moss-glow: rgba(34, 197, 94, 0.35);
+    --uin-moss-subtle: rgba(34, 197, 94, 0.12);
+    --uin-moss-border: rgba(34, 197, 94, 0.35);
+
+    --karcis-signal: #0284c7;
+    --karcis-signal-bright: #38bdf8;
+    --karcis-signal-glow: rgba(56, 189, 248, 0.35);
+    --karcis-signal-subtle: rgba(2, 132, 199, 0.14);
+    --karcis-signal-border: rgba(56, 189, 248, 0.35);
+
+    --congestion-amber: #eab308;
+    --congestion-amber-bright: #facc15;
+    --congestion-amber-glow: rgba(250, 204, 21, 0.35);
+    --congestion-amber-subtle: rgba(234, 179, 8, 0.14);
+    --congestion-amber-border: rgba(250, 204, 21, 0.35);
+
+    --red-barrier: #ef4444;
+    --red-barrier-glow: rgba(239, 68, 68, 0.45);
+    --text-primary: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-subtle: #64748b;
+
+    --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+
+    --glow-mult: 1;
+    color-scheme: dark;
+}
+
+/* Cyber glow preset */
+body.glow-cyber {
+    --glow-mult: 1.8;
+}
+body.glow-subtle {
+    --glow-mult: 0.4;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-ui);
+    background: var(--bg-tarmac);
+    background-image: var(--bg-radial);
+    background-attachment: fixed;
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+}
+
+/* Accessibility Skip Link */
+.skip-link {
+    position: absolute;
+    top: -45px;
+    left: 16px;
+    background: var(--karcis-signal-bright);
+    color: #031525;
+    padding: 8px 14px;
+    font-weight: 700;
+    font-size: 0.82rem;
+    border-radius: 6px;
+    z-index: 2000;
+    transition: top 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    text-decoration: none;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.5);
+}
+.skip-link:focus {
+    top: 12px;
+    outline: 2px solid #ffffff;
+}
+
+/* Page Frame Container */
+.app-container {
+    max-width: 1380px;
+    margin: 0 auto;
+    padding: 0 16px 40px;
+    transition: max-width 0.25s ease, padding 0.25s ease;
+}
+
+/* Compact mode modifier */
+body.compact-mode .app-container {
+    max-width: 1200px;
+    padding: 0 12px 24px;
+}
+body.compact-mode .command-deck {
+    padding: 10px 14px;
+    margin-bottom: 10px;
+}
+body.compact-mode .metrics-block {
+    padding: 12px;
+}
+body.compact-mode .metrics-grid {
+    gap: 4px 14px;
+}
+
+/* ===== 1. HEADER (Command Console Header) ===== */
+.console-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 16px 22px;
+    background: linear-gradient(180deg, rgba(20, 28, 38, 0.95) 0%, rgba(12, 18, 25, 0.95) 100%);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-lane);
+    border-top: none;
+    border-radius: 0 0 14px 14px;
+    margin-bottom: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    flex-wrap: wrap;
+    position: relative;
+}
+.console-header::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 20%;
+    right: 20%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(56, 189, 248, 0.3) 50%, transparent 100%);
+    pointer-events: none;
+}
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.header-brand img.logo {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.25));
+    transition: transform 0.2s ease;
+}
+.header-brand img.logo:hover {
+    transform: scale(1.05);
+}
+.header-titles h1 {
+    font-size: 1.18rem;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.header-badge {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border-radius: 5px;
+    background: var(--uin-moss-subtle);
+    color: var(--uin-moss-bright);
+    border: 1px solid var(--uin-moss-border);
+    font-weight: 700;
+    font-family: var(--font-mono);
+    box-shadow: 0 0 10px rgba(34, 197, 94, calc(0.2 * var(--glow-mult)));
+}
+.header-titles .subtitle {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+.header-telemetry {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface-inner);
+    border: 1px solid var(--border-lane);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 0.74rem;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+.status-pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--uin-moss-bright);
+    box-shadow: 0 0 10px rgba(34, 197, 94, calc(0.8 * var(--glow-mult)));
+    animation: pulseDot 2s infinite ease-in-out;
+}
+@keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.55; transform: scale(0.85); }
+}
+
+/* ===== 2. COMMAND DECK (Controls HUD) ===== */
+.command-deck {
+    background: linear-gradient(180deg, var(--surface-card) 0%, var(--surface-deck) 100%);
+    border: 1px solid var(--border-lane);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+.controls-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+.controls-row:last-child {
+    margin-bottom: 0;
+}
+.controls-row-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--border-dim) 15%, var(--border-dim) 85%, transparent 100%);
+    margin: 10px 0;
+}
+
+.ctrl-group {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+.ctrl-group label {
+    font-size: 0.77rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+.ctrl-group select,
+.ctrl-group input[type="number"],
+.ctrl-group input[type="text"] {
+    background: var(--surface-inner);
+    border: 1px solid var(--border-lane);
+    color: var(--text-primary);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    font-family: var(--font-ui);
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    touch-action: manipulation;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+.ctrl-group select:focus-visible,
+.ctrl-group input:focus-visible {
+    outline: none;
+    border-color: var(--karcis-signal-bright);
+    box-shadow: 0 0 10px rgba(56, 189, 248, calc(0.35 * var(--glow-mult))), inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+.ctrl-group select:hover,
+.ctrl-group input:hover {
+    border-color: var(--border-highlight);
+}
+.ctrl-group input[type="number"] {
+    width: 66px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+}
+.ctrl-group input[type="text"] {
+    width: 76px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+}
+.effective-label {
+    font-size: 0.72rem;
+    color: var(--text-subtle);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+}
+
+.ctrl-separator {
+    width: 1px;
+    height: 22px;
+    background: var(--border-dim);
+    margin: 0 4px;
+}
+
+/* Tactical Action Buttons */
+.btn {
+    border: none;
+    border-radius: 6px;
+    padding: 7px 16px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    font-family: var(--font-ui);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    touch-action: manipulation;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+}
+.btn:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+.btn-play {
+    background: linear-gradient(180deg, #16a34a 0%, #15803d 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(22, 163, 74, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+.btn-play:hover {
+    background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+    box-shadow: 0 0 16px rgba(34, 197, 94, calc(0.4 * var(--glow-mult))), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+.btn-pause {
+    background: linear-gradient(180deg, #eab308 0%, #ca8a04 100%);
+    color: #1a1002;
+    box-shadow: 0 2px 8px rgba(234, 179, 8, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.btn-pause:hover {
+    background: linear-gradient(180deg, #facc15 0%, #eab308 100%);
+    box-shadow: 0 0 16px rgba(250, 204, 21, calc(0.4 * var(--glow-mult))), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+}
+.btn-restart {
+    background: linear-gradient(180deg, #2b394b 0%, #1e2836 100%);
+    color: var(--text-primary);
+    border: 1px solid var(--border-highlight);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.btn-restart:hover {
+    background: linear-gradient(180deg, #37475c 0%, #253344 100%);
+    border-color: #4f6785;
+    transform: translateY(-1px);
+}
+
+/* Speed Button Group */
+.speed-group {
+    display: flex;
+    align-items: center;
+    background: var(--surface-inner);
+    border: 1px solid var(--border-lane);
+    border-radius: 7px;
+    padding: 2px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+.speed-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 4px 10px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    border-radius: 5px;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.speed-btn:focus-visible {
+    outline: 2px solid var(--karcis-signal-bright);
+}
+.speed-btn.active {
+    background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(2, 132, 199, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+.speed-btn:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+}
+
+/* Checkbox Toggle Styled */
+.toggle-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    transition: opacity 0.15s;
+}
+.toggle-check:hover {
+    color: #ffffff;
+}
+.toggle-check input[type="checkbox"] {
+    accent-color: var(--karcis-signal-bright);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+.toggle-check input[type="checkbox"]:focus-visible {
+    outline: 2px solid var(--karcis-signal-bright);
+    outline-offset: 2px;
+}
+
+/* Dynamic Lane Tag */
+.dyn-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    color: var(--karcis-signal-bright);
+    background: var(--karcis-signal-subtle);
+    border: 1px solid var(--karcis-signal-border);
+    padding: 3px 9px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(56, 189, 248, calc(0.15 * var(--glow-mult)));
+}
+
+/* ===== 3. SIMULATION VIEWPORT (Canvas Section) ===== */
+.canvas-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+.canvas-panel {
+    background: linear-gradient(180deg, var(--surface-card) 0%, var(--surface-deck) 100%);
+    border: 1px solid var(--border-lane);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+    position: relative;
+}
+/* HUD Corner Reticles */
+.canvas-panel::before {
+    content: "+";
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--border-highlight);
+    pointer-events: none;
+}
+.canvas-panel::after {
+    content: "+";
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--border-highlight);
+    pointer-events: none;
+}
+.canvas-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 0 4px;
+}
+.canvas-panel-label {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--congestion-amber-bright);
+    font-family: var(--font-mono);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-shadow: 0 0 12px rgba(250, 204, 21, calc(0.3 * var(--glow-mult)));
+}
+canvas.sim-canvas {
+    display: block;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border-lane);
+    background: var(--bg-tarmac);
+    touch-action: none;
+    cursor: pointer;
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.7);
+}
+canvas.sim-canvas:focus-visible {
+    outline: 2px solid var(--karcis-signal-bright);
+    outline-offset: 2px;
+}
+
+/* Live Event Telemetry Ticker */
+.event-log-ticker {
+    background: var(--surface-inner);
+    border: 1px solid var(--border-lane);
+    border-radius: 7px;
+    padding: 6px 12px;
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+.event-log-ticker .badge-log {
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    box-shadow: 0 0 8px rgba(2, 132, 199, 0.35);
+}
+.event-log-ticker .badge-log.revert {
+    background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.35);
+}
+
+/* ===== 4. TELEMETRIC METRICS MATRIX ===== */
+.metrics-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+@media (max-width: 900px) {
+    .metrics-wrapper {
+        grid-template-columns: 1fr;
+    }
+}
+.compare-metrics-wrapper {
+    display: none;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+.compare-metrics-wrapper.visible {
+    display: grid;
+}
+
+.metrics-block {
+    background: linear-gradient(180deg, var(--surface-card) 0%, var(--surface-deck) 100%);
+    border: 1px solid var(--border-lane);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+.metrics-block.karcis {
+    border-top: 3px solid var(--karcis-signal);
+}
+.metrics-block.karcis::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 16px;
+    background: linear-gradient(180deg, rgba(2, 132, 199, 0.1) 0%, transparent 100%);
+    pointer-events: none;
+}
+.metrics-block.rfid {
+    border-top: 3px solid var(--uin-moss);
+}
+.metrics-block.rfid::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 16px;
+    background: linear-gradient(180deg, rgba(34, 197, 94, 0.1) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+.metrics-block-hdr {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-lane);
+}
+.metrics-block-hdr h2 {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.metrics-block-hdr .gate-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+}
+.metrics-block.karcis .gate-indicator {
+    background: var(--karcis-signal-bright);
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+}
+.metrics-block.rfid .gate-indicator {
+    background: var(--uin-moss-bright);
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+}
+.metrics-block-hdr .gate-badge {
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    padding: 3px 7px;
+    border-radius: 5px;
+    font-weight: 600;
+}
+.metrics-block.karcis .gate-badge {
+    background: var(--karcis-signal-subtle);
+    color: var(--karcis-signal-bright);
+    border: 1px solid var(--karcis-signal-border);
+}
+.metrics-block.rfid .gate-badge {
+    background: var(--uin-moss-subtle);
+    color: var(--uin-moss-bright);
+    border: 1px solid var(--uin-moss-border);
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 18px;
+    margin-bottom: 12px;
+}
+.metric-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.76rem;
+    padding: 3px 0;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+    transition: background-color 0.15s;
+}
+.metric-item:hover {
+    border-bottom-color: var(--border-highlight);
+}
+.metric-item .metric-label {
+    color: var(--text-muted);
+}
+.metric-item .metric-value {
+    color: var(--text-primary);
+    font-weight: 700;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+}
+
+.mini-chart-container {
+    background: var(--surface-inner);
+    border: 1px solid var(--border-lane);
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+.mini-chart-container canvas {
+    width: 100%;
+    height: 75px;
+    display: block;
+}
+
+/* ===== 5. SUMMARY MODAL OVERLAY ===== */
+.summary-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(7, 10, 14, 0.88);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.summary-overlay.visible {
+    display: flex;
+}
+.summary-card {
+    background: var(--surface-card);
+    border-radius: 14px;
+    padding: 26px 30px;
+    max-width: 680px;
+    width: 100%;
+    border: 1px solid var(--border-highlight);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+    max-height: 88vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+.summary-card h2 {
+    text-align: center;
+    color: #ffffff;
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+}
+.summary-card .summary-sub {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    margin-bottom: 18px;
+}
+.summary-card table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    margin-bottom: 12px;
+}
+.summary-card th, .summary-card td {
+    padding: 9px 12px;
+    text-align: right;
+    border-bottom: 1px solid var(--border-lane);
+}
+.summary-card th:first-child, .summary-card td:first-child {
+    text-align: left;
+}
+.summary-card th {
+    color: var(--text-muted);
+    font-weight: 700;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.summary-card td {
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+}
+.summary-card .btn-close-summary {
+    display: block;
+    margin: 18px auto 0;
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+    padding: 8px 24px;
+    font-size: 0.8rem;
+    border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+}
+.summary-card .btn-close-summary:hover {
+    background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+}
+
+/* ===== 6. TWEAKS PANEL (DESIGN ADJUSTER) ===== */
+.tweaks-toggle-btn {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    background: var(--surface-card);
+    color: var(--text-muted);
+    border: 1px solid var(--border-lane);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    z-index: 1500;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.tweaks-toggle-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--border-highlight);
+    background: var(--surface-card-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+}
+.tweaks-panel {
+    display: none;
+    position: fixed;
+    bottom: 56px;
+    right: 16px;
+    width: 290px;
+    background: var(--surface-card);
+    border: 1px solid var(--border-highlight);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+    z-index: 1500;
+    backdrop-filter: blur(12px);
+}
+.tweaks-panel.open {
+    display: block;
+    animation: tweaksFadeIn 0.15s ease-out;
+}
+@keyframes tweaksFadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.tweaks-hdr {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-lane);
+}
+.tweaks-hdr h3 {
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.tweaks-close {
+    background: transparent;
+    border: none;
+    color: var(--text-subtle);
+    cursor: pointer;
+    font-size: 0.95rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+.tweaks-close:hover {
+    color: var(--text-primary);
+}
+.tweaks-group {
+    margin-bottom: 12px;
+}
+.tweaks-group:last-child {
+    margin-bottom: 0;
+}
+.tweaks-group label {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+.tweaks-segmented {
+    display: flex;
+    background: var(--surface-inner);
+    border: 1px solid var(--border-lane);
+    border-radius: 6px;
+    padding: 2px;
+    gap: 2px;
+}
+.tweaks-segmented button {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    padding: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.tweaks-segmented button.active {
+    background: var(--surface-card-hover);
+    color: var(--text-primary);
+    font-weight: 700;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Compact Density Modifier */
+body.density-compact .app-container {
+    padding: 10px 14px 40px;
+    gap: 10px;
+}
+body.density-compact .controls-wrapper {
+    padding: 8px 14px;
+}
+body.density-compact .controls-row {
+    gap: 8px;
+}
+body.density-compact .ctrl-group input,
+body.density-compact .ctrl-group select,
+body.density-compact .btn,
+body.density-compact .speed-btn {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-size: 0.72rem;
+}
+body.density-compact .canvas-panel {
+    padding: 10px 14px 12px;
+}
+body.density-compact .metrics-wrapper,
+body.density-compact .compare-metrics-wrapper {
+    gap: 10px;
+}
+body.density-compact .metrics-block {
+    padding: 10px 14px;
+}
+body.density-compact .metric-item {
+    padding: 1px 0;
+}
+
+/* ===== 7. FOOTNOTES & NOTICE ===== */
+.footnotes {
+    padding: 16px 20px 24px;
+    font-size: 0.74rem;
+    color: var(--text-subtle);
+    line-height: 1.6;
+    border-top: 1px solid var(--border-lane);
+}
+
+.no-data-msg {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--text-muted);
+}
+.no-data-msg h2 {
+    color: #ffffff;
+    margin-bottom: 8px;
+}
+
+#btn-validate {
+    display: none;
+    margin: 12px 0;
+    background: #b91c1c;
+    color: #ffffff;
+}
+#btn-validate.visible {
+    display: inline-flex;
+}
+
+/* ===== 8. REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+</style>
+</head>
+<body>
+
+<a href="#canvas-container" class="skip-link">Loncat ke Konten Simulasi</a>
+
+<div class="app-container">
+<!-- ===== HEADER ===== -->
+<header class="console-header">
+    <div class="header-brand">
+        <img class="logo" id="logo-img" width="44" height="44" src="docs/img/logo.png" alt="Logo UIN Syarif Hidayatullah Jakarta">
+        <div class="header-titles">
+            <h1>Konsol Operasi Tap-Out Gerbang UIN Jakarta <span class="header-badge">Transit DES</span></h1>
+            <div class="subtitle">Discrete Event Simulation (Model Antrean M/G/c) & Rekonfigurasi Jalur Dinamis</div>
+        </div>
+    </div>
+    <div class="header-telemetry">
+        <span class="status-pill"><span class="status-pulse-dot" aria-hidden="true"></span>Sistem Telemetri Aktif</span>
+    </div>
+</header>
+
+<!-- ===== COMMAND DECK (CONTROLS) ===== -->
+<div class="command-deck" id="controls-wrapper">
+    <!-- Row 1: Session, Scenario, Play controls -->
+    <div class="controls-row">
+        <div class="ctrl-group">
+            <label for="sel-session">Sesi:</label>
+            <select id="sel-session" name="session" autocomplete="off"></select>
+        </div>
+        <div class="ctrl-separator" aria-hidden="true"></div>
+        <div class="ctrl-group">
+            <label for="sel-scenario">Skenario A:</label>
+            <select id="sel-scenario" name="scenario_a" autocomplete="off">
+                <option value="as_is">Kondisi Saat Ini</option>
+                <option value="shift_25">Geser 25% ke RFID</option>
+                <option value="shift_50">Geser 50% ke RFID</option>
+                <option value="shift_75">Geser 75% ke RFID</option>
+                <option value="shift_100">Geser 100% ke RFID</option>
+                <option value="full_rfid">Semua RFID</option>
+                <option value="full_karcis">Semua Karcis</option>
+            </select>
+        </div>
+        <div class="ctrl-separator" aria-hidden="true"></div>
+        <button type="button" class="btn btn-play" id="btn-play" title="Putar / Jeda" aria-label="Putar simulasi"><span aria-hidden="true">&#9654;</span> Putar</button>
+        <button type="button" class="btn btn-restart" id="btn-restart" title="Ulang dari awal" aria-label="Mulai ulang simulasi"><span aria-hidden="true">&#8635;</span> Ulang</button>
+        <div class="ctrl-separator" aria-hidden="true"></div>
+        <div class="ctrl-group" role="radiogroup" aria-label="Kecepatan Simulasi">
+            <label id="lbl-speed">Kecepatan:</label>
+            <div class="speed-group" aria-labelledby="lbl-speed">
+                <button type="button" class="speed-btn" data-speed="1" role="radio" aria-checked="false">1x</button>
+                <button type="button" class="speed-btn" data-speed="5" role="radio" aria-checked="false">5x</button>
+                <button type="button" class="speed-btn active" data-speed="20" role="radio" aria-checked="true">20x</button>
+                <button type="button" class="speed-btn" data-speed="60" role="radio" aria-checked="false">60x</button>
+            </div>
+        </div>
+    </div>
+    <div class="controls-row-divider" aria-hidden="true"></div>
+    <!-- Row 2: Seed, Lane controls -->
+    <div class="controls-row">
+        <div class="ctrl-group">
+            <label for="inp-seed">Seed:</label>
+            <input type="text" id="inp-seed" name="seed" autocomplete="off" inputmode="numeric" spellcheck="false" value="42">
+        </div>
+        <div class="ctrl-separator" aria-hidden="true"></div>
+        <div class="ctrl-group">
+            <label for="inp-lanes-k">Jalur Karcis:</label>
+            <input type="number" id="inp-lanes-k" name="lanes_k" autocomplete="off" min="0" max="10" value="2">
+            <span class="effective-label" id="eff-lanes-k">Efektif: 2</span>
+        </div>
+        <div class="ctrl-separator" aria-hidden="true"></div>
+        <div class="ctrl-group">
+            <label for="inp-lanes-r">Jalur RFID:</label>
+            <input type="number" id="inp-lanes-r" name="lanes_r" autocomplete="off" min="0" max="10" value="1">
+            <span class="effective-label" id="eff-lanes-r">Efektif: 1</span>
+        </div>
+        <div class="ctrl-separator" aria-hidden="true"></div>
+        <label class="toggle-check">
+            <input type="checkbox" id="chk-compare" name="compare" autocomplete="off">
+            <span>Mode Perbandingan</span>
+        </label>
+        <div class="ctrl-group" id="compare-scenario-group" style="display:none;">
+            <label for="sel-scenario-b">Skenario B:</label>
+            <select id="sel-scenario-b" name="scenario_b" autocomplete="off">
+                <option value="as_is">Kondisi Saat Ini</option>
+                <option value="shift_25">Geser 25% ke RFID</option>
+                <option value="shift_50">Geser 50% ke RFID</option>
+                <option value="shift_75">Geser 75% ke RFID</option>
+                <option value="shift_100">Geser 100% ke RFID</option>
+                <option value="full_rfid" selected>Semua RFID</option>
+                <option value="full_karcis">Semua Karcis</option>
+            </select>
+        </div>
+    </div>
+    <div class="controls-row-divider" aria-hidden="true"></div>
+    <!-- Row 3: Dynamic Lanes Controls -->
+    <div class="controls-row" id="row-dynamic-lanes">
+        <label class="toggle-check">
+            <input type="checkbox" id="chk-dynamic-lanes" name="dynamic_lanes" autocomplete="off" checked>
+            <span class="dyn-tag">Jalur Dinamis</span>
+        </label>
+        <div class="ctrl-separator" aria-hidden="true"></div>
+        <div class="ctrl-group" id="dyn-params-group">
+            <label for="inp-dyn-thresh">Ambang Karcis &gt;:</label>
+            <input type="number" id="inp-dyn-thresh" name="dyn_thresh" autocomplete="off" min="1" max="100" value="20">
+            <label for="inp-dyn-revert" style="margin-left: 6px;">Batas Kembali &le;:</label>
+            <input type="number" id="inp-dyn-revert" name="dyn_revert" autocomplete="off" min="0" max="50" value="5">
+            <label for="inp-dyn-cooldown" style="margin-left: 6px;">Jeda Min (s):</label>
+            <input type="number" id="inp-dyn-cooldown" name="dyn_cooldown" autocomplete="off" min="0" max="600" value="60">
+        </div>
+        <div class="ctrl-separator" aria-hidden="true"></div>
+        <div class="ctrl-group">
+            <span class="effective-label" id="dyn-status-info" aria-live="polite">Status Jalur R1: Normal (RFID)</span>
+        </div>
+    </div>
+</div>
+
+<!-- ===== CANVAS VIEWPORT ===== -->
+<main class="canvas-container" id="canvas-container">
+    <!-- Panel A -->
+    <section class="canvas-panel" id="panel-a">
+        <div class="canvas-panel-header">
+            <div class="canvas-panel-label" id="label-a">Skenario A: Kondisi Saat Ini</div>
+        </div>
+        <canvas class="sim-canvas" id="canvas-a" width="1200" height="360" tabindex="0" role="slider" aria-label="Penggeser Waktu Skenario A" aria-valuemin="0" aria-valuemax="3600" aria-valuenow="0"></canvas>
+        <div class="event-log-ticker" id="log-ticker-a" role="log" aria-live="polite"><span class="badge-log" id="badge-log-a">LOG</span><span id="log-text-a">Mode Jalur Dinamis aktif (Ambang: 20, Kembali: 5, Jeda: 60s)</span></div>
+    </section>
+    <!-- Panel B (compare mode) -->
+    <section class="canvas-panel" id="panel-b" style="display:none;">
+        <div class="canvas-panel-header">
+            <div class="canvas-panel-label" id="label-b">Skenario B: Semua RFID</div>
+        </div>
+        <canvas class="sim-canvas" id="canvas-b" width="1200" height="360" tabindex="0" role="slider" aria-label="Penggeser Waktu Skenario B" aria-valuemin="0" aria-valuemax="3600" aria-valuenow="0"></canvas>
+        <div class="event-log-ticker" id="log-ticker-b" role="log" aria-live="polite"><span class="badge-log" id="badge-log-b">LOG</span><span id="log-text-b">Mode Jalur Dinamis aktif</span></div>
+    </section>
+</main>
+
+<!-- ===== METRICS MATRIX A ===== -->
+<section class="metrics-wrapper" id="metrics-a" aria-label="Metrik Skenario A">
+    <div class="metrics-block karcis">
+        <div class="metrics-block-hdr">
+            <h2><span class="gate-indicator" aria-hidden="true"></span> Gardu Karcis (A)</h2>
+            <span class="gate-badge">Layanan Tiket</span>
+        </div>
+        <div class="metrics-grid">
+            <div class="metric-item"><span class="metric-label">Antrian saat ini</span><span class="metric-value" id="m-a-k-queue">0</span></div>
+            <div class="metric-item"><span class="metric-label">Kendaraan dilayani</span><span class="metric-value" id="m-a-k-served">0</span></div>
+            <div class="metric-item"><span class="metric-label">Rata-rata tunggu</span><span class="metric-value" id="m-a-k-avgwait">0.0 s</span></div>
+            <div class="metric-item"><span class="metric-label">Maks tunggu</span><span class="metric-value" id="m-a-k-maxwait">0.0 s</span></div>
+            <div class="metric-item"><span class="metric-label">Utilisasi</span><span class="metric-value" id="m-a-k-util">0.00</span></div>
+            <div class="metric-item"><span class="metric-label">Throughput</span><span class="metric-value" id="m-a-k-throughput">0</span></div>
+            <div class="metric-item"><span class="metric-label">Perpindahan jalur</span><span class="metric-value" id="m-a-k-switches">0</span></div>
+            <div class="metric-item"><span class="metric-label">Waktu sbg Karcis</span><span class="metric-value" id="m-a-k-time">0 s</span></div>
+        </div>
+        <div class="mini-chart-container">
+            <canvas id="chart-a-k" width="400" height="75"></canvas>
+        </div>
+    </div>
+    <div class="metrics-block rfid">
+        <div class="metrics-block-hdr">
+            <h2><span class="gate-indicator" aria-hidden="true"></span> Gardu RFID (A)</h2>
+            <span class="gate-badge">Nirsentuh</span>
+        </div>
+        <div class="metrics-grid">
+            <div class="metric-item"><span class="metric-label">Antrian saat ini</span><span class="metric-value" id="m-a-r-queue">0</span></div>
+            <div class="metric-item"><span class="metric-label">Kendaraan dilayani</span><span class="metric-value" id="m-a-r-served">0</span></div>
+            <div class="metric-item"><span class="metric-label">Rata-rata tunggu</span><span class="metric-value" id="m-a-r-avgwait">0.0 s</span></div>
+            <div class="metric-item"><span class="metric-label">Maks tunggu</span><span class="metric-value" id="m-a-r-maxwait">0.0 s</span></div>
+            <div class="metric-item"><span class="metric-label">Utilisasi</span><span class="metric-value" id="m-a-r-util">0.00</span></div>
+            <div class="metric-item"><span class="metric-label">Throughput</span><span class="metric-value" id="m-a-r-throughput">0</span></div>
+            <div class="metric-item"><span class="metric-label">Waktu sbg RFID</span><span class="metric-value" id="m-a-r-time">3600 s</span></div>
+            <div class="metric-item"><span class="metric-label">Status Jalur R1</span><span class="metric-value" id="m-a-r-status">Normal (RFID)</span></div>
+        </div>
+        <div class="mini-chart-container">
+            <canvas id="chart-a-r" width="400" height="75"></canvas>
+        </div>
+    </div>
+</section>
+
+<!-- ===== METRICS MATRIX B (COMPARE) ===== -->
+<section class="compare-metrics-wrapper" id="metrics-b" aria-label="Metrik Skenario B">
+    <div class="metrics-block karcis">
+        <div class="metrics-block-hdr">
+            <h2><span class="gate-indicator" aria-hidden="true"></span> Gardu Karcis (B)</h2>
+            <span class="gate-badge">Layanan Tiket</span>
+        </div>
+        <div class="metrics-grid">
+            <div class="metric-item"><span class="metric-label">Antrian saat ini</span><span class="metric-value" id="m-b-k-queue">0</span></div>
+            <div class="metric-item"><span class="metric-label">Kendaraan dilayani</span><span class="metric-value" id="m-b-k-served">0</span></div>
+            <div class="metric-item"><span class="metric-label">Rata-rata tunggu</span><span class="metric-value" id="m-b-k-avgwait">0.0 s</span></div>
+            <div class="metric-item"><span class="metric-label">Maks tunggu</span><span class="metric-value" id="m-b-k-maxwait">0.0 s</span></div>
+            <div class="metric-item"><span class="metric-label">Utilisasi</span><span class="metric-value" id="m-b-k-util">0.00</span></div>
+            <div class="metric-item"><span class="metric-label">Throughput</span><span class="metric-value" id="m-b-k-throughput">0</span></div>
+            <div class="metric-item"><span class="metric-label">Perpindahan jalur</span><span class="metric-value" id="m-b-k-switches">0</span></div>
+            <div class="metric-item"><span class="metric-label">Waktu sbg Karcis</span><span class="metric-value" id="m-b-k-time">0 s</span></div>
+        </div>
+        <div class="mini-chart-container">
+            <canvas id="chart-b-k" width="400" height="75"></canvas>
+        </div>
+    </div>
+    <div class="metrics-block rfid">
+        <div class="metrics-block-hdr">
+            <h2><span class="gate-indicator" aria-hidden="true"></span> Gardu RFID (B)</h2>
+            <span class="gate-badge">Nirsentuh</span>
+        </div>
+        <div class="metrics-grid">
+            <div class="metric-item"><span class="metric-label">Antrian saat ini</span><span class="metric-value" id="m-b-r-queue">0</span></div>
+            <div class="metric-item"><span class="metric-label">Kendaraan dilayani</span><span class="metric-value" id="m-b-r-served">0</span></div>
+            <div class="metric-item"><span class="metric-label">Rata-rata tunggu</span><span class="metric-value" id="m-b-r-avgwait">0.0 s</span></div>
+            <div class="metric-item"><span class="metric-label">Maks tunggu</span><span class="metric-value" id="m-b-r-maxwait">0.0 s</span></div>
+            <div class="metric-item"><span class="metric-label">Utilisasi</span><span class="metric-value" id="m-b-r-util">0.00</span></div>
+            <div class="metric-item"><span class="metric-label">Throughput</span><span class="metric-value" id="m-b-r-throughput">0</span></div>
+            <div class="metric-item"><span class="metric-label">Waktu sbg RFID</span><span class="metric-value" id="m-b-r-time">3600 s</span></div>
+            <div class="metric-item"><span class="metric-label">Status Jalur R1</span><span class="metric-value" id="m-b-r-status">Normal (RFID)</span></div>
+        </div>
+        <div class="mini-chart-container">
+            <canvas id="chart-b-r" width="400" height="75"></canvas>
+        </div>
+    </div>
+</section>
+
+<!-- ===== SUMMARY MODAL OVERLAY ===== -->
+<div class="summary-overlay" id="summary-overlay" role="dialog" aria-modal="true" aria-labelledby="summary-title">
+    <div class="summary-card" id="summary-card">
+        <!-- Filled dynamically -->
+    </div>
+</div>
+
+<!-- ===== FOOTNOTES ===== -->
+<footer class="footnotes">
+    <p>* Default 2 Karcis + 1 RFID karena Sesi 3 dimulai di jam sibuk; jumlah jalur diasumsikan.</p>
+    <p>* Waktu tunggu tidak diobservasi di lapangan; seluruh waktu tunggu berasal dari hasil simulasi.</p>
+</footer>
+
+<!-- ===== HIDDEN VALIDATE ===== -->
+<button type="button" class="btn" id="btn-validate">Validasi (200 rep)</button>
+
+<!-- ===== NO DATA MESSAGE ===== -->
+<div class="no-data-msg" id="no-data-msg" style="display:none;">
+    <h2>Data Belum Tersedia</h2>
+    <p>File ini membutuhkan data simulasi yang diinjeksikan oleh skrip build Python.</p>
+    <p>Jalankan skrip build terlebih dahulu untuk menghasilkan file animasi yang lengkap.</p>
+</div>
+
+<!-- ===== FLOATING TWEAKS TRIGGER & PANEL ===== -->
+<button type="button" class="tweaks-toggle-btn" id="btn-tweaks-toggle" title="Kustomisasi Tampilan" aria-label="Buka Pengaturan Tampilan">
+    <span aria-hidden="true">⚙️</span> Tweaks
+</button>
+<div class="tweaks-panel" id="tweaks-panel" role="region" aria-label="Panel Pengaturan Visual">
+    <div class="tweaks-hdr">
+        <h3><span>⚙️</span> Tweaks HUD</h3>
+        <button type="button" class="tweaks-close" id="btn-tweaks-close" aria-label="Tutup Panel">&times;</button>
+    </div>
+    <div class="tweaks-group">
+        <label id="lbl-glow">Intensitas Glow:</label>
+        <div class="tweaks-segmented" role="radiogroup" aria-labelledby="lbl-glow">
+            <button type="button" class="btn-tweak-glow" data-glow="subtle" role="radio" aria-checked="false">Halus</button>
+            <button type="button" class="btn-tweak-glow active" data-glow="normal" role="radio" aria-checked="true">Normal</button>
+            <button type="button" class="btn-tweak-glow" data-glow="cyber" role="radio" aria-checked="false">Cyber</button>
+        </div>
+    </div>
+    <div class="tweaks-group">
+        <label id="lbl-density">Kerapatan Tampilan:</label>
+        <div class="tweaks-segmented" role="radiogroup" aria-labelledby="lbl-density">
+            <button type="button" class="btn-tweak-density active" data-density="normal" role="radio" aria-checked="true">Standar</button>
+            <button type="button" class="btn-tweak-density" data-density="compact" role="radio" aria-checked="false">Ringkas</button>
+        </div>
+    </div>
+    <div class="tweaks-group">
+        <label id="lbl-lights">Lampu & Detail Mobil:</label>
+        <div class="tweaks-segmented" role="radiogroup" aria-labelledby="lbl-lights">
+            <button type="button" class="btn-tweak-lights active" data-lights="on" role="radio" aria-checked="true">Aktif</button>
+            <button type="button" class="btn-tweak-lights" data-lights="off" role="radio" aria-checked="false">Minimal</button>
+        </div>
+    </div>
+</div>
+</div> <!-- .app-container -->
+
+<script>
+// ============================================================================
+// 1. DATA CONSTANTS
+// ============================================================================
+const ANIM_DATA = /*__ANIM_DATA__*/null;
+const LOGO_BASE64 = "/*__LOGO_BASE64__*/";
+
+// ============================================================================
+// 2. PRNG UTILITIES
+// ============================================================================
+
+/**
+ * Mulberry32 seeded PRNG.
+ * Returns a function that produces uniform floats in [0,1).
+ */
+function mulberry32(seed) {
+    return function() {
+        seed |= 0;
+        seed = seed + 0x6D2B79F5 | 0;
+        let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
+// ============================================================================
+// 3. MINHEAP PRIORITY QUEUE
+// ============================================================================
+
+/**
+ * MinHeap for DES event scheduling.
+ * Events with the smallest .time float are dequeued first.
+ */
+class MinHeap {
+    constructor() {
+        this.heap = [];
+    }
+
+    get size() {
+        return this.heap.length;
+    }
+
+    push(item) {
+        this.heap.push(item);
+        this._bubbleUp(this.heap.length - 1);
+    }
+
+    pop() {
+        if (this.heap.length === 0) return undefined;
+        const top = this.heap[0];
+        const last = this.heap.pop();
+        if (this.heap.length > 0) {
+            this.heap[0] = last;
+            this._sinkDown(0);
+        }
+        return top;
+    }
+
+    peek() {
+        return this.heap[0];
+    }
+
+    _bubbleUp(i) {
+        while (i > 0) {
+            const parent = (i - 1) >> 1;
+            if (this.heap[i].time < this.heap[parent].time) {
+                [this.heap[i], this.heap[parent]] = [this.heap[parent], this.heap[i]];
+                i = parent;
+            } else {
+                break;
+            }
+        }
+    }
+
+    _sinkDown(i) {
+        const n = this.heap.length;
+        while (true) {
+            let smallest = i;
+            const left = 2 * i + 1;
+            const right = 2 * i + 2;
+            if (left < n && this.heap[left].time < this.heap[smallest].time) smallest = left;
+            if (right < n && this.heap[right].time < this.heap[smallest].time) smallest = right;
+            if (smallest !== i) {
+                [this.heap[i], this.heap[smallest]] = [this.heap[smallest], this.heap[i]];
+                i = smallest;
+            } else {
+                break;
+            }
+        }
+    }
+}
+
+// ============================================================================
+// 4. DES ENGINE
+// ============================================================================
+
+/**
+ * Run a single DES simulation.
+ * @param {object} config
+ *   - lamK: Karcis arrival rate (Poisson lambda)
+ *   - lamR: RFID arrival rate
+ *   - kLanes: number of Karcis service lanes
+ *   - rLanes: number of RFID service lanes
+ *   - serviceTimes: { karcis: [...], rfid: [...] }
+ *   - seed: integer seed
+ *   - simDuration: total simulation time in seconds (default 3600)
+ * @returns {{ events: array, stats: object }}
+ */
+function runSimulation(config) {
+    const { lamK, lamR, kLanes, rLanes, serviceTimes, seed, simDuration,
+            dynamicLanes = true, dynThreshold = 20, dynRevert = 5, dynCooldown = 60 } = config;
+    const duration = simDuration || 3600;
+
+    // 4 separate PRNG streams
+    const rngArrK = mulberry32(seed * 4 + 0);
+    const rngSvcK = mulberry32(seed * 4 + 1);
+    const rngArrR = mulberry32(seed * 4 + 2);
+    const rngSvcR = mulberry32(seed * 4 + 3);
+
+    const stK = serviceTimes.karcis;
+    const stR = serviceTimes.rfid;
+
+    // Event log for animation
+    const eventLog = [];
+
+    const useDyn = dynamicLanes && rLanes > 0 && kLanes > 0;
+    const permRLanes = useDyn ? rLanes - 1 : rLanes;
+
+    // Gate state
+    const karcisLanes = new Array(kLanes).fill(null);
+    const rfidLanes = new Array(permRLanes).fill(null);
+    const karcisQueue = [];
+    const rfidQueue = [];
+
+    // Dynamic lane state
+    let dynRole = 'R';
+    let dynLaneVeh = null;
+    let pendingShift = false;
+    let pendingRevert = false;
+    let lastSwitchTime = -dynCooldown;
+    let totalTimeK = 0.0;
+    let totalTimeR = 0.0;
+    let roleStartTime = 0.0;
+    let switchCount = 0;
+
+    // Tracking per vehicle
+    const vehicles = {}; // id -> { gate, arriveTime, serviceTime, serviceStartTime, endTime, waitTime, lane }
+
+    // Stats accumulators
+    const karcisQueueLog = []; // {time, length}
+    const rfidQueueLog = [];
+
+    // Priority queue
+    const pq = new MinHeap();
+
+    let nextIdK = 0;
+    let nextIdR = 0;
+
+    // Schedule first Karcis arrival
+    if (lamK > 0 && kLanes > 0) {
+        const iat = -Math.log(1 - rngArrK()) / lamK;
+        pq.push({ type: 'ARRIVAL_K', time: iat });
+    }
+
+    // Schedule first RFID arrival
+    if (lamR > 0 && rLanes > 0) {
+        const iat = -Math.log(1 - rngArrR()) / lamR;
+        pq.push({ type: 'ARRIVAL_R', time: iat });
+    }
+
+    // Schedule monitor events every 1 second
+    pq.push({ type: 'MONITOR', time: 1.0 });
+
+    // Helper: find a free lane
+    function findFreeLane(lanes) {
+        for (let i = 0; i < lanes.length; i++) {
+            if (lanes[i] === null) return i;
+        }
+        return -1;
+    }
+
+    function checkShiftTrigger(t) {
+        if (!useDyn) return;
+        if (dynRole === 'R' && !pendingShift) {
+            if (karcisQueue.length > dynThreshold) {
+                if (dynLaneVeh === null) {
+                    doShift(t);
+                } else {
+                    pendingShift = true;
+                }
+            }
+        }
+    }
+
+    function doShift(t) {
+        totalTimeR += Math.max(0, t - roleStartTime);
+        roleStartTime = t;
+        dynRole = 'K';
+        pendingShift = false;
+        lastSwitchTime = t;
+        switchCount++;
+        eventLog.push({
+            type: 'laneShift', time: t, lane: 'R1', fromGate: 'R', toGate: 'K',
+            desc: `Jalur R1 dialihkan ke Karcis pada t=${Math.round(t)}s`
+        });
+        if (karcisQueue.length > 0) {
+            const nextVehId = karcisQueue.shift();
+            const nextVeh = vehicles[nextVehId];
+            dynLaneVeh = nextVehId;
+            nextVeh.serviceStartTime = t;
+            nextVeh.waitTime = t - nextVeh.arriveTime;
+            nextVeh.lane = 999;
+            eventLog.push({ type: 'startService', time: t, id: nextVehId, gate: 'K', lane: 999, isDyn: true });
+            pq.push({ type: 'SERVICE_END', time: t + nextVeh.serviceTime, id: nextVehId, gate: 'K', lane: 999 });
+        }
+    }
+
+    function checkRevertTrigger(t) {
+        if (!useDyn) return;
+        if (dynRole === 'K' && !pendingRevert) {
+            if (karcisQueue.length <= dynRevert && (t - lastSwitchTime >= dynCooldown)) {
+                if (dynLaneVeh === null) {
+                    doRevert(t);
+                } else {
+                    pendingRevert = true;
+                }
+            }
+        }
+    }
+
+    function doRevert(t) {
+        totalTimeK += Math.max(0, t - roleStartTime);
+        roleStartTime = t;
+        dynRole = 'R';
+        pendingRevert = false;
+        lastSwitchTime = t;
+        switchCount++;
+        eventLog.push({
+            type: 'laneRevert', time: t, lane: 'R1', fromGate: 'K', toGate: 'R',
+            desc: `Jalur R1 dikembalikan ke RFID pada t=${Math.round(t)}s`
+        });
+        if (rfidQueue.length > 0) {
+            const nextVehId = rfidQueue.shift();
+            const nextVeh = vehicles[nextVehId];
+            dynLaneVeh = nextVehId;
+            nextVeh.serviceStartTime = t;
+            nextVeh.waitTime = t - nextVeh.arriveTime;
+            nextVeh.lane = 999;
+            eventLog.push({ type: 'startService', time: t, id: nextVehId, gate: 'R', lane: 999, isDyn: true });
+            pq.push({ type: 'SERVICE_END', time: t + nextVeh.serviceTime, id: nextVehId, gate: 'R', lane: 999 });
+        }
+    }
+
+    // Process events
+    while (pq.size > 0) {
+        const evt = pq.pop();
+        const t = evt.time;
+
+        if (evt.type === 'MONITOR') {
+            karcisQueueLog.push({ time: t, length: karcisQueue.length });
+            rfidQueueLog.push({ time: t, length: rfidQueue.length });
+            if (useDyn) {
+                checkShiftTrigger(t);
+                checkRevertTrigger(t);
+            }
+            if (t + 1.0 <= duration + 60) {
+                pq.push({ type: 'MONITOR', time: t + 1.0 });
+            }
+            continue;
+        }
+
+        if (evt.type === 'ARRIVAL_K') {
+            if (t > duration) continue; // No new arrivals after duration
+            const vehId = 'K' + nextIdK++;
+            const svcTime = stK[Math.floor(rngSvcK() * stK.length)];
+
+            vehicles[vehId] = {
+                gate: 'K', arriveTime: t, serviceTime: svcTime,
+                serviceStartTime: null, endTime: null, waitTime: null, lane: null
+            };
+
+            eventLog.push({ type: 'arrive', time: t, id: vehId, gate: 'K', serviceTime: svcTime });
+
+            // Try to find a free lane
+            const freeLane = findFreeLane(karcisLanes);
+            if (freeLane >= 0) {
+                // Start service immediately
+                karcisLanes[freeLane] = vehId;
+                vehicles[vehId].serviceStartTime = t;
+                vehicles[vehId].waitTime = 0;
+                vehicles[vehId].lane = freeLane;
+                eventLog.push({ type: 'startService', time: t, id: vehId, gate: 'K', lane: freeLane, isDyn: false });
+                pq.push({ type: 'SERVICE_END', time: t + svcTime, id: vehId, gate: 'K', lane: freeLane });
+            } else if (useDyn && dynRole === 'K' && dynLaneVeh === null) {
+                dynLaneVeh = vehId;
+                vehicles[vehId].serviceStartTime = t;
+                vehicles[vehId].waitTime = 0;
+                vehicles[vehId].lane = 999;
+                eventLog.push({ type: 'startService', time: t, id: vehId, gate: 'K', lane: 999, isDyn: true });
+                pq.push({ type: 'SERVICE_END', time: t + svcTime, id: vehId, gate: 'K', lane: 999 });
+            } else {
+                // Enter queue
+                karcisQueue.push(vehId);
+                checkShiftTrigger(t);
+            }
+
+            // Schedule next Karcis arrival
+            const iat = -Math.log(1 - rngArrK()) / lamK;
+            pq.push({ type: 'ARRIVAL_K', time: t + iat });
+            continue;
+        }
+
+        if (evt.type === 'ARRIVAL_R') {
+            if (t > duration) continue;
+            const vehId = 'R' + nextIdR++;
+            const svcTime = stR[Math.floor(rngSvcR() * stR.length)];
+
+            vehicles[vehId] = {
+                gate: 'R', arriveTime: t, serviceTime: svcTime,
+                serviceStartTime: null, endTime: null, waitTime: null, lane: null
+            };
+
+            eventLog.push({ type: 'arrive', time: t, id: vehId, gate: 'R', serviceTime: svcTime });
+
+            const freeLane = findFreeLane(rfidLanes);
+            if (freeLane >= 0) {
+                rfidLanes[freeLane] = vehId;
+                vehicles[vehId].serviceStartTime = t;
+                vehicles[vehId].waitTime = 0;
+                vehicles[vehId].lane = freeLane;
+                eventLog.push({ type: 'startService', time: t, id: vehId, gate: 'R', lane: freeLane, isDyn: false });
+                pq.push({ type: 'SERVICE_END', time: t + svcTime, id: vehId, gate: 'R', lane: freeLane });
+            } else if (useDyn && dynRole === 'R' && dynLaneVeh === null) {
+                dynLaneVeh = vehId;
+                vehicles[vehId].serviceStartTime = t;
+                vehicles[vehId].waitTime = 0;
+                vehicles[vehId].lane = 999;
+                eventLog.push({ type: 'startService', time: t, id: vehId, gate: 'R', lane: 999, isDyn: true });
+                pq.push({ type: 'SERVICE_END', time: t + svcTime, id: vehId, gate: 'R', lane: 999 });
+            } else {
+                rfidQueue.push(vehId);
+            }
+
+            const iat = -Math.log(1 - rngArrR()) / lamR;
+            pq.push({ type: 'ARRIVAL_R', time: t + iat });
+            continue;
+        }
+
+        if (evt.type === 'SERVICE_END') {
+            const vehId = evt.id;
+            const gate = evt.gate;
+            const lane = evt.lane;
+            const veh = vehicles[vehId];
+            veh.endTime = t;
+
+            eventLog.push({ type: 'endService', time: t, id: vehId, gate: gate, lane: lane, isDyn: (lane === 999) });
+
+            if (lane === 999) {
+                dynLaneVeh = null;
+                if (gate === 'K') {
+                    if (pendingRevert) {
+                        if (karcisQueue.length <= dynRevert) {
+                            doRevert(t);
+                        } else {
+                            pendingRevert = false;
+                            if (karcisQueue.length > 0) {
+                                const nextVehId = karcisQueue.shift();
+                                const nextVeh = vehicles[nextVehId];
+                                dynLaneVeh = nextVehId;
+                                nextVeh.serviceStartTime = t;
+                                nextVeh.waitTime = t - nextVeh.arriveTime;
+                                nextVeh.lane = 999;
+                                eventLog.push({ type: 'startService', time: t, id: nextVehId, gate: 'K', lane: 999, isDyn: true });
+                                pq.push({ type: 'SERVICE_END', time: t + nextVeh.serviceTime, id: nextVehId, gate: 'K', lane: 999 });
+                            }
+                        }
+                    } else {
+                        checkRevertTrigger(t);
+                        if (dynRole === 'K' && dynLaneVeh === null && karcisQueue.length > 0) {
+                            const nextVehId = karcisQueue.shift();
+                            const nextVeh = vehicles[nextVehId];
+                            dynLaneVeh = nextVehId;
+                            nextVeh.serviceStartTime = t;
+                            nextVeh.waitTime = t - nextVeh.arriveTime;
+                            nextVeh.lane = 999;
+                            eventLog.push({ type: 'startService', time: t, id: nextVehId, gate: 'K', lane: 999, isDyn: true });
+                            pq.push({ type: 'SERVICE_END', time: t + nextVeh.serviceTime, id: nextVehId, gate: 'K', lane: 999 });
+                        }
+                    }
+                } else {
+                    if (pendingShift) {
+                        if (karcisQueue.length > dynRevert) {
+                            doShift(t);
+                        } else {
+                            pendingShift = false;
+                            if (rfidQueue.length > 0) {
+                                const nextVehId = rfidQueue.shift();
+                                const nextVeh = vehicles[nextVehId];
+                                dynLaneVeh = nextVehId;
+                                nextVeh.serviceStartTime = t;
+                                nextVeh.waitTime = t - nextVeh.arriveTime;
+                                nextVeh.lane = 999;
+                                eventLog.push({ type: 'startService', time: t, id: nextVehId, gate: 'R', lane: 999, isDyn: true });
+                                pq.push({ type: 'SERVICE_END', time: t + nextVeh.serviceTime, id: nextVehId, gate: 'R', lane: 999 });
+                            }
+                        }
+                    } else {
+                        checkShiftTrigger(t);
+                        if (dynRole === 'R' && dynLaneVeh === null && rfidQueue.length > 0) {
+                            const nextVehId = rfidQueue.shift();
+                            const nextVeh = vehicles[nextVehId];
+                            dynLaneVeh = nextVehId;
+                            nextVeh.serviceStartTime = t;
+                            nextVeh.waitTime = t - nextVeh.arriveTime;
+                            nextVeh.lane = 999;
+                            eventLog.push({ type: 'startService', time: t, id: nextVehId, gate: 'R', lane: 999, isDyn: true });
+                            pq.push({ type: 'SERVICE_END', time: t + nextVeh.serviceTime, id: nextVehId, gate: 'R', lane: 999 });
+                        }
+                    }
+                }
+            } else {
+                // Free static lane
+                const lanes = gate === 'K' ? karcisLanes : rfidLanes;
+                const queue = gate === 'K' ? karcisQueue : rfidQueue;
+                lanes[lane] = null;
+
+                // Dequeue next vehicle if any
+                if (queue.length > 0) {
+                    const nextVehId = queue.shift();
+                    const nextVeh = vehicles[nextVehId];
+                    lanes[lane] = nextVehId;
+                    nextVeh.serviceStartTime = t;
+                    nextVeh.waitTime = t - nextVeh.arriveTime;
+                    nextVeh.lane = lane;
+                    eventLog.push({ type: 'startService', time: t, id: nextVehId, gate: gate, lane: lane, isDyn: false });
+                    pq.push({ type: 'SERVICE_END', time: t + nextVeh.serviceTime, id: nextVehId, gate: gate, lane: lane });
+                }
+
+                if (gate === 'K' && useDyn) {
+                    checkRevertTrigger(t);
+                }
+            }
+            continue;
+        }
+    }
+
+    if (useDyn) {
+        if (dynRole === 'R') {
+            totalTimeR += Math.max(0, duration - roleStartTime);
+        } else {
+            totalTimeK += Math.max(0, duration - roleStartTime);
+        }
+    }
+
+    const effKCap = useDyn ? (kLanes * duration + totalTimeK) : (kLanes * duration);
+    const effRCap = useDyn ? Math.max(0, (rLanes - 1) * duration + totalTimeR) : (rLanes * duration);
+
+    // Events are pushed in true causal order (the priority queue pops in non-decreasing time).
+    // Sort by time only and keep push order for ties, so an endService is never replayed
+    // AFTER the startService of the next vehicle on the same lane at the same timestamp.
+    eventLog.forEach((e, i) => { e._seq = i; });
+    eventLog.sort((a, b) => (a.time - b.time) || (a._seq - b._seq));
+
+    // Compute statistics
+    const stats = computeStats(vehicles, karcisQueueLog, rfidQueueLog, kLanes, rLanes, duration,
+                               useDyn, effKCap, effRCap, switchCount, totalTimeK, totalTimeR);
+
+    return { events: eventLog, stats, vehicles, useDyn, switchCount, totalTimeK, totalTimeR };
+}
+
+/**
+ * Compute summary statistics from completed simulation.
+ */
+function computeStats(vehicles, kQueueLog, rQueueLog, kLanes, rLanes, duration,
+                      useDyn = false, effKCap = 0, effRCap = 0, switchCount = 0, totalTimeK = 0, totalTimeR = 0) {
+    const kWaits = [];
+    const rWaits = [];
+    let kServed = 0, rServed = 0;
+    let kTotalService = 0, rTotalService = 0;
+    let kBacklog = 0, rBacklog = 0;
+
+    for (const id in vehicles) {
+        const v = vehicles[id];
+        if (v.endTime !== null && v.endTime <= duration) {
+            // Vehicle completed service within simulation duration (matches SimPy cutoff)
+            const w = v.waitTime !== null ? v.waitTime : 0;
+            if (v.gate === 'K') {
+                kWaits.push(w);
+                kServed++;
+                kTotalService += v.serviceTime;
+            } else {
+                rWaits.push(w);
+                rServed++;
+                rTotalService += v.serviceTime;
+            }
+        } else if (v.serviceStartTime === null) {
+            // Vehicle still in queue at end (never started service) = backlog
+            if (v.gate === 'K') kBacklog++;
+            else rBacklog++;
+        }
+    }
+
+    const capK = useDyn ? effKCap : (kLanes * duration);
+    const capR = useDyn ? effRCap : (rLanes * duration);
+
+    function calcStats(waits, qLog, cap, served, totalService) {
+        if (waits.length === 0) {
+            return {
+                meanWait: 0, maxWait: 0, p95Wait: 0,
+                avgQueue: 0, maxQueue: 0,
+                utilisation: 0, throughput: served, backlog: 0,
+                queueLog: qLog
+            };
+        }
+        const sorted = waits.slice().sort((a, b) => a - b);
+        const mean = waits.reduce((s, v) => s + v, 0) / waits.length;
+        const max = sorted[sorted.length - 1];
+        const p95idx = Math.min(Math.floor(sorted.length * 0.95), sorted.length - 1);
+        const p95 = sorted[p95idx];
+
+        let avgQ = 0, maxQ = 0;
+        if (qLog.length > 0) {
+            let sum = 0;
+            for (let i = 0; i < qLog.length; i++) {
+                sum += qLog[i].length;
+                if (qLog[i].length > maxQ) maxQ = qLog[i].length;
+            }
+            avgQ = sum / qLog.length;
+        }
+
+        const util = cap > 0 ? (totalService / cap) : 0;
+
+        return {
+            meanWait: mean,
+            maxWait: max,
+            p95Wait: p95,
+            avgQueue: avgQ,
+            maxQueue: maxQ,
+            utilisation: util,
+            throughput: served,
+            backlog: 0,
+            queueLog: qLog
+        };
+    }
+
+    return {
+        karcis: {
+            ...calcStats(kWaits, kQueueLog, capK, kServed, kTotalService),
+            backlog: kBacklog,
+            switchCount: switchCount,
+            timeAsKarcis: totalTimeK,
+            timeAsRfid: totalTimeR
+        },
+        rfid: {
+            ...calcStats(rWaits, rQueueLog, capR, rServed, rTotalService),
+            backlog: rBacklog,
+            switchCount: switchCount,
+            timeAsKarcis: totalTimeK,
+            timeAsRfid: totalTimeR
+        }
+    };
+}
+
+// ============================================================================
+// 5. SCENARIO LOGIC
+// ============================================================================
+
+const SCENARIO_LABELS = {
+    'as_is':       'Kondisi Saat Ini',
+    'shift_25':    'Geser 25% ke RFID',
+    'shift_50':    'Geser 50% ke RFID',
+    'shift_75':    'Geser 75% ke RFID',
+    'shift_100':   'Geser 100% ke RFID',
+    'full_rfid':   'Semua RFID',
+    'full_karcis': 'Semua Karcis'
+};
+
+/**
+ * Derive effective config for a given scenario.
+ */
+function getScenarioConfig(session, scenario, baseLanesK, baseLanesR) {
+    const lamK0 = session.karcis.lambda;
+    const lamR0 = session.rfid.lambda;
+    const totalLam = lamK0 + lamR0;
+    const totalLanes = baseLanesK + baseLanesR;
+
+    switch (scenario) {
+        case 'as_is':       return { lamK: lamK0,       lamR: lamR0,               kLanes: baseLanesK, rLanes: baseLanesR };
+        case 'shift_25':    return { lamK: lamK0 * 0.75, lamR: lamR0 + lamK0 * 0.25, kLanes: baseLanesK, rLanes: baseLanesR };
+        case 'shift_50':    return { lamK: lamK0 * 0.50, lamR: lamR0 + lamK0 * 0.50, kLanes: baseLanesK, rLanes: baseLanesR };
+        case 'shift_75':    return { lamK: lamK0 * 0.25, lamR: lamR0 + lamK0 * 0.75, kLanes: baseLanesK, rLanes: baseLanesR };
+        case 'shift_100':   return { lamK: 0,            lamR: lamR0 + lamK0,         kLanes: baseLanesK, rLanes: baseLanesR };
+        case 'full_rfid':   return { lamK: 0,            lamR: totalLam,              kLanes: 0,          rLanes: totalLanes };
+        case 'full_karcis':  return { lamK: totalLam,     lamR: 0,                     kLanes: totalLanes, rLanes: 0 };
+        default:            return { lamK: lamK0,       lamR: lamR0,               kLanes: baseLanesK, rLanes: baseLanesR };
+    }
+}
+
+// ============================================================================
+// 6. ANIMATION STATE & RENDERER
+// ============================================================================
+
+/**
+ * AnimationController manages one canvas panel's playback and rendering.
+ */
+class AnimationController {
+    /**
+     * @param {HTMLCanvasElement} canvas
+     * @param {string} panelId - 'a' or 'b'
+     */
+    constructor(canvas, panelId) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.panelId = panelId;
+
+        // Simulation data
+        this.simResult = null;
+        this.events = [];
+        this.vehicles = {};
+        this.stats = null;
+
+        // Current animation state
+        this.simTime = 0;
+        this.eventIndex = 0;
+
+        // Visual state: live queues and lanes
+        this.karcisQueue = [];   // vehicle IDs waiting
+        this.rfidQueue = [];
+        this.karcisLanes = [];   // array of {vehId, startTime, endTime} or null
+        this.rfidLanes = [];
+        this.exitingVehicles = []; // {id, gate, lane, isDyn, exitStart, progress}
+
+        // Dynamic lane state
+        this.useDyn = false;
+        this.dynRole = 'R';
+        this.dynLaneVeh = null;
+        this.shiftAnimTime = -999;
+        this.revertAnimTime = -999;
+        this.recentLogs = [];
+        this.switchCount = 0;
+        this.totalTimeK = 0;
+        this.totalTimeR = 0;
+        this.roleStartTime = 0;
+
+        // Live metrics
+        this.kServed = 0;
+        this.rServed = 0;
+        this.kWaits = [];
+        this.rWaits = [];
+        this.kTotalService = 0;
+        this.rTotalService = 0;
+
+        // Lane counts (effective)
+        this.kLaneCount = 0;
+        this.rLaneCount = 0;
+
+        // Queue log for mini charts
+        this.kQueueSnapshots = [];
+        this.rQueueSnapshots = [];
+        this.lastSnapshotTime = 0;
+
+        // Has finished
+        this.finished = false;
+    }
+
+    /**
+     * Load simulation results and reset animation state.
+     */
+    load(simResult, kLaneCount, rLaneCount) {
+        this.simResult = simResult;
+        this.events = simResult.events;
+        this.vehicles = {}; // We rebuild our own visual tracking
+        this.stats = simResult.stats;
+
+        this.simTime = 0;
+        this.eventIndex = 0;
+
+        this.kLaneCount = kLaneCount;
+        this.rLaneCount = rLaneCount;
+
+        this.useDyn = !!simResult.useDyn;
+        this.dynRole = 'R';
+        this.dynLaneVeh = null;
+        this.shiftAnimTime = -999;
+        this.revertAnimTime = -999;
+        this.recentLogs = [];
+        this.switchCount = 0;
+        this.totalTimeK = 0;
+        this.totalTimeR = 0;
+        this.roleStartTime = 0;
+
+        const permRLanes = this.useDyn ? Math.max(0, rLaneCount - 1) : rLaneCount;
+        this.karcisQueue = [];
+        this.rfidQueue = [];
+        this.karcisLanes = new Array(kLaneCount).fill(null);
+        this.rfidLanes = new Array(permRLanes).fill(null);
+        this.exitingVehicles = [];
+
+        this.kServed = 0;
+        this.rServed = 0;
+        this.kWaits = [];
+        this.rWaits = [];
+        this.kTotalService = 0;
+        this.rTotalService = 0;
+
+        this.kQueueSnapshots = [];
+        this.rQueueSnapshots = [];
+        this.lastSnapshotTime = 0;
+
+        this.finished = false;
+
+        // Build vehicle info map
+        for (const ev of this.events) {
+            if (ev.type === 'arrive') {
+                this.vehicles[ev.id] = {
+                    gate: ev.gate,
+                    serviceTime: ev.serviceTime,
+                    arriveTime: ev.time,
+                    state: 'pending', // pending, queued, serving, exiting, done
+                    lane: null,
+                    serviceStartTime: null,
+                    serviceEndTime: null,
+                    x: 0, y: 0, targetX: 0, targetY: 0
+                };
+            }
+        }
+    }
+
+    /**
+     * Advance simulation time and process events up to newTime.
+     */
+    advanceTo(newTime) {
+        if (!this.events || this.events.length === 0) return;
+
+        const prevTime = this.simTime;
+        this.simTime = Math.min(newTime, 3700); // Allow a bit past 3600 for stragglers
+
+        // Process events up to current time
+        while (this.eventIndex < this.events.length && this.events[this.eventIndex].time <= this.simTime) {
+            const ev = this.events[this.eventIndex];
+            this.processEvent(ev);
+            this.eventIndex++;
+        }
+
+        // Take queue snapshots every second
+        while (this.lastSnapshotTime + 1.0 <= this.simTime && this.lastSnapshotTime < 3600) {
+            this.lastSnapshotTime += 1.0;
+            this.kQueueSnapshots.push(this.karcisQueue.length);
+            this.rQueueSnapshots.push(this.rfidQueue.length);
+        }
+
+        // Check if finished
+        if (this.simTime >= 3600 && !this.finished) {
+            this.finished = true;
+        }
+    }
+
+    processEvent(ev) {
+        if (ev.type === 'laneShift') {
+            this.totalTimeR += Math.max(0, ev.time - this.roleStartTime);
+            this.roleStartTime = ev.time;
+            this.dynRole = 'K';
+            this.shiftAnimTime = ev.time;
+            this.switchCount++;
+            this.recentLogs.unshift(ev.desc);
+            if (this.recentLogs.length > 5) this.recentLogs.pop();
+            return;
+        }
+
+        if (ev.type === 'laneRevert') {
+            this.totalTimeK += Math.max(0, ev.time - this.roleStartTime);
+            this.roleStartTime = ev.time;
+            this.dynRole = 'R';
+            this.revertAnimTime = ev.time;
+            this.switchCount++;
+            this.recentLogs.unshift(ev.desc);
+            if (this.recentLogs.length > 5) this.recentLogs.pop();
+            return;
+        }
+
+        const veh = this.vehicles[ev.id];
+        if (!veh) return;
+
+        switch (ev.type) {
+            case 'arrive':
+                veh.state = 'queued';
+                veh.arriveTime = ev.time;
+                if (ev.gate === 'K') {
+                    this.karcisQueue.push(ev.id);
+                } else {
+                    this.rfidQueue.push(ev.id);
+                }
+                break;
+
+            case 'startService':
+                veh.state = 'serving';
+                veh.lane = ev.lane;
+                veh.serviceStartTime = ev.time;
+                veh.serviceEndTime = ev.time + veh.serviceTime;
+
+                if (ev.isDyn || ev.lane === 999) {
+                    this.dynLaneVeh = ev.id;
+                } else {
+                    if (ev.gate === 'K') {
+                        this.karcisLanes[ev.lane] = ev.id;
+                    } else {
+                        this.rfidLanes[ev.lane] = ev.id;
+                    }
+                }
+
+                // Remove from queue
+                if (ev.gate === 'K') {
+                    const idx = this.karcisQueue.indexOf(ev.id);
+                    if (idx >= 0) this.karcisQueue.splice(idx, 1);
+                } else {
+                    const idx = this.rfidQueue.indexOf(ev.id);
+                    if (idx >= 0) this.rfidQueue.splice(idx, 1);
+                }
+
+                // Record wait time
+                const waitTime = ev.time - veh.arriveTime;
+                if (ev.gate === 'K') {
+                    this.kWaits.push(waitTime);
+                } else {
+                    this.rWaits.push(waitTime);
+                }
+                break;
+
+            case 'endService':
+                veh.state = 'exiting';
+                if (ev.isDyn || ev.lane === 999) {
+                    this.dynLaneVeh = null;
+                } else {
+                    if (ev.gate === 'K') {
+                        if (ev.lane < this.karcisLanes.length) this.karcisLanes[ev.lane] = null;
+                    } else {
+                        if (ev.lane < this.rfidLanes.length) this.rfidLanes[ev.lane] = null;
+                    }
+                }
+
+                if (ev.gate === 'K') {
+                    this.kServed++;
+                    this.kTotalService += veh.serviceTime;
+                } else {
+                    this.rServed++;
+                    this.rTotalService += veh.serviceTime;
+                }
+
+                // Add to exiting list for animation
+                this.exitingVehicles.push({
+                    id: ev.id, gate: ev.gate, lane: ev.lane, isDyn: !!(ev.isDyn || ev.lane === 999),
+                    exitStart: ev.time, duration: 1.5
+                });
+                break;
+        }
+    }
+
+    /**
+     * Seek to a specific time (for scrubber). Rebuilds state from scratch.
+     */
+    seekTo(targetTime) {
+        // Reset state
+        this.simTime = 0;
+        this.eventIndex = 0;
+        this.karcisQueue = [];
+        this.rfidQueue = [];
+        const permRLanes = this.useDyn ? Math.max(0, this.rLaneCount - 1) : this.rLaneCount;
+        this.karcisLanes = new Array(this.kLaneCount).fill(null);
+        this.rfidLanes = new Array(permRLanes).fill(null);
+        this.exitingVehicles = [];
+
+        this.dynRole = 'R';
+        this.dynLaneVeh = null;
+        this.shiftAnimTime = -999;
+        this.revertAnimTime = -999;
+        this.recentLogs = [];
+        this.switchCount = 0;
+        this.totalTimeK = 0;
+        this.totalTimeR = 0;
+        this.roleStartTime = 0;
+
+        this.kServed = 0;
+        this.rServed = 0;
+        this.kWaits = [];
+        this.rWaits = [];
+        this.kTotalService = 0;
+        this.rTotalService = 0;
+        this.kQueueSnapshots = [];
+        this.rQueueSnapshots = [];
+        this.lastSnapshotTime = 0;
+        this.finished = false;
+
+        // Reset all vehicles
+        for (const id in this.vehicles) {
+            this.vehicles[id].state = 'pending';
+            this.vehicles[id].lane = null;
+            this.vehicles[id].serviceStartTime = null;
+            this.vehicles[id].serviceEndTime = null;
+        }
+
+        this.advanceTo(targetTime);
+    }
+
+    /**
+     * Get live metrics at current simulation time.
+     */
+    getLiveMetrics() {
+        const elapsed = Math.max(this.simTime, 0.001);
+        let liveTimeK = this.totalTimeK;
+        let liveTimeR = this.totalTimeR;
+        if (this.useDyn) {
+            const liveDelta = Math.max(0, this.simTime - this.roleStartTime);
+            if (this.dynRole === 'K') liveTimeK += liveDelta;
+            else liveTimeR += liveDelta;
+        }
+        const effKCap = this.useDyn ? (this.kLaneCount * elapsed + liveTimeK) : (this.kLaneCount * elapsed);
+        const effRCap = this.useDyn ? Math.max(0, (this.rLaneCount - 1) * elapsed + liveTimeR) : (this.rLaneCount * elapsed);
+
+        const kMeanWait = this.kWaits.length > 0 ? this.kWaits.reduce((a, b) => a + b, 0) / this.kWaits.length : 0;
+        const rMeanWait = this.rWaits.length > 0 ? this.rWaits.reduce((a, b) => a + b, 0) / this.rWaits.length : 0;
+        const kMaxWait = this.kWaits.length > 0 ? Math.max(...this.kWaits) : 0;
+        const rMaxWait = this.rWaits.length > 0 ? Math.max(...this.rWaits) : 0;
+
+        const kUtil = effKCap > 0 ? Math.min(this.kTotalService / effKCap, 1.0) : 0;
+        const rUtil = effRCap > 0 ? Math.min(this.rTotalService / effRCap, 1.0) : 0;
+
+        return {
+            karcis: {
+                queue: this.karcisQueue.length,
+                served: this.kServed,
+                meanWait: kMeanWait,
+                maxWait: kMaxWait,
+                utilisation: kUtil,
+                throughput: this.kServed,
+                switchCount: this.switchCount,
+                timeAsKarcis: liveTimeK,
+                timeAsRfid: liveTimeR
+            },
+            rfid: {
+                queue: this.rfidQueue.length,
+                served: this.rServed,
+                meanWait: rMeanWait,
+                maxWait: rMaxWait,
+                utilisation: rUtil,
+                throughput: this.rServed,
+                switchCount: this.switchCount,
+                timeAsKarcis: liveTimeK,
+                timeAsRfid: liveTimeR,
+                dynRole: this.dynRole
+            },
+            lastLog: this.recentLogs.length > 0 ? this.recentLogs[0] : null
+        };
+    }
+
+    /**
+     * Render the current state onto the canvas.
+     */
+    render(canvasWidth, canvasHeight) {
+        const ctx = this.ctx;
+        const W = canvasWidth;
+        const H = canvasHeight;
+
+        ctx.clearRect(0, 0, W, H);
+
+        // Background
+        ctx.fillStyle = '#0c1015';
+        ctx.fillRect(0, 0, W, H);
+
+        // Layout constants
+        const VEH_W = 30;
+        const VEH_H = 14;
+        const LANE_H = 28;
+        const LANE_GAP = 6;
+        const HEADER_OFFSET = 24; // Distance from section start to lane surface
+        const ROAD_LEFT = 16;     // Left margin for approach roadway
+
+        // Dynamically position the gate to balance queue space (left) and exit space (right)
+        const GATE_LEFT = Math.min(Math.max(380, Math.round(W * 0.38)), 480);
+        const QUEUE_START = GATE_LEFT - 12; // Queued vehicles start just before the booth entrance
+        const BARRIER_X = GATE_LEFT + 6;
+        const BARRIER_W = 8;
+        const EXIT_ZONE_X = GATE_LEFT + 55;
+        // Max visible vehicles on the approach road before showing overflow badge
+        const MAX_VISIBLE_QUEUE = Math.max(1, Math.floor((QUEUE_START - ROAD_LEFT - 65) / (VEH_W + 4)));
+
+        // Time display
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '12px monospace';
+        ctx.textAlign = 'right';
+        const mins = Math.floor(this.simTime / 60);
+        const secs = Math.floor(this.simTime % 60);
+        ctx.fillText(`Waktu: ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')} / 60:00`, W - 20, 20);
+
+        // ---- KARCIS GATE ----
+        const kStartY = 24;
+        const kGateHeight = this.kLaneCount > 0 ? (HEADER_OFFSET + this.kLaneCount * (LANE_H + LANE_GAP)) : 36;
+        if (this.kLaneCount > 0) {
+            this.renderGate(ctx, 'GARDU KARCIS', '#3b82f6', kStartY, W, this.kLaneCount,
+                this.karcisQueue, this.karcisLanes, 'K',
+                VEH_W, VEH_H, LANE_H, LANE_GAP, HEADER_OFFSET, ROAD_LEFT, GATE_LEFT, QUEUE_START,
+                BARRIER_X, BARRIER_W, EXIT_ZONE_X, MAX_VISIBLE_QUEUE);
+        } else {
+            ctx.fillStyle = '#475569';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('GARDU KARCIS (Nonaktif pada skenario ini)', 16, kStartY + 16);
+        }
+
+        // ---- RFID GATE ----
+        const rStartY = kStartY + kGateHeight + 14;
+        if (this.rLaneCount > 0) {
+            this.renderGate(ctx, 'GARDU RFID', '#10b981', rStartY, W, this.rLaneCount,
+                this.rfidQueue, this.rfidLanes, 'R',
+                VEH_W, VEH_H, LANE_H, LANE_GAP, HEADER_OFFSET, ROAD_LEFT, GATE_LEFT, QUEUE_START,
+                BARRIER_X, BARRIER_W, EXIT_ZONE_X, MAX_VISIBLE_QUEUE);
+        } else {
+            ctx.fillStyle = '#475569';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('GARDU RFID (Nonaktif pada skenario ini)', 16, rStartY + 16);
+        }
+
+        // ---- EXITING VEHICLES ----
+        this.renderExitingVehicles(ctx, kStartY, rStartY, HEADER_OFFSET, VEH_W, VEH_H,
+            LANE_H, LANE_GAP, EXIT_ZONE_X, W);
+
+        // ---- TIMELINE SCRUBBER ----
+        this.renderTimeline(ctx, W, H);
+    }
+
+    renderGate(ctx, label, color, startY, canvasW, laneCount,
+               queue, lanes, gateChar,
+               VEH_W, VEH_H, LANE_H, LANE_GAP, HEADER_OFFSET, ROAD_LEFT,
+               GATE_LEFT, QUEUE_START, BARRIER_X, BARRIER_W, EXIT_ZONE_X, MAX_VISIBLE) {
+
+        // --- 1. HEADER ROW (Above the lanes, completely separated from queue) ---
+        const headerY = startY + 12;
+
+        // Gate status dot indicator
+        let dotColor = color;
+        let isClosedGate = false;
+        if (gateChar === 'R' && this.useDyn && this.dynRole === 'K' && laneCount === 1) {
+            dotColor = '#fbbf24';
+            isClosedGate = true;
+        }
+
+        ctx.save();
+        ctx.fillStyle = dotColor;
+        ctx.shadowColor = dotColor;
+        ctx.shadowBlur = 6;
+        ctx.beginPath();
+        ctx.arc(ROAD_LEFT + 4, headerY - 4, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        // Gate title
+        ctx.fillStyle = isClosedGate ? '#fbbf24' : '#f8fafc';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(label, ROAD_LEFT + 14, headerY);
+
+        const titleWidth = ctx.measureText(label).width;
+        let curBadgeX = ROAD_LEFT + 14 + titleWidth + 10;
+
+        // Queue pill badge
+        const qCount = queue.length;
+        const qText = `Antrian: ${qCount}`;
+        ctx.font = 'bold 11px monospace';
+        const qTextW = ctx.measureText(qText).width;
+        const qBadgeW = qTextW + 16;
+        const qBadgeH = 18;
+        const qBadgeY = headerY - 13;
+
+        let qBg = gateChar === 'K' ? 'rgba(2, 132, 199, 0.16)' : 'rgba(34, 197, 94, 0.16)';
+        let qBorder = gateChar === 'K' ? 'rgba(56, 189, 248, 0.35)' : 'rgba(34, 197, 94, 0.35)';
+        let qColor = gateChar === 'K' ? '#38bdf8' : '#22c55e';
+
+        if (qCount > 20) {
+            qBg = 'rgba(239, 68, 68, 0.2)';
+            qBorder = 'rgba(248, 113, 113, 0.45)';
+            qColor = '#f87171';
+        } else if (qCount > 10) {
+            qBg = 'rgba(234, 179, 8, 0.2)';
+            qBorder = 'rgba(250, 204, 21, 0.45)';
+            qColor = '#facc15';
+        }
+
+        ctx.fillStyle = qBg;
+        ctx.strokeStyle = qBorder;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        if (ctx.roundRect) {
+            ctx.roundRect(curBadgeX, qBadgeY, qBadgeW, qBadgeH, 4);
+        } else {
+            ctx.rect(curBadgeX, qBadgeY, qBadgeW, qBadgeH);
+        }
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = qColor;
+        ctx.fillText(qText, curBadgeX + 8, headerY);
+        curBadgeX += qBadgeW + 8;
+
+        // Dynamic lane status tag
+        if (gateChar === 'R' && this.useDyn && this.dynRole === 'K') {
+            const dynMsg = laneCount === 1 ? 'Gerbang Tutup (Dialihkan ke Karcis)' : 'Jalur R1 Dialihkan ke Karcis';
+            ctx.font = 'bold 10px sans-serif';
+            const dynW = ctx.measureText(dynMsg).width + 16;
+            ctx.fillStyle = 'rgba(234, 179, 8, 0.18)';
+            ctx.strokeStyle = 'rgba(250, 204, 21, 0.45)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            if (ctx.roundRect) {
+                ctx.roundRect(curBadgeX, qBadgeY, dynW, qBadgeH, 4);
+            } else {
+                ctx.rect(curBadgeX, qBadgeY, dynW, qBadgeH);
+            }
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#facc15';
+            ctx.fillText(dynMsg, curBadgeX + 8, headerY - 1);
+            curBadgeX += dynW + 8;
+        } else if (gateChar === 'K' && this.useDyn && this.dynRole === 'K') {
+            const dynMsg = '+1 Jalur R1 Aktif';
+            ctx.font = 'bold 10px sans-serif';
+            const dynW = ctx.measureText(dynMsg).width + 16;
+            ctx.fillStyle = 'rgba(56, 189, 248, 0.18)';
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            if (ctx.roundRect) {
+                ctx.roundRect(curBadgeX, qBadgeY, dynW, qBadgeH, 4);
+            } else {
+                ctx.rect(curBadgeX, qBadgeY, dynW, qBadgeH);
+            }
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#38bdf8';
+            ctx.fillText(dynMsg, curBadgeX + 8, headerY - 1);
+            curBadgeX += dynW + 8;
+        }
+
+        // Capacity label
+        ctx.fillStyle = '#64748b';
+        ctx.font = '10px monospace';
+        ctx.fillText(`(${laneCount} Gardu)`, curBadgeX, headerY - 1);
+
+        // --- 2. LANES & ROADWAY ---
+        const lanesY = startY + HEADER_OFFSET;
+        const queueCenterY = lanesY + (laneCount * (LANE_H + LANE_GAP) - LANE_GAP) / 2;
+
+        // Draw approach road surface for the queue
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
+        ctx.fillRect(ROAD_LEFT, queueCenterY - LANE_H / 2, QUEUE_START - ROAD_LEFT + 2, LANE_H);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(ROAD_LEFT, queueCenterY - LANE_H / 2);
+        ctx.lineTo(QUEUE_START + 2, queueCenterY - LANE_H / 2);
+        ctx.moveTo(ROAD_LEFT, queueCenterY + LANE_H / 2);
+        ctx.lineTo(QUEUE_START + 2, queueCenterY + LANE_H / 2);
+        ctx.stroke();
+
+        // Draw individual booth lanes
+        for (let i = 0; i < laneCount; i++) {
+            const laneY = lanesY + i * (LANE_H + LANE_GAP);
+            const isDynLane = (gateChar === 'R' && this.useDyn && i === 0);
+
+            // Determine lane styling
+            let laneStripeColor = 'rgba(255,255,255,0.03)';
+            let laneLabelText = `${gateChar}${i + 1}`;
+            let laneLabelColor = '#64748b';
+            let barrierOpenColor = '#22c55e';
+            let isOccupied = false;
+            let currentVehId = null;
+
+            if (isDynLane) {
+                if (this.dynRole === 'K') {
+                    laneStripeColor = 'rgba(59, 130, 246, 0.12)';
+                    laneLabelText = 'R1 → Karcis';
+                    laneLabelColor = '#60a5fa';
+                    barrierOpenColor = '#3b82f6';
+                } else {
+                    laneLabelText = 'R1';
+                }
+                isOccupied = this.dynLaneVeh !== null;
+                currentVehId = this.dynLaneVeh;
+            } else {
+                const staticLaneIdx = (gateChar === 'R' && this.useDyn) ? (i - 1) : i;
+                isOccupied = lanes[staticLaneIdx] !== null;
+                currentVehId = lanes[staticLaneIdx];
+            }
+
+            // Lane background stripe (from gate barrier to right exit)
+            ctx.fillStyle = laneStripeColor;
+            ctx.fillRect(GATE_LEFT - 2, laneY, canvasW - GATE_LEFT - 20, LANE_H);
+
+            // Barrier
+            ctx.fillStyle = isOccupied ? '#ef4444' : barrierOpenColor;
+            const barrierHeight = LANE_H - 6;
+            ctx.fillRect(BARRIER_X, laneY + 3, BARRIER_W, barrierHeight);
+
+            // Barrier glow
+            if (!isOccupied) {
+                ctx.save();
+                ctx.shadowColor = barrierOpenColor;
+                ctx.shadowBlur = 6;
+                ctx.fillRect(BARRIER_X, laneY + 3, BARRIER_W, barrierHeight);
+                ctx.restore();
+            }
+
+            // Vehicle in lane (being served)
+            if (isOccupied && currentVehId) {
+                const veh = this.vehicles[currentVehId];
+                if (veh) {
+                    const vx = BARRIER_X + BARRIER_W + 10;
+                    const vy = laneY + (LANE_H - VEH_H) / 2;
+                    const actualVehColor = (isDynLane && this.dynRole === 'K') ? '#3b82f6' : (veh.gate === 'K' ? '#3b82f6' : '#10b981');
+                    this.drawVehicle(ctx, vx, vy, VEH_W, VEH_H, actualVehColor, true, veh, currentVehId);
+                }
+            }
+
+            // Lane label (placed after serving vehicle area so it is never obscured)
+            ctx.fillStyle = laneLabelColor;
+            ctx.font = isDynLane ? 'bold 10px monospace' : '10px monospace';
+            ctx.textAlign = 'left';
+            const labelX = EXIT_ZONE_X + 10;
+            ctx.fillText(laneLabelText, labelX, laneY + LANE_H / 2 + 3);
+            const labelTextW = ctx.measureText(laneLabelText).width;
+
+            // Arrow on lane (right-pointing after label)
+            ctx.fillStyle = '#334155';
+            const arrowX = labelX + labelTextW + 12;
+            const arrowY = laneY + LANE_H / 2;
+            ctx.beginPath();
+            ctx.moveTo(arrowX, arrowY - 4);
+            ctx.lineTo(arrowX + 8, arrowY);
+            ctx.lineTo(arrowX, arrowY + 4);
+            ctx.fill();
+
+            // Dynamic lane transition pulse animation
+            if (isDynLane) {
+                if (this.simTime - this.shiftAnimTime >= 0 && this.simTime - this.shiftAnimTime < 2.0) {
+                    const p = (this.simTime - this.shiftAnimTime) / 2.0;
+                    const alpha = Math.sin(p * Math.PI) * 0.9;
+                    ctx.save();
+                    ctx.strokeStyle = `rgba(59, 130, 246, ${alpha})`;
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(GATE_LEFT - 2, laneY, canvasW - GATE_LEFT - 20, LANE_H);
+                    ctx.restore();
+                } else if (this.simTime - this.revertAnimTime >= 0 && this.simTime - this.revertAnimTime < 2.0) {
+                    const p = (this.simTime - this.revertAnimTime) / 2.0;
+                    const alpha = Math.sin(p * Math.PI) * 0.9;
+                    ctx.save();
+                    ctx.strokeStyle = `rgba(16, 185, 129, ${alpha})`;
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(GATE_LEFT - 2, laneY, canvasW - GATE_LEFT - 20, LANE_H);
+                    ctx.restore();
+                }
+            }
+        }
+
+        // --- 3. QUEUED VEHICLES & OVERFLOW BADGE ---
+        const totalQueued = queue.length;
+        const visibleCount = Math.min(totalQueued, MAX_VISIBLE);
+
+        for (let i = 0; i < visibleCount; i++) {
+            const vx = QUEUE_START - (i + 1) * (VEH_W + 4);
+            const vy = queueCenterY - VEH_H / 2;
+            this.drawVehicle(ctx, vx, vy, VEH_W, VEH_H, color, false, null, queue[i]);
+        }
+
+        // Clean overflow pill badge at road entrance if queue exceeds visible capacity
+        if (totalQueued > MAX_VISIBLE) {
+            const overflowCount = totalQueued - MAX_VISIBLE;
+            const badgeW = 56;
+            const badgeH = 18;
+            const badgeX = ROAD_LEFT;
+            const badgeY = queueCenterY - badgeH / 2;
+
+            ctx.fillStyle = 'rgba(234, 179, 8, 0.2)';
+            ctx.strokeStyle = 'rgba(250, 204, 21, 0.5)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            if (ctx.roundRect) {
+                ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 4);
+            } else {
+                ctx.rect(badgeX, badgeY, badgeW, badgeH);
+            }
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#facc15';
+            ctx.font = 'bold 10px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(`+${overflowCount} lagi`, badgeX + badgeW / 2, badgeY + badgeH / 2 + 3);
+        }
+
+        // Connection lines (queue to lanes)
+        if (laneCount > 1 && visibleCount > 0) {
+            ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
+            // From front of queue to each lane
+            const forkX = QUEUE_START + 2;
+            for (let i = 0; i < laneCount; i++) {
+                const laneY = lanesY + i * (LANE_H + LANE_GAP) + LANE_H / 2;
+                ctx.beginPath();
+                ctx.moveTo(forkX, queueCenterY);
+                ctx.lineTo(GATE_LEFT + 2, laneY);
+                ctx.stroke();
+            }
+            ctx.setLineDash([]);
+        }
+    }
+
+    drawVehicle(ctx, x, y, w, h, color, isServing, veh, vehId) {
+        // Vehicle lights option (default: on)
+        const showLights = (window.tweakLights !== 'off');
+
+        // Glow for serving vehicles
+        if (isServing) {
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 12;
+        }
+
+        // Vehicle body (rounded rectangle)
+        const r = 3;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+
+        // Roof / cabin shading
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
+        ctx.fillRect(x + 4, y + 2, w - 8, h - 4);
+
+        // Windshield (front windshield facing right)
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+        ctx.fillRect(x + w - 5, y + 2, 2, h - 4);
+
+        // Headlights (facing forward / right)
+        if (showLights) {
+            ctx.fillStyle = '#fef08a';
+            ctx.fillRect(x + w - 1, y + 1.5, 1.5, 2.5);
+            ctx.fillRect(x + w - 1, y + h - 4, 1.5, 2.5);
+
+            // Light beam cone
+            const grad = ctx.createLinearGradient(x + w, y, x + w + 10, y);
+            grad.addColorStop(0, 'rgba(254, 240, 138, 0.22)');
+            grad.addColorStop(1, 'rgba(254, 240, 138, 0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.moveTo(x + w, y + 1);
+            ctx.lineTo(x + w + 9, y - 2);
+            ctx.lineTo(x + w + 9, y + h + 2);
+            ctx.lineTo(x + w, y + h - 1);
+            ctx.closePath();
+            ctx.fill();
+
+            // Taillights (facing left / rear)
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(x, y + 1.5, 1, 2.5);
+            ctx.fillRect(x, y + h - 4, 1, 2.5);
+        }
+
+        // Highlight border for serving
+        if (isServing) {
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Service progress bar
+            if (veh && veh.serviceStartTime !== null) {
+                const progress = Math.min((this.simTime - veh.serviceStartTime) / veh.serviceTime, 1.0);
+                const barY = y + h + 2;
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                ctx.fillRect(x, barY, w, 3);
+                ctx.fillStyle = '#fbbf24';
+                ctx.fillRect(x, barY, w * progress, 3);
+            }
+        }
+
+        // Direction arrow
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        const ax = x + Math.round(w / 2) + 1;
+        const ay = y + h / 2;
+        ctx.beginPath();
+        ctx.moveTo(ax - 2, ay - 2.5);
+        ctx.lineTo(ax + 2, ay);
+        ctx.lineTo(ax - 2, ay + 2.5);
+        ctx.fill();
+    }
+
+    renderExitingVehicles(ctx, kStartY, rStartY, HEADER_OFFSET, VEH_W, VEH_H,
+                          LANE_H, LANE_GAP, EXIT_ZONE_X, canvasW) {
+        const toRemove = [];
+        for (let i = 0; i < this.exitingVehicles.length; i++) {
+            const ex = this.exitingVehicles[i];
+            const elapsed = this.simTime - ex.exitStart;
+            const progress = elapsed / ex.duration;
+
+            if (progress > 1.0) {
+                toRemove.push(i);
+                continue;
+            }
+
+            let baseY = ex.gate === 'K' ? kStartY : rStartY;
+            let laneIdx = Math.min(ex.lane, (ex.gate === 'K' ? this.kLaneCount : this.rLaneCount) - 1);
+            if (ex.isDyn) {
+                baseY = rStartY;
+                laneIdx = 0;
+            }
+
+            const lanesY = baseY + HEADER_OFFSET;
+            const laneY = lanesY + Math.max(0, laneIdx) * (LANE_H + LANE_GAP);
+
+            const startX = EXIT_ZONE_X + 20;
+            const endX = canvasW + VEH_W;
+            const vx = startX + (endX - startX) * this.easeOut(progress);
+            const vy = laneY + (LANE_H - VEH_H) / 2;
+            const alpha = 1.0 - progress * 0.6;
+
+            const color = ex.gate === 'K' ? `rgba(59,130,246,${alpha})` : `rgba(16,185,129,${alpha})`;
+            ctx.globalAlpha = alpha;
+            this.drawVehicle(ctx, vx, vy, VEH_W, VEH_H, color, false, null, ex.id);
+            ctx.globalAlpha = 1.0;
+        }
+
+        // Remove completed exits (iterate backwards)
+        for (let i = toRemove.length - 1; i >= 0; i--) {
+            this.exitingVehicles.splice(toRemove[i], 1);
+        }
+    }
+
+    easeOut(t) {
+        return 1 - (1 - t) * (1 - t);
+    }
+
+    renderTimeline(ctx, W, H) {
+        const barY = H - 30;
+        const barH = 14;
+        const barX = 20;
+        const barW = W - 40;
+
+        // Background
+        ctx.fillStyle = '#0d131a';
+        ctx.fillRect(barX, barY, barW, barH);
+        ctx.strokeStyle = '#223246';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(barX, barY, barW, barH);
+
+        // Progress
+        const progress = Math.min(this.simTime / 3600, 1.0);
+        ctx.fillStyle = '#0284c7';
+        ctx.fillRect(barX, barY, barW * progress, barH);
+
+        // Dynamic lane shift & revert marker pins
+        if (this.events && this.events.length > 0) {
+            for (let i = 0; i < this.events.length; i++) {
+                const ev = this.events[i];
+                if (ev.type === 'laneShift' || ev.type === 'laneRevert') {
+                    const ex = barX + (ev.time / 3600) * barW;
+                    ctx.fillStyle = ev.type === 'laneShift' ? '#f59e0b' : '#22c55e';
+                    ctx.fillRect(ex - 1, barY - 4, 2, barH + 4);
+                }
+            }
+        }
+
+        // Time markers
+        ctx.fillStyle = '#64748b';
+        ctx.font = '9px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        for (let m = 0; m <= 60; m += 10) {
+            const mx = barX + (m / 60) * barW;
+            ctx.fillText(`${m}m`, mx, barY - 5);
+            ctx.strokeStyle = '#334155';
+            ctx.beginPath();
+            ctx.moveTo(mx, barY);
+            ctx.lineTo(mx, barY + barH);
+            ctx.stroke();
+        }
+
+        // Playhead
+        const headX = barX + progress * barW;
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.moveTo(headX - 5, barY - 3);
+        ctx.lineTo(headX + 5, barY - 3);
+        ctx.lineTo(headX, barY + 5);
+        ctx.closePath();
+        ctx.fill();
+
+        // Playhead vertical line
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(headX, barY);
+        ctx.lineTo(headX, barY + barH);
+        ctx.stroke();
+
+        // Current time text
+        ctx.fillStyle = '#e2e8f0';
+        ctx.font = '10px "JetBrains Mono", monospace';
+        const tMins = Math.floor(this.simTime / 60);
+        const tSecs = Math.floor(this.simTime % 60);
+        ctx.fillText(`${String(tMins).padStart(2, '0')}:${String(tSecs).padStart(2, '0')}`, headX, barY + barH + 13);
+    }
+
+    /**
+     * Get the timeline bar bounds for hit-testing (scrubber clicks).
+     */
+    getTimelineBarBounds(canvasWidth, canvasHeight) {
+        return {
+            x: 20,
+            y: canvasHeight - 30,
+            w: canvasWidth - 40,
+            h: 14
+        };
+    }
+}
+
+// ============================================================================
+// 7. UI CONTROLLERS (MAIN APP)
+// ============================================================================
+
+const App = {
+    // State
+    data: null,
+    isPlaying: false,
+    speed: 20,
+    seed: 42,
+    baseLanesK: 2,
+    baseLanesR: 1,
+    compareMode: false,
+    scenarioA: 'as_is',
+    scenarioB: 'full_rfid',
+    sessionIndex: 0,
+    simDuration: 3600,
+
+    // Dynamic Lanes State
+    dynamicLanes: true,
+    dynThreshold: 20,
+    dynRevert: 5,
+    dynCooldown: 60,
+
+    // Animation
+    animFrameId: null,
+    lastTimestamp: null,
+
+    // Controllers
+    ctrlA: null,
+    ctrlB: null,
+
+    // Canvas sizing
+    canvasW: 1200,
+    canvasH: 360,
+
+    // Summary shown flag
+    summaryShown: false,
+
+    init() {
+        if (!ANIM_DATA) {
+            document.getElementById('controls-wrapper').style.display = 'none';
+            document.getElementById('canvas-container').style.display = 'none';
+            document.getElementById('metrics-a').style.display = 'none';
+            document.getElementById('no-data-msg').style.display = 'block';
+            return;
+        }
+
+        this.data = ANIM_DATA;
+        this.simDuration = this.data.sim_duration || 3600;
+
+        // Set up logo
+        if (LOGO_BASE64 && LOGO_BASE64 !== '/*__LOGO_BASE64__*/') {
+            document.getElementById('logo-img').src = 'data:image/png;base64,' + LOGO_BASE64;
+        }
+
+        // Set defaults from data
+        this.baseLanesK = this.data.defaults.karcis_lanes;
+        this.baseLanesR = this.data.defaults.rfid_lanes;
+
+        // Dynamic lanes controls init
+        const chkDyn = document.getElementById('chk-dynamic-lanes');
+        if (chkDyn) this.dynamicLanes = chkDyn.checked;
+        const inpThresh = document.getElementById('inp-dyn-thresh');
+        if (inpThresh) this.dynThreshold = parseInt(inpThresh.value) || 20;
+        const inpRev = document.getElementById('inp-dyn-revert');
+        if (inpRev) this.dynRevert = parseInt(inpRev.value) || 5;
+        const inpCd = document.getElementById('inp-dyn-cooldown');
+        if (inpCd) this.dynCooldown = parseInt(inpCd.value) || 60;
+
+        // Populate session dropdown
+        const selSession = document.getElementById('sel-session');
+        this.data.sessions.forEach((s, i) => {
+            const opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = `${s.hari} - ${s.sesi}`;
+            selSession.appendChild(opt);
+        });
+
+        // Set UI values
+        document.getElementById('inp-seed').value = this.seed;
+        document.getElementById('inp-lanes-k').value = this.baseLanesK;
+        document.getElementById('inp-lanes-r').value = this.baseLanesR;
+
+        // Initialize canvases
+        const canvasA = document.getElementById('canvas-a');
+        const canvasB = document.getElementById('canvas-b');
+        this.ctrlA = new AnimationController(canvasA, 'a');
+        this.ctrlB = new AnimationController(canvasB, 'b');
+
+        // Resize canvases
+        this.resizeCanvases();
+        window.addEventListener('resize', () => this.resizeCanvases());
+
+        // Bind events
+        this.bindEvents();
+        this.initTweaks();
+        this.initKeyboardShortcuts();
+
+        // Run initial simulation
+        this.runAndLoad();
+
+        // Render first frame
+        this.renderFrame();
+
+        // Show validate button if URL has ?validate
+        if (window.location.search.includes('validate')) {
+            document.getElementById('btn-validate').classList.add('visible');
+        }
+    },
+
+    resizeCanvases() {
+        const container = document.getElementById('canvas-container');
+        const w = container.clientWidth - 48; // padding
+        this.canvasW = Math.max(w, 900);
+        this.canvasH = this.compareMode ? 280 : 360;
+
+        const setSize = (canvas) => {
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = this.canvasW * dpr;
+            canvas.height = this.canvasH * dpr;
+            canvas.style.width = this.canvasW + 'px';
+            canvas.style.height = this.canvasH + 'px';
+            canvas.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+        };
+
+        setSize(document.getElementById('canvas-a'));
+        setSize(document.getElementById('canvas-b'));
+    },
+
+    bindEvents() {
+        // Play/Pause
+        document.getElementById('btn-play').addEventListener('click', () => {
+            if (this.ctrlA.finished && !this.compareMode) {
+                this.restart();
+                return;
+            }
+            this.isPlaying = !this.isPlaying;
+            this.updatePlayButton();
+            if (this.isPlaying) {
+                this.lastTimestamp = null;
+                this.animFrameId = requestAnimationFrame((ts) => this.animLoop(ts));
+            }
+        });
+
+        // Restart
+        document.getElementById('btn-restart').addEventListener('click', () => this.restart());
+
+        // Speed buttons
+        document.querySelectorAll('.speed-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.speed-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-checked', 'false');
+                });
+                btn.classList.add('active');
+                btn.setAttribute('aria-checked', 'true');
+                this.speed = parseInt(btn.dataset.speed);
+            });
+        });
+
+        // Dynamic lanes controls
+        const chkDyn = document.getElementById('chk-dynamic-lanes');
+        if (chkDyn) {
+            chkDyn.addEventListener('change', (e) => {
+                this.dynamicLanes = e.target.checked;
+                const grp = document.getElementById('dyn-params-group');
+                if (grp) grp.style.opacity = this.dynamicLanes ? '1.0' : '0.4';
+                this.runAndLoad();
+            });
+        }
+        const inpThresh = document.getElementById('inp-dyn-thresh');
+        if (inpThresh) {
+            inpThresh.addEventListener('change', (e) => {
+                this.dynThreshold = Math.max(1, parseInt(e.target.value) || 20);
+                e.target.value = this.dynThreshold;
+                this.runAndLoad();
+            });
+        }
+        const inpRev = document.getElementById('inp-dyn-revert');
+        if (inpRev) {
+            inpRev.addEventListener('change', (e) => {
+                this.dynRevert = Math.max(0, parseInt(e.target.value) || 5);
+                e.target.value = this.dynRevert;
+                this.runAndLoad();
+            });
+        }
+        const inpCd = document.getElementById('inp-dyn-cooldown');
+        if (inpCd) {
+            inpCd.addEventListener('change', (e) => {
+                this.dynCooldown = Math.max(0, parseInt(e.target.value) || 60);
+                e.target.value = this.dynCooldown;
+                this.runAndLoad();
+            });
+        }
+
+        // Session change
+        document.getElementById('sel-session').addEventListener('change', (e) => {
+            this.sessionIndex = parseInt(e.target.value);
+            this.runAndLoad();
+        });
+
+        // Scenario A
+        document.getElementById('sel-scenario').addEventListener('change', (e) => {
+            this.scenarioA = e.target.value;
+            this.updateEffectiveLanes();
+            this.runAndLoad();
+        });
+
+        // Scenario B
+        document.getElementById('sel-scenario-b').addEventListener('change', (e) => {
+            this.scenarioB = e.target.value;
+            this.runAndLoad();
+        });
+
+        // Seed
+        document.getElementById('inp-seed').addEventListener('change', (e) => {
+            this.seed = parseInt(e.target.value) || 42;
+            this.runAndLoad();
+        });
+
+        // Lanes
+        document.getElementById('inp-lanes-k').addEventListener('change', (e) => {
+            this.baseLanesK = Math.max(0, Math.min(10, parseInt(e.target.value) || 0));
+            e.target.value = this.baseLanesK;
+            this.updateEffectiveLanes();
+            this.runAndLoad();
+        });
+        document.getElementById('inp-lanes-r').addEventListener('change', (e) => {
+            this.baseLanesR = Math.max(0, Math.min(10, parseInt(e.target.value) || 0));
+            e.target.value = this.baseLanesR;
+            this.updateEffectiveLanes();
+            this.runAndLoad();
+        });
+
+        // Compare mode
+        document.getElementById('chk-compare').addEventListener('change', (e) => {
+            this.compareMode = e.target.checked;
+            this.toggleCompareMode();
+            this.runAndLoad();
+        });
+
+        // Timeline scrubber (click/drag on canvas + keyboard + touch)
+        const handleScrub = (canvas, ctrl) => {
+            let dragging = false;
+            const scrub = (clientX, clientY) => {
+                const rect = canvas.getBoundingClientRect();
+                const mx = (clientX - rect.left);
+                const my = (clientY - rect.top);
+                const bar = ctrl.getTimelineBarBounds(this.canvasW, this.canvasH);
+                if (mx >= bar.x && mx <= bar.x + bar.w && my >= bar.y - 8 && my <= bar.y + bar.h + 12) {
+                    const frac = Math.max(0, Math.min(1, (mx - bar.x) / bar.w));
+                    const targetTime = frac * 3600;
+                    this.isPlaying = false;
+                    this.updatePlayButton();
+
+                    // Seek both controllers to the same time in compare mode
+                    ctrl.seekTo(targetTime);
+                    if (this.compareMode) {
+                        const other = ctrl === this.ctrlA ? this.ctrlB : this.ctrlA;
+                        other.seekTo(targetTime);
+                    }
+                    canvas.setAttribute('aria-valuenow', Math.round(targetTime));
+                    this.renderFrame();
+                    this.updateMetrics();
+                    dragging = true;
+                }
+            };
+
+            canvas.addEventListener('mousedown', (e) => scrub(e.clientX, e.clientY));
+            canvas.addEventListener('mousemove', (e) => { if (dragging) scrub(e.clientX, e.clientY); });
+            document.addEventListener('mouseup', () => { dragging = false; });
+
+            canvas.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) scrub(e.touches[0].clientX, e.touches[0].clientY);
+            }, { passive: true });
+            canvas.addEventListener('touchmove', (e) => {
+                if (dragging && e.touches.length === 1) scrub(e.touches[0].clientX, e.touches[0].clientY);
+            }, { passive: true });
+            document.addEventListener('touchend', () => { dragging = false; });
+
+            canvas.addEventListener('keydown', (e) => {
+                let step = 0;
+                if (e.key === 'ArrowRight') step = (e.shiftKey ? 60 : 10);
+                else if (e.key === 'ArrowLeft') step = -(e.shiftKey ? 60 : 10);
+                else if (e.key === 'Home') step = -ctrl.simTime;
+                else if (e.key === 'End') step = 3600 - ctrl.simTime;
+                if (step !== 0) {
+                    e.preventDefault();
+                    this.isPlaying = false;
+                    this.updatePlayButton();
+                    const newTime = Math.max(0, Math.min(3600, ctrl.simTime + step));
+                    ctrl.seekTo(newTime);
+                    if (this.compareMode) {
+                        const other = ctrl === this.ctrlA ? this.ctrlB : this.ctrlA;
+                        other.seekTo(newTime);
+                    }
+                    canvas.setAttribute('aria-valuenow', Math.round(newTime));
+                    this.renderFrame();
+                    this.updateMetrics();
+                }
+            });
+        };
+
+        handleScrub(document.getElementById('canvas-a'), this.ctrlA);
+        handleScrub(document.getElementById('canvas-b'), this.ctrlB);
+
+        // Summary overlay close & Escape key
+        document.getElementById('summary-overlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('summary-overlay') || e.target.classList.contains('btn-close-summary')) {
+                document.getElementById('summary-overlay').classList.remove('visible');
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const overlay = document.getElementById('summary-overlay');
+                if (overlay && overlay.classList.contains('visible')) {
+                    overlay.classList.remove('visible');
+                }
+            }
+        });
+
+        // Validate button
+        document.getElementById('btn-validate').addEventListener('click', () => this.runValidation());
+    },
+
+    initTweaks() {
+        const toggleBtn = document.getElementById('btn-tweaks-toggle');
+        const panel = document.getElementById('tweaks-panel');
+        const closeBtn = document.getElementById('btn-tweaks-close');
+
+        if (toggleBtn && panel) {
+            toggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                panel.classList.toggle('open');
+            });
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    panel.classList.remove('open');
+                });
+            }
+            document.addEventListener('click', (e) => {
+                if (!panel.contains(e.target) && e.target !== toggleBtn) {
+                    panel.classList.remove('open');
+                }
+            });
+        }
+
+        // Glow tweak
+        document.querySelectorAll('.btn-tweak-glow').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.btn-tweak-glow').forEach(b => {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-checked', 'false');
+                });
+                btn.classList.add('active');
+                btn.setAttribute('aria-checked', 'true');
+                const glow = btn.dataset.glow;
+                document.body.classList.remove('glow-subtle', 'glow-cyber');
+                if (glow === 'subtle') document.body.classList.add('glow-subtle');
+                if (glow === 'cyber') document.body.classList.add('glow-cyber');
+            });
+        });
+
+        // Density tweak
+        document.querySelectorAll('.btn-tweak-density').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.btn-tweak-density').forEach(b => {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-checked', 'false');
+                });
+                btn.classList.add('active');
+                btn.setAttribute('aria-checked', 'true');
+                const density = btn.dataset.density;
+                document.body.classList.remove('density-compact');
+                if (density === 'compact') document.body.classList.add('density-compact');
+                this.resizeCanvases();
+            });
+        });
+
+        // Vehicle lights tweak
+        document.querySelectorAll('.btn-tweak-lights').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.btn-tweak-lights').forEach(b => {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-checked', 'false');
+                });
+                btn.classList.add('active');
+                btn.setAttribute('aria-checked', 'true');
+                window.tweakLights = btn.dataset.lights;
+                this.renderFrame();
+            });
+        });
+    },
+
+    initKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+            if (tag === 'input' || tag === 'select' || tag === 'textarea') return;
+
+            if (e.code === 'Space') {
+                e.preventDefault();
+                const playBtn = document.getElementById('btn-play');
+                if (playBtn) playBtn.click();
+            } else if (e.key === 'r' || e.key === 'R') {
+                e.preventDefault();
+                this.restart();
+            }
+        });
+    },
+
+    updatePlayButton() {
+        const btn = document.getElementById('btn-play');
+        if (this.isPlaying) {
+            btn.innerHTML = '<span aria-hidden="true">\u23F8</span> Jeda';
+            btn.className = 'btn btn-pause';
+            btn.setAttribute('aria-label', 'Jeda simulasi');
+        } else {
+            btn.innerHTML = '<span aria-hidden="true">\u25B6</span> Putar';
+            btn.className = 'btn btn-play';
+            btn.setAttribute('aria-label', 'Putar simulasi');
+        }
+    },
+
+    updateEffectiveLanes() {
+        const session = this.data.sessions[this.sessionIndex];
+        const cfgA = getScenarioConfig(session, this.scenarioA, this.baseLanesK, this.baseLanesR);
+        document.getElementById('eff-lanes-k').textContent = `Efektif: ${cfgA.kLanes}`;
+        document.getElementById('eff-lanes-r').textContent = `Efektif: ${cfgA.rLanes}`;
+    },
+
+    toggleCompareMode() {
+        const panelB = document.getElementById('panel-b');
+        const metricsB = document.getElementById('metrics-b');
+        const compareGroup = document.getElementById('compare-scenario-group');
+        const panelA = document.getElementById('panel-a');
+
+        if (this.compareMode) {
+            panelB.style.display = 'block';
+            metricsB.classList.add('visible');
+            compareGroup.style.display = 'flex';
+            panelA.classList.add('compare-active');
+            panelB.classList.add('compare-active');
+        } else {
+            panelB.style.display = 'none';
+            metricsB.classList.remove('visible');
+            compareGroup.style.display = 'none';
+            panelA.classList.remove('compare-active');
+            panelB.classList.remove('compare-active');
+        }
+
+        this.resizeCanvases();
+
+        // Update panel labels
+        document.getElementById('label-a').textContent = `Skenario A: ${SCENARIO_LABELS[this.scenarioA]}`;
+        document.getElementById('label-b').textContent = `Skenario B: ${SCENARIO_LABELS[this.scenarioB]}`;
+    },
+
+    runAndLoad() {
+        this.summaryShown = false;
+        document.getElementById('summary-overlay').classList.remove('visible');
+
+        const session = this.data.sessions[this.sessionIndex];
+        const cfgA = getScenarioConfig(session, this.scenarioA, this.baseLanesK, this.baseLanesR);
+
+        // Update effective lanes display
+        this.updateEffectiveLanes();
+
+        // Update panel labels
+        document.getElementById('label-a').textContent = `Skenario A: ${SCENARIO_LABELS[this.scenarioA]}`;
+        document.getElementById('label-b').textContent = `Skenario B: ${SCENARIO_LABELS[this.scenarioB]}`;
+
+        // Run simulation A
+        const simA = runSimulation({
+            lamK: cfgA.lamK,
+            lamR: cfgA.lamR,
+            kLanes: cfgA.kLanes,
+            rLanes: cfgA.rLanes,
+            serviceTimes: this.data.service_times,
+            seed: this.seed,
+            simDuration: this.simDuration,
+            dynamicLanes: this.dynamicLanes,
+            dynThreshold: this.dynThreshold,
+            dynRevert: this.dynRevert,
+            dynCooldown: this.dynCooldown
+        });
+        this.ctrlA.load(simA, cfgA.kLanes, cfgA.rLanes);
+
+        // Run simulation B if compare mode
+        if (this.compareMode) {
+            const cfgB = getScenarioConfig(session, this.scenarioB, this.baseLanesK, this.baseLanesR);
+            const simB = runSimulation({
+                lamK: cfgB.lamK,
+                lamR: cfgB.lamR,
+                kLanes: cfgB.kLanes,
+                rLanes: cfgB.rLanes,
+                serviceTimes: this.data.service_times,
+                seed: this.seed,
+                simDuration: this.simDuration,
+                dynamicLanes: this.dynamicLanes,
+                dynThreshold: this.dynThreshold,
+                dynRevert: this.dynRevert,
+                dynCooldown: this.dynCooldown
+            });
+            this.ctrlB.load(simB, cfgB.kLanes, cfgB.rLanes);
+        }
+
+        // Reset playback
+        this.isPlaying = false;
+        this.lastTimestamp = null;
+        this.updatePlayButton();
+        if (this.animFrameId) {
+            cancelAnimationFrame(this.animFrameId);
+            this.animFrameId = null;
+        }
+
+        this.renderFrame();
+        this.updateMetrics();
+    },
+
+    restart() {
+        this.summaryShown = false;
+        document.getElementById('summary-overlay').classList.remove('visible');
+        this.runAndLoad();
+        this.isPlaying = true;
+        this.updatePlayButton();
+        this.lastTimestamp = null;
+        this.animFrameId = requestAnimationFrame((ts) => this.animLoop(ts));
+    },
+
+    animLoop(timestamp) {
+        if (!this.isPlaying) return;
+
+        if (this.lastTimestamp === null) {
+            this.lastTimestamp = timestamp;
+            this.animFrameId = requestAnimationFrame((ts) => this.animLoop(ts));
+            return;
+        }
+
+        const dtReal = (timestamp - this.lastTimestamp) / 1000; // seconds
+        this.lastTimestamp = timestamp;
+
+        const dtSim = dtReal * this.speed;
+
+        // Advance simulation time
+        const newTimeA = this.ctrlA.simTime + dtSim;
+        this.ctrlA.advanceTo(newTimeA);
+
+        if (this.compareMode) {
+            this.ctrlB.advanceTo(newTimeA);
+        }
+
+        // Render
+        this.renderFrame();
+        this.updateMetrics();
+
+        // Check for end
+        const aFinished = this.ctrlA.finished;
+        const bFinished = this.compareMode ? this.ctrlB.finished : true;
+        if (aFinished && bFinished) {
+            this.isPlaying = false;
+            this.updatePlayButton();
+            if (!this.summaryShown) {
+                this.summaryShown = true;
+                this.showSummary();
+            }
+            return;
+        }
+
+        this.animFrameId = requestAnimationFrame((ts) => this.animLoop(ts));
+    },
+
+    renderFrame() {
+        this.ctrlA.render(this.canvasW, this.canvasH);
+        if (this.compareMode) {
+            this.ctrlB.render(this.canvasW, this.canvasH);
+        }
+    },
+
+    // ========================================================================
+    // 8. METRICS & CHARTS
+    // ========================================================================
+
+    updateMetrics() {
+        const mA = this.ctrlA.getLiveMetrics();
+        this.setMetricValues('a', mA);
+        this.drawMiniChart('chart-a-k', this.ctrlA.kQueueSnapshots, '#3b82f6');
+        this.drawMiniChart('chart-a-r', this.ctrlA.rQueueSnapshots, '#10b981');
+
+        if (this.compareMode) {
+            const mB = this.ctrlB.getLiveMetrics();
+            this.setMetricValues('b', mB);
+            this.drawMiniChart('chart-b-k', this.ctrlB.kQueueSnapshots, '#3b82f6');
+            this.drawMiniChart('chart-b-r', this.ctrlB.rQueueSnapshots, '#10b981');
+        }
+    },
+
+    setMetricValues(panel, metrics) {
+        const set = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+        };
+        set(`m-${panel}-k-queue`, metrics.karcis.queue);
+        set(`m-${panel}-k-served`, metrics.karcis.served);
+        set(`m-${panel}-k-avgwait`, metrics.karcis.meanWait.toFixed(1) + ' s');
+        set(`m-${panel}-k-maxwait`, metrics.karcis.maxWait.toFixed(1) + ' s');
+        set(`m-${panel}-k-util`, metrics.karcis.utilisation.toFixed(2));
+        set(`m-${panel}-k-throughput`, metrics.karcis.throughput);
+        set(`m-${panel}-k-switches`, metrics.karcis.switchCount || 0);
+        set(`m-${panel}-k-time`, Math.round(metrics.karcis.timeAsKarcis || 0) + ' s');
+
+        set(`m-${panel}-r-queue`, metrics.rfid.queue);
+        set(`m-${panel}-r-served`, metrics.rfid.served);
+        set(`m-${panel}-r-avgwait`, metrics.rfid.meanWait.toFixed(1) + ' s');
+        set(`m-${panel}-r-maxwait`, metrics.rfid.maxWait.toFixed(1) + ' s');
+        set(`m-${panel}-r-util`, metrics.rfid.utilisation.toFixed(2));
+        set(`m-${panel}-r-throughput`, metrics.rfid.throughput);
+        set(`m-${panel}-r-time`, Math.round(metrics.rfid.timeAsRfid || 3600) + ' s');
+        set(`m-${panel}-r-status`, metrics.rfid.dynRole === 'K' ? 'Dialihkan ke Karcis' : 'Normal (RFID)');
+
+        // Status info label & ticker
+        if (panel === 'a') {
+            const statusInfo = document.getElementById('dyn-status-info');
+            if (statusInfo) {
+                if (!this.dynamicLanes) {
+                    statusInfo.textContent = 'Jalur Dinamis: NONAKTIF';
+                    statusInfo.style.color = '#64748b';
+                } else if (metrics.rfid.dynRole === 'K') {
+                    statusInfo.textContent = 'Status Jalur R1: DIALIHKAN KE KARCIS';
+                    statusInfo.style.color = '#38bdf8';
+                } else {
+                    statusInfo.textContent = 'Status Jalur R1: Normal (RFID)';
+                    statusInfo.style.color = '#10b981';
+                }
+            }
+        }
+
+        const tickerText = document.getElementById(`log-text-${panel}`);
+        const tickerBadge = document.getElementById(`badge-log-${panel}`);
+        if (tickerText && metrics.lastLog) {
+            tickerText.textContent = metrics.lastLog;
+            if (tickerBadge) {
+                if (metrics.rfid.dynRole === 'K') {
+                    tickerBadge.className = 'badge-log';
+                    tickerBadge.textContent = 'DIALIHKAN';
+                } else {
+                    tickerBadge.className = 'badge-log revert';
+                    tickerBadge.textContent = 'RFID';
+                }
+            }
+        }
+    },
+
+    drawMiniChart(canvasId, data, color) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
+
+        const displayW = canvas.clientWidth;
+        const displayH = canvas.clientHeight;
+        canvas.width = displayW * dpr;
+        canvas.height = displayH * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        const W = displayW;
+        const H = displayH;
+
+        ctx.clearRect(0, 0, W, H);
+        ctx.fillStyle = '#0c1015';
+        ctx.fillRect(0, 0, W, H);
+
+        if (data.length < 2) {
+            ctx.fillStyle = '#5f7287';
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Menunggu data…', W / 2, H / 2);
+            return;
+        }
+
+        const maxVal = Math.max(1, ...data);
+        const padL = 30;
+        const padR = 5;
+        const padT = 5;
+        const padB = 15;
+        const plotW = W - padL - padR;
+        const plotH = H - padT - padB;
+
+        // Y-axis labels
+        ctx.fillStyle = '#64748b';
+        ctx.font = '9px monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText(String(maxVal), padL - 4, padT + 8);
+        ctx.fillText('0', padL - 4, padT + plotH);
+
+        // Grid line
+        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padL, padT + plotH / 2);
+        ctx.lineTo(padL + plotW, padT + plotH / 2);
+        ctx.stroke();
+
+        // Draw filled area
+        ctx.beginPath();
+        ctx.moveTo(padL, padT + plotH);
+
+        for (let i = 0; i < data.length; i++) {
+            const x = padL + (i / Math.max(data.length - 1, 1)) * plotW;
+            const y = padT + plotH - (data[i] / maxVal) * plotH;
+            ctx.lineTo(x, y);
+        }
+
+        ctx.lineTo(padL + plotW, padT + plotH);
+        ctx.closePath();
+
+        // Fill gradient
+        const grad = ctx.createLinearGradient(0, padT, 0, padT + plotH);
+        grad.addColorStop(0, color + '40');
+        grad.addColorStop(1, color + '08');
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // Draw line
+        ctx.beginPath();
+        for (let i = 0; i < data.length; i++) {
+            const x = padL + (i / Math.max(data.length - 1, 1)) * plotW;
+            const y = padT + plotH - (data[i] / maxVal) * plotH;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // X label
+        ctx.fillStyle = '#64748b';
+        ctx.font = '9px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Panjang antrian per detik', W / 2, H - 2);
+    },
+
+    // ========================================================================
+    // 9. SUMMARY CARD
+    // ========================================================================
+
+    showSummary() {
+        const statsA = this.ctrlA.stats;
+        const session = this.data.sessions[this.sessionIndex];
+
+        let html = `
+            <h2 id="summary-title">Ringkasan Telemetri Simulasi</h2>
+            <div class="summary-sub">
+                ${session.hari} - ${session.sesi} | Skenario: ${SCENARIO_LABELS[this.scenarioA]}
+                | Seed: ${this.seed}
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metrik</th>
+                        <th style="color:var(--karcis-signal-bright)">Karcis</th>
+                        <th style="color:var(--uin-moss-bright)">RFID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Kendaraan dilayani</td><td>${statsA.karcis.throughput}</td><td>${statsA.rfid.throughput}</td></tr>
+                    <tr><td>Rata-rata tunggu (s)</td><td>${statsA.karcis.meanWait.toFixed(1)}</td><td>${statsA.rfid.meanWait.toFixed(1)}</td></tr>
+                    <tr><td>Maks tunggu (s)</td><td>${statsA.karcis.maxWait.toFixed(1)}</td><td>${statsA.rfid.maxWait.toFixed(1)}</td></tr>
+                    <tr><td>P95 tunggu (s)</td><td>${statsA.karcis.p95Wait.toFixed(1)}</td><td>${statsA.rfid.p95Wait.toFixed(1)}</td></tr>
+                    <tr><td>Utilisasi</td><td>${statsA.karcis.utilisation.toFixed(3)}</td><td>${statsA.rfid.utilisation.toFixed(3)}</td></tr>
+                    <tr><td>Maks antrian</td><td>${statsA.karcis.maxQueue}</td><td>${statsA.rfid.maxQueue}</td></tr>
+                    <tr><td>Backlog</td><td>${statsA.karcis.backlog}</td><td>${statsA.rfid.backlog}</td></tr>
+                    <tr><td>Perpindahan jalur</td><td>${statsA.karcis.switchCount || 0} kali</td><td>${statsA.rfid.switchCount || 0} kali</td></tr>
+                    <tr><td>Waktu aktif (s)</td><td>${Math.round(statsA.karcis.timeAsKarcis || 0)} s</td><td>${Math.round(statsA.rfid.timeAsRfid != null ? statsA.rfid.timeAsRfid : 3600)} s</td></tr>
+                </tbody>
+            </table>`;
+
+        if (this.compareMode) {
+            const statsB = this.ctrlB.stats;
+            html += `
+            <div class="summary-sub" style="margin-top:18px;">
+                Skenario B: ${SCENARIO_LABELS[this.scenarioB]}
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metrik</th>
+                        <th style="color:var(--karcis-signal-bright)">Karcis</th>
+                        <th style="color:var(--uin-moss-bright)">RFID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Kendaraan dilayani</td><td>${statsB.karcis.throughput}</td><td>${statsB.rfid.throughput}</td></tr>
+                    <tr><td>Rata-rata tunggu (s)</td><td>${statsB.karcis.meanWait.toFixed(1)}</td><td>${statsB.rfid.meanWait.toFixed(1)}</td></tr>
+                    <tr><td>Maks tunggu (s)</td><td>${statsB.karcis.maxWait.toFixed(1)}</td><td>${statsB.rfid.maxWait.toFixed(1)}</td></tr>
+                    <tr><td>P95 tunggu (s)</td><td>${statsB.karcis.p95Wait.toFixed(1)}</td><td>${statsB.rfid.p95Wait.toFixed(1)}</td></tr>
+                    <tr><td>Utilisasi</td><td>${statsB.karcis.utilisation.toFixed(3)}</td><td>${statsB.rfid.utilisation.toFixed(3)}</td></tr>
+                    <tr><td>Maks antrian</td><td>${statsB.karcis.maxQueue}</td><td>${statsB.rfid.maxQueue}</td></tr>
+                    <tr><td>Backlog</td><td>${statsB.karcis.backlog}</td><td>${statsB.rfid.backlog}</td></tr>
+                    <tr><td>Perpindahan jalur</td><td>${statsB.karcis.switchCount || 0} kali</td><td>${statsB.rfid.switchCount || 0} kali</td></tr>
+                    <tr><td>Waktu aktif (s)</td><td>${Math.round(statsB.karcis.timeAsKarcis || 0)} s</td><td>${Math.round(statsB.rfid.timeAsRfid != null ? statsB.rfid.timeAsRfid : 3600)} s</td></tr>
+                </tbody>
+            </table>`;
+        }
+
+        html += `<button type="button" class="btn btn-close-summary" onclick="document.getElementById('summary-overlay').classList.remove('visible')">Tutup Ringkasan</button>`;
+
+        document.getElementById('summary-card').innerHTML = html;
+        document.getElementById('summary-overlay').classList.add('visible');
+    },
+
+    // ========================================================================
+    // 10. COMPARE MODE LOGIC (handled inline above)
+    // ========================================================================
+
+    // ========================================================================
+    // 11. VALIDATION FUNCTION
+    // ========================================================================
+
+    runValidation() {
+        const btn = document.getElementById('btn-validate');
+        btn.textContent = 'Sedang validasi…';
+        btn.disabled = true;
+
+        setTimeout(() => {
+            const results = [];
+            const session = this.data.sessions[0]; // Use first session
+            const cfg = getScenarioConfig(session, 'as_is', this.baseLanesK, this.baseLanesR);
+
+            for (let rep = 0; rep < 200; rep++) {
+                const sim = runSimulation({
+                    lamK: cfg.lamK,
+                    lamR: cfg.lamR,
+                    kLanes: cfg.kLanes,
+                    rLanes: cfg.rLanes,
+                    serviceTimes: this.data.service_times,
+                    seed: rep + 1,
+                    simDuration: this.simDuration
+                });
+                results.push({
+                    seed: rep + 1,
+                    kMeanWait: sim.stats.karcis.meanWait,
+                    kMaxWait: sim.stats.karcis.maxWait,
+                    kThroughput: sim.stats.karcis.throughput,
+                    kUtil: sim.stats.karcis.utilisation,
+                    rMeanWait: sim.stats.rfid.meanWait,
+                    rMaxWait: sim.stats.rfid.maxWait,
+                    rThroughput: sim.stats.rfid.throughput,
+                    rUtil: sim.stats.rfid.utilisation,
+                });
+            }
+
+            // Compute averages
+            const avg = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
+            const summary = {
+                kMeanWait: avg(results.map(r => r.kMeanWait)),
+                kMaxWait: avg(results.map(r => r.kMaxWait)),
+                kThroughput: avg(results.map(r => r.kThroughput)),
+                kUtil: avg(results.map(r => r.kUtil)),
+                rMeanWait: avg(results.map(r => r.rMeanWait)),
+                rMaxWait: avg(results.map(r => r.rMaxWait)),
+                rThroughput: avg(results.map(r => r.rThroughput)),
+                rUtil: avg(results.map(r => r.rUtil)),
+            };
+
+            console.log('=== VALIDASI 200 REPLIKASI ===');
+            console.log('Sesi:', session.label);
+            console.log('Rata-rata dari 200 replikasi:');
+            console.table(summary);
+            console.log('Detail per replikasi:', results);
+
+            btn.textContent = 'Validasi selesai (lihat console)';
+            btn.disabled = false;
+
+            alert(
+                'Validasi 200 replikasi selesai!\n\n' +
+                `Karcis - Rata-rata tunggu: ${summary.kMeanWait.toFixed(2)}s, Utilisasi: ${summary.kUtil.toFixed(3)}\n` +
+                `RFID - Rata-rata tunggu: ${summary.rMeanWait.toFixed(2)}s, Utilisasi: ${summary.rUtil.toFixed(3)}\n\n` +
+                'Detail lengkap ada di console (F12).'
+            );
+        }, 50);
+    }
+};
+
+// ============================================================================
+// 12. INIT / BOOTSTRAP
+// ============================================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    App.init();
+});
+</script>
+</body>
+</html>

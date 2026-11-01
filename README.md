@@ -168,6 +168,67 @@ flagged.  Throughput is compared to observed vehicle counts.
    vs 630 in the cleaning file (Karcis matches at 1 049). All v3 analysis
    uses the cleaning workbook.
 
+## Animated Visualization
+
+An interactive 2D animated visualization of the DES simulation is available
+as a self-contained HTML file:
+
+### Quick Start
+
+```bash
+# 1. Generate animation data and build animation.html
+python export_anim_data.py
+
+# 2. Open in any browser (works offline, no internet needed)
+start animation.html        # Windows
+open animation.html          # macOS
+xdg-open animation.html     # Linux
+```
+
+### Features
+
+- **7 scenarios** (as_is, shift_25/50/75/100, full_rfid, full_karcis) × 6 sessions
+- **Dynamic Lanes ("Jalur Dinamis")**: Optional adaptive lane allocation (default ON). When Karcis queue > threshold (default 20), 1 RFID lane temporarily shifts to Karcis (after completing ongoing service). When Karcis queue drops <= revert threshold (default 5) and cooldown (default 60s) expires, lane reverts to RFID. RFID can drop to 0 lanes (gate closed).
+- **Interactive controls**: play/pause, speed (1×–100×), seed, lane count steppers, dynamic lane parameters
+- **Compare mode**: view two scenarios side-by-side with synchronized playback
+- **Live metrics**: queue length, vehicles served, mean/max wait, effective capacity utilisation, lane switch count, and active time per role
+- **Live event log ticker**: records timestamped dynamic lane shifts and reverts
+- **Mini queue-length charts** updated in real time
+- **End-of-session summary card** with final statistics
+- **Built-in validation** (200 replications) accessible via `?validate` URL parameter
+- **Self-contained**: all data, logos, and code embedded in a single HTML file (201 KB)
+- **Indonesian UI** throughout
+
+### Validation
+
+The JS DES engine is validated against both the Python v3 engine (Dynamic Lanes OFF) and the Python v4 engine (Dynamic Lanes ON):
+
+```bash
+# Run Python v4 simulation (optional)
+python tap_out_sim_v4.py --reps 200 --seed 42 --dynamic-lanes
+
+# Run 24-check JS validation suite (requires Node.js)
+node validate_anim.js
+```
+
+Acceptance criteria: JS mean wait within Python's 95% CI, or within 0.5s
+absolute tolerance, or within 20% relative tolerance.
+- **Part 1 (Dynamic Lanes OFF vs Python v3)**: 12/12 checks pass.
+- **Part 2 (Dynamic Lanes ON vs Python v4)**: 12/12 checks pass.
+- **Total: 24/24 checks passed.**
+
+### Files
+
+| File | Description |
+|------|-------------|
+| `animation.html` | Self-contained animated visualization (open in browser) |
+| `animation_template.html` | HTML template with DES engine, dynamic lane manager, renderer, and UI |
+| `tap_out_sim_v3.py` | Python DES simulation baseline (untouched v3 gold standard) |
+| `tap_out_sim_v4.py` | Python DES simulation v4 supporting `--dynamic-lanes` |
+| `export_anim_data.py` | Generates `anim_data.json` and builds `animation.html` |
+| `anim_data.json` | Extracted simulation parameters (arrival rates, service times) |
+| `validate_anim.js` | Node.js dual validation suite (200 replications × 6 sessions × 2 suites) |
+
 ## Data Layout
 
 `Hasil_Cleaning_Tap_Out_IQR_Final.xlsx` sheets:

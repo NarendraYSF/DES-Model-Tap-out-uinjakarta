@@ -1,0 +1,13 @@
+{
+  "name": "des-model-tap-out-uinjakarta",
+  "version": "1.0.0",
+  "description": "2D Discrete Event Simulation of UIN Jakarta parking tap-out exit gate",
+  "scripts": {
+    "test": "node tests/engine_invariants.js",
+    "test:bug": "node tests/engine_invariants.js --simulate-bug",
+    "validate": "node validate_anim.js",
+    "build": "python export_anim_data.py"
+  },
+  "author": "",
+  "license": "ISC"
+}

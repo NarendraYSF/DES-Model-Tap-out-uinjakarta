@@ -217,6 +217,21 @@ absolute tolerance, or within 20% relative tolerance.
 - **Part 2 (Dynamic Lanes ON vs Python v4)**: 12/12 checks pass.
 - **Total: 24/24 checks passed.**
 
+### Regression Tests (Engine Invariants)
+
+A regression test suite verifies that vehicles never vanish or double-occupy lanes during event playback (asserting that every serving vehicle occupies exactly 1 lane, and no lane holds a non-serving vehicle):
+
+```bash
+# Run regression test (288 configurations, 150k+ timestamps)
+node tests/engine_invariants.js
+
+# Or via npm
+npm test
+
+# Verify failure detection (simulates old typePriority bug)
+node tests/engine_invariants.js --simulate-bug
+```
+
 ### Files
 
 | File | Description |
@@ -228,6 +243,7 @@ absolute tolerance, or within 20% relative tolerance.
 | `export_anim_data.py` | Generates `anim_data.json` and builds `animation.html` |
 | `anim_data.json` | Extracted simulation parameters (arrival rates, service times) |
 | `validate_anim.js` | Node.js dual validation suite (200 replications × 6 sessions × 2 suites) |
+| `tests/engine_invariants.js` | Node.js regression test verifying lane occupancy invariants |
 
 ## Data Layout
 

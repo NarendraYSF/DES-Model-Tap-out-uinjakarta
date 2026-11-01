@@ -706,7 +706,7 @@ canvas.sim-canvas:focus-visible {
     background: var(--surface-card);
     border-radius: 14px;
     padding: 26px 30px;
-    max-width: 680px;
+    max-width: 860px;
     width: 100%;
     border: 1px solid var(--border-highlight);
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
@@ -757,7 +757,7 @@ canvas.sim-canvas:focus-visible {
 }
 .summary-card .btn-close-summary {
     display: block;
-    margin: 18px auto 0;
+    margin: 22px auto 0;
     background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
     color: #ffffff;
     padding: 8px 24px;
@@ -767,6 +767,115 @@ canvas.sim-canvas:focus-visible {
 }
 .summary-card .btn-close-summary:hover {
     background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+}
+
+/* Multi-Replication Summary & Paired Comparison */
+.summary-replikasi-section {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px dashed var(--border-highlight);
+}
+.summary-card .rep-controls-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    background: var(--surface-inner);
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border-lane);
+}
+.summary-card .rep-controls-bar label {
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+.summary-card .rep-controls-bar input {
+    background: var(--surface-card);
+    border: 1px solid var(--border-lane);
+    color: var(--text-primary);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    width: 65px;
+    text-align: center;
+}
+.summary-card .rep-controls-bar .btn-run-reps {
+    background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+.summary-card .rep-controls-bar .btn-run-reps:hover:not(:disabled) {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+}
+.summary-card .rep-controls-bar .btn-run-reps:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+.summary-card .rep-controls-bar .btn-download-csv {
+    background: var(--surface-card);
+    color: var(--karcis-signal-bright);
+    border: 1px solid var(--karcis-signal-border);
+}
+.summary-card .rep-controls-bar .btn-download-csv:hover {
+    background: var(--surface-card-hover);
+    border-color: var(--karcis-signal-bright);
+}
+.summary-card .rep-progress-wrap {
+    margin: 12px 0 16px;
+}
+.summary-card .rep-progress-status {
+    font-size: 0.74rem;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 6px;
+}
+.summary-card .rep-progress-track {
+    width: 100%;
+    height: 6px;
+    background: var(--surface-inner);
+    border-radius: 4px;
+    border: 1px solid var(--border-lane);
+    overflow: hidden;
+}
+.summary-card .rep-progress-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--karcis-signal-bright), var(--uin-moss-bright));
+    transition: width 0.1s ease;
+}
+.summary-card .badge-verdict {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+.summary-card .badge-verdict.sig {
+    background: rgba(34, 197, 94, 0.15);
+    color: var(--uin-moss-bright);
+    border: 1px solid rgba(34, 197, 94, 0.35);
+}
+.summary-card .badge-verdict.not-sig {
+    background: rgba(148, 163, 184, 0.12);
+    color: var(--text-muted);
+    border: 1px solid var(--border-dim);
+}
+.btn-open-reps {
+    background: var(--surface-inner);
+    color: var(--karcis-signal-bright);
+    border: 1px solid var(--border-highlight);
+}
+.btn-open-reps:hover {
+    background: var(--surface-card-hover);
+    border-color: var(--karcis-signal);
+    color: #ffffff;
 }
 
 /* ===== 6. TWEAKS PANEL (DESIGN ADJUSTER) ===== */
@@ -1006,6 +1115,7 @@ body.density-compact .metric-item {
         <div class="ctrl-separator" aria-hidden="true"></div>
         <button type="button" class="btn btn-play" id="btn-play" title="Putar / Jeda" aria-label="Putar simulasi"><span aria-hidden="true">&#9654;</span> Putar</button>
         <button type="button" class="btn btn-restart" id="btn-restart" title="Ulang dari awal" aria-label="Mulai ulang simulasi"><span aria-hidden="true">&#8635;</span> Ulang</button>
+        <button type="button" class="btn btn-open-reps" id="btn-open-reps" title="Buka Analisis Multi-Replikasi (95% CI)" aria-label="Buka Analisis Replikasi"><span aria-hidden="true">&#128202;</span> Replikasi</button>
         <div class="ctrl-separator" aria-hidden="true"></div>
         <div class="ctrl-group" role="radiogroup" aria-label="Kecepatan Simulasi">
             <label id="lbl-speed">Kecepatan:</label>
@@ -1834,6 +1944,173 @@ function getScenarioConfig(session, scenario, baseLanesK, baseLanesR) {
         case 'full_karcis':  return { lamK: totalLam,     lamR: 0,                     kLanes: totalLanes, rLanes: 0 };
         default:            return { lamK: lamK0,       lamR: lamR0,               kLanes: baseLanesK, rLanes: baseLanesR };
     }
+}
+
+// ============================================================================
+// 5B. MULTI-REPLICATION STATISTICS & ANALYSIS
+// ============================================================================
+
+/**
+ * Student's t critical values for two-tailed 95% confidence interval (alpha = 0.05).
+ * Exact lookup table for df 1..30; normal approximation with Cornish-Fisher expansion for df > 30.
+ * Pure function, zero external dependencies.
+ * @param {number} df - degrees of freedom (n - 1)
+ * @returns {number} t critical value
+ */
+function tCritical(df) {
+    if (df < 1) return 1.96;
+    const table = [
+        0,
+        12.7062, 4.30265, 3.18245, 2.77645, 2.57058, // 1-5
+        2.44691, 2.36462, 2.30600, 2.26216, 2.22814, // 6-10
+        2.20099, 2.17881, 2.16037, 2.14479, 2.13145, // 11-15
+        2.11991, 2.10982, 2.10092, 2.09302, 2.08596, // 16-20
+        2.07961, 2.07387, 2.06866, 2.06390, 2.05954, // 21-25
+        2.05553, 2.05183, 2.04841, 2.04523, 2.04227  // 26-30
+    ];
+    if (df <= 30) return table[Math.round(df)];
+    // Standard normal approximation with Cornish-Fisher expansion for df > 30
+    const z = 1.95996;
+    return z + (z * z * z + z) / (4 * df);
+}
+
+/**
+ * Compute sample mean, standard deviation, 95% confidence interval, min, max.
+ * Pure function.
+ * @param {number[]} values - array of numbers
+ * @returns {{ mean: number, sd: number, ci95Low: number, ci95High: number, min: number, max: number, halfWidth: number }}
+ */
+function summarize(values) {
+    const n = values ? values.length : 0;
+    if (n === 0) {
+        return { mean: 0, sd: 0, ci95Low: 0, ci95High: 0, min: 0, max: 0, halfWidth: 0 };
+    }
+    if (n === 1) {
+        const v = values[0];
+        return { mean: v, sd: 0, ci95Low: v, ci95High: v, min: v, max: v, halfWidth: 0 };
+    }
+
+    const mean = values.reduce((s, v) => s + v, 0) / n;
+    const variance = values.reduce((s, v) => s + (v - mean) * (v - mean), 0) / (n - 1);
+    const sd = Math.sqrt(Math.max(0, variance));
+    const se = sd / Math.sqrt(n);
+    const tVal = tCritical(n - 1);
+    const halfWidth = se * tVal;
+
+    let min = values[0];
+    let max = values[0];
+    for (let i = 1; i < n; i++) {
+        if (values[i] < min) min = values[i];
+        if (values[i] > max) max = values[i];
+    }
+
+    return {
+        mean,
+        sd,
+        ci95Low: mean - halfWidth,
+        ci95High: mean + halfWidth,
+        min,
+        max,
+        halfWidth
+    };
+}
+
+/**
+ * Pure function: runs nReps replications using seeds baseSeed..baseSeed+nReps-1.
+ * Passes the exact same dynamicLanes, dynThreshold, dynRevert, dynCooldown, simDuration as provided.
+ * @param {Object} config - simulation parameters
+ * @param {number} nReps - number of replications
+ * @param {number} baseSeed - starting random seed
+ * @returns {Array<Object>} array of { seed, karcis, rfid, stats }
+ */
+function runReplications(config, nReps, baseSeed = 42) {
+    const results = [];
+    for (let i = 0; i < nReps; i++) {
+        const seed = baseSeed + i;
+        const sim = runSimulation({
+            lamK: config.lamK,
+            lamR: config.lamR,
+            kLanes: config.kLanes,
+            rLanes: config.rLanes,
+            serviceTimes: config.serviceTimes,
+            simDuration: config.simDuration,
+            dynamicLanes: config.dynamicLanes,
+            dynThreshold: config.dynThreshold,
+            dynRevert: config.dynRevert,
+            dynCooldown: config.dynCooldown,
+            seed
+        });
+        results.push({
+            seed,
+            karcis: sim.stats.karcis,
+            rfid: sim.stats.rfid,
+            stats: sim.stats
+        });
+    }
+    return results;
+}
+
+/**
+ * Run replications in non-blocking chunks using setTimeout to prevent UI freezing.
+ */
+function runReplicationsChunked(config, nReps, baseSeed = 42, onProgress = null, chunkSize = 5) {
+    return new Promise((resolve) => {
+        const results = [];
+        let done = 0;
+
+        function tick() {
+            const batchSize = Math.min(chunkSize, nReps - done);
+            const batch = runReplications(config, batchSize, baseSeed + done);
+            for (let i = 0; i < batch.length; i++) {
+                results.push(batch[i]);
+            }
+            done += batchSize;
+
+            if (onProgress) onProgress(done, nReps);
+
+            if (done < nReps) {
+                setTimeout(tick, 0);
+            } else {
+                resolve(results);
+            }
+        }
+
+        tick();
+    });
+}
+
+/**
+ * Run paired replications for scenario A and B simultaneously with identical seeds.
+ */
+function runPairedReplicationsChunked(cfgA, cfgB, nReps, baseSeed = 42, onProgress = null, chunkSize = 5) {
+    return new Promise((resolve) => {
+        const resultsA = [];
+        const resultsB = [];
+        let done = 0;
+
+        function tick() {
+            const batchSize = Math.min(chunkSize, nReps - done);
+            const currentBase = baseSeed + done;
+            const batchA = runReplications(cfgA, batchSize, currentBase);
+            const batchB = runReplications(cfgB, batchSize, currentBase);
+
+            for (let i = 0; i < batchSize; i++) {
+                resultsA.push(batchA[i]);
+                resultsB.push(batchB[i]);
+            }
+            done += batchSize;
+
+            if (onProgress) onProgress(done, nReps);
+
+            if (done < nReps) {
+                setTimeout(tick, 0);
+            } else {
+                resolve({ resultsA, resultsB });
+            }
+        }
+
+        tick();
+    });
 }
 
 // ============================================================================
@@ -2797,6 +3074,12 @@ const App = {
     dynRevert: 5,
     dynCooldown: 60,
 
+    // Multi-Replication Analysis State
+    repCount: 30,
+    lastRepData: null,
+    lastFocusedElement: null,
+    isReplicating: false,
+
     // Animation
     animFrameId: null,
     lastTimestamp: null,
@@ -3081,19 +3364,34 @@ const App = {
         handleScrub(document.getElementById('canvas-b'), this.ctrlB);
 
         // Summary overlay close & Escape key
+        const closeSummaryModal = () => {
+            const overlay = document.getElementById('summary-overlay');
+            if (overlay && overlay.classList.contains('visible')) {
+                overlay.classList.remove('visible');
+                if (this.lastFocusedElement && typeof this.lastFocusedElement.focus === 'function') {
+                    this.lastFocusedElement.focus();
+                }
+            }
+        };
+
         document.getElementById('summary-overlay').addEventListener('click', (e) => {
             if (e.target === document.getElementById('summary-overlay') || e.target.classList.contains('btn-close-summary')) {
-                document.getElementById('summary-overlay').classList.remove('visible');
+                closeSummaryModal();
             }
         });
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                const overlay = document.getElementById('summary-overlay');
-                if (overlay && overlay.classList.contains('visible')) {
-                    overlay.classList.remove('visible');
-                }
+                closeSummaryModal();
             }
         });
+
+        // Open replications / summary button from command deck
+        const btnOpenReps = document.getElementById('btn-open-reps');
+        if (btnOpenReps) {
+            btnOpenReps.addEventListener('click', () => {
+                this.showSummary(true);
+            });
+        }
 
         // Validate button
         document.getElementById('btn-validate').addEventListener('click', () => this.runValidation());
@@ -3519,15 +3817,15 @@ const App = {
     // 9. SUMMARY CARD
     // ========================================================================
 
-    showSummary() {
+    showSummary(autoRunReps = true) {
+        this.lastFocusedElement = document.activeElement;
         const statsA = this.ctrlA.stats;
         const session = this.data.sessions[this.sessionIndex];
 
         let html = `
             <h2 id="summary-title">Ringkasan Telemetri Simulasi</h2>
             <div class="summary-sub">
-                ${session.hari} - ${session.sesi} | Skenario: ${SCENARIO_LABELS[this.scenarioA]}
-                | Seed: ${this.seed}
+                <strong>Satu run (seed ${this.seed}), ilustrasi saja</strong> &mdash; ${session.hari} ${session.sesi} | Skenario A: ${SCENARIO_LABELS[this.scenarioA]}
             </div>
             <table>
                 <thead>
@@ -3554,7 +3852,7 @@ const App = {
             const statsB = this.ctrlB.stats;
             html += `
             <div class="summary-sub" style="margin-top:18px;">
-                Skenario B: ${SCENARIO_LABELS[this.scenarioB]}
+                <strong>Satu run (seed ${this.seed}), ilustrasi saja</strong> &mdash; Skenario B: ${SCENARIO_LABELS[this.scenarioB]}
             </div>
             <table>
                 <thead>
@@ -3578,10 +3876,419 @@ const App = {
             </table>`;
         }
 
-        html += `<button type="button" class="btn btn-close-summary" onclick="document.getElementById('summary-overlay').classList.remove('visible')">Tutup Ringkasan</button>`;
+        // Section Replikasi
+        html += `
+        <div class="summary-replikasi-section">
+            <h3 style="font-size:1.02rem; font-weight:700; margin-bottom:4px; color:var(--text-primary); text-align:center;">
+                Analisis Multi-Replikasi (95% CI)
+            </h3>
+            <div class="summary-sub" style="margin-bottom:12px;">
+                Mengurangi derau stokastik melalui simulasi berulang dengan uji Student-t
+            </div>
+            <div class="rep-controls-bar">
+                <label for="inp-rep-count">Jumlah Replikasi (N):</label>
+                <input type="number" id="inp-rep-count" min="5" max="200" value="${this.repCount || 30}">
+                <button type="button" class="btn btn-run-reps" id="btn-run-reps">
+                    <span aria-hidden="true">&#9654;</span> Jalankan Replikasi
+                </button>
+                <button type="button" class="btn btn-download-csv" id="btn-download-csv" style="display:none;">
+                    <span aria-hidden="true">&#128190;</span> Unduh CSV
+                </button>
+            </div>
+            <div class="rep-progress-wrap" id="rep-progress-wrap" style="display:none;">
+                <div class="rep-progress-status" id="rep-progress-text">Memproses replikasi...</div>
+                <div class="rep-progress-track"><div class="rep-progress-fill" id="rep-progress-bar"></div></div>
+            </div>
+            <div id="rep-results-area"></div>
+        </div>
+        <button type="button" class="btn btn-close-summary" id="btn-close-summary">Tutup Ringkasan</button>`;
 
+        const overlay = document.getElementById('summary-overlay');
         document.getElementById('summary-card').innerHTML = html;
-        document.getElementById('summary-overlay').classList.add('visible');
+        overlay.classList.add('visible');
+
+        const closeBtn = document.getElementById('btn-close-summary');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                overlay.classList.remove('visible');
+                if (this.lastFocusedElement && typeof this.lastFocusedElement.focus === 'function') {
+                    this.lastFocusedElement.focus();
+                }
+            });
+            closeBtn.focus();
+        }
+
+        const btnRunReps = document.getElementById('btn-run-reps');
+        if (btnRunReps) {
+            btnRunReps.addEventListener('click', () => {
+                const inp = document.getElementById('inp-rep-count');
+                let n = parseInt(inp ? inp.value : '30', 10);
+                if (isNaN(n) || n < 5) n = 5;
+                if (n > 200) n = 200;
+                if (inp) inp.value = n;
+                this.repCount = n;
+                this.runReplicationAnalysis(n);
+            });
+        }
+
+        const btnDownload = document.getElementById('btn-download-csv');
+        if (btnDownload) {
+            btnDownload.addEventListener('click', () => this.downloadCsv());
+        }
+
+        if (autoRunReps) {
+            this.runReplicationAnalysis(this.repCount || 30);
+        }
+    },
+
+    runReplicationAnalysis(nReps) {
+        if (this.isReplicating) return;
+        this.isReplicating = true;
+
+        const btnRun = document.getElementById('btn-run-reps');
+        const btnDownload = document.getElementById('btn-download-csv');
+        const progressWrap = document.getElementById('rep-progress-wrap');
+        const progressText = document.getElementById('rep-progress-text');
+        const progressBar = document.getElementById('rep-progress-bar');
+        const resultsArea = document.getElementById('rep-results-area');
+
+        if (btnRun) {
+            btnRun.disabled = true;
+            btnRun.textContent = 'Menjalankan…';
+        }
+        if (btnDownload) btnDownload.style.display = 'none';
+        if (progressWrap) progressWrap.style.display = 'block';
+        if (progressBar) progressBar.style.width = '0%';
+        if (progressText) progressText.textContent = `Menyiapkan ${nReps} replikasi…`;
+
+        const session = this.data.sessions[this.sessionIndex];
+        const cfgA = getScenarioConfig(session, this.scenarioA, this.baseLanesK, this.baseLanesR);
+        const configA = {
+            lamK: cfgA.lamK,
+            lamR: cfgA.lamR,
+            kLanes: cfgA.kLanes,
+            rLanes: cfgA.rLanes,
+            serviceTimes: this.data.service_times,
+            simDuration: this.simDuration,
+            dynamicLanes: this.dynamicLanes,
+            dynThreshold: this.dynThreshold,
+            dynRevert: this.dynRevert,
+            dynCooldown: this.dynCooldown
+        };
+
+        const onProgress = (done, total) => {
+            const pct = Math.round((done / total) * 100);
+            if (progressBar) progressBar.style.width = pct + '%';
+            if (progressText) progressText.textContent = `Memproses: ${done} / ${total} replikasi (${pct}%)…`;
+        };
+
+        const onFinish = (resultsA, resultsB = null) => {
+            this.isReplicating = false;
+            if (btnRun) {
+                btnRun.disabled = false;
+                btnRun.innerHTML = '<span aria-hidden="true">&#9654;</span> Jalankan Replikasi';
+            }
+            if (progressWrap) progressWrap.style.display = 'none';
+            if (btnDownload) btnDownload.style.display = 'inline-flex';
+
+            this.lastRepData = {
+                nReps,
+                session,
+                scenarioA: this.scenarioA,
+                scenarioB: this.compareMode ? this.scenarioB : null,
+                compareMode: this.compareMode,
+                resultsA,
+                resultsB
+            };
+
+            const extractMetrics = (res) => ({
+                k_meanWait: summarize(res.map(r => r.karcis.meanWait)),
+                k_p95Wait: summarize(res.map(r => r.karcis.p95Wait)),
+                k_maxQueue: summarize(res.map(r => r.karcis.maxQueue)),
+                k_util: summarize(res.map(r => r.karcis.utilisation)),
+                k_throughput: summarize(res.map(r => r.karcis.throughput)),
+                k_backlog: summarize(res.map(r => r.karcis.backlog)),
+                r_meanWait: summarize(res.map(r => r.rfid.meanWait)),
+                r_p95Wait: summarize(res.map(r => r.rfid.p95Wait)),
+                r_maxQueue: summarize(res.map(r => r.rfid.maxQueue)),
+                r_util: summarize(res.map(r => r.rfid.utilisation)),
+                r_throughput: summarize(res.map(r => r.rfid.throughput)),
+                r_backlog: summarize(res.map(r => r.rfid.backlog))
+            });
+
+            const formatCi = (s, unit = '', decimals = 1) => {
+                if (!s || isNaN(s.mean)) return '-';
+                const m = s.mean.toFixed(decimals);
+                const hw = s.halfWidth.toFixed(decimals);
+                return `${m} ± ${hw}${unit ? ' ' + unit : ''}`;
+            };
+
+            const formatDiff = (s, unit = '', decimals = 1) => {
+                if (!s || isNaN(s.mean)) return '-';
+                const sign = s.mean > 0 ? '+' : '';
+                const m = sign + s.mean.toFixed(decimals);
+                const hw = s.halfWidth.toFixed(decimals);
+                return `${m} ± ${hw}${unit ? ' ' + unit : ''}`;
+            };
+
+            const renderVerdict = (s) => {
+                if (!s) return '-';
+                const isSig = (s.ci95Low > 0) || (s.ci95High < 0);
+                return isSig
+                    ? `<span class="badge-verdict sig">berbeda signifikan</span>`
+                    : `<span class="badge-verdict not-sig">tidak berbeda signifikan</span>`;
+            };
+
+            const sumA = extractMetrics(resultsA);
+
+            let resHtml = `
+            <div class="summary-sub" style="margin-top:14px; text-align:center;">
+                <strong>Hasil Multi-Replikasi (${nReps} run, 95% CI)</strong> &mdash; Skenario A: ${SCENARIO_LABELS[this.scenarioA]}
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metrik</th>
+                        <th style="color:var(--karcis-signal-bright)">Karcis (Rata-rata ± HW)</th>
+                        <th style="color:var(--uin-moss-bright)">RFID (Rata-rata ± HW)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Rata-rata tunggu (s)</td><td>${formatCi(sumA.k_meanWait, 's', 1)}</td><td>${formatCi(sumA.r_meanWait, 's', 1)}</td></tr>
+                    <tr><td>P95 tunggu (s)</td><td>${formatCi(sumA.k_p95Wait, 's', 1)}</td><td>${formatCi(sumA.r_p95Wait, 's', 1)}</td></tr>
+                    <tr><td>Maks antrian</td><td>${formatCi(sumA.k_maxQueue, '', 1)}</td><td>${formatCi(sumA.r_maxQueue, '', 1)}</td></tr>
+                    <tr><td>Utilisasi</td><td>${formatCi(sumA.k_util, '', 3)}</td><td>${formatCi(sumA.r_util, '', 3)}</td></tr>
+                    <tr><td>Throughput</td><td>${formatCi(sumA.k_throughput, '', 1)}</td><td>${formatCi(sumA.r_throughput, '', 1)}</td></tr>
+                    <tr><td>Backlog</td><td>${formatCi(sumA.k_backlog, '', 1)}</td><td>${formatCi(sumA.r_backlog, '', 1)}</td></tr>
+                </tbody>
+            </table>`;
+
+            if (this.compareMode && resultsB) {
+                const sumB = extractMetrics(resultsB);
+                resHtml += `
+                <div class="summary-sub" style="margin-top:18px; text-align:center;">
+                    <strong>Hasil Multi-Replikasi (${nReps} run, 95% CI)</strong> &mdash; Skenario B: ${SCENARIO_LABELS[this.scenarioB]}
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metrik</th>
+                            <th style="color:var(--karcis-signal-bright)">Karcis (Rata-rata ± HW)</th>
+                            <th style="color:var(--uin-moss-bright)">RFID (Rata-rata ± HW)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Rata-rata tunggu (s)</td><td>${formatCi(sumB.k_meanWait, 's', 1)}</td><td>${formatCi(sumB.r_meanWait, 's', 1)}</td></tr>
+                        <tr><td>P95 tunggu (s)</td><td>${formatCi(sumB.k_p95Wait, 's', 1)}</td><td>${formatCi(sumB.r_p95Wait, 's', 1)}</td></tr>
+                        <tr><td>Maks antrian</td><td>${formatCi(sumB.k_maxQueue, '', 1)}</td><td>${formatCi(sumB.r_maxQueue, '', 1)}</td></tr>
+                        <tr><td>Utilisasi</td><td>${formatCi(sumB.k_util, '', 3)}</td><td>${formatCi(sumB.r_util, '', 3)}</td></tr>
+                        <tr><td>Throughput</td><td>${formatCi(sumB.k_throughput, '', 1)}</td><td>${formatCi(sumB.r_throughput, '', 1)}</td></tr>
+                        <tr><td>Backlog</td><td>${formatCi(sumB.k_backlog, '', 1)}</td><td>${formatCi(sumB.r_backlog, '', 1)}</td></tr>
+                    </tbody>
+                </table>`;
+
+                // Paired differences calculation: diff = B - A
+                const pairedDiffs = {
+                    k_meanWait: summarize(resultsB.map((r, i) => r.karcis.meanWait - resultsA[i].karcis.meanWait)),
+                    k_p95Wait: summarize(resultsB.map((r, i) => r.karcis.p95Wait - resultsA[i].karcis.p95Wait)),
+                    k_maxQueue: summarize(resultsB.map((r, i) => r.karcis.maxQueue - resultsA[i].karcis.maxQueue)),
+                    k_util: summarize(resultsB.map((r, i) => r.karcis.utilisation - resultsA[i].karcis.utilisation)),
+                    k_throughput: summarize(resultsB.map((r, i) => r.karcis.throughput - resultsA[i].karcis.throughput)),
+                    k_backlog: summarize(resultsB.map((r, i) => r.karcis.backlog - resultsA[i].karcis.backlog)),
+                    r_meanWait: summarize(resultsB.map((r, i) => r.rfid.meanWait - resultsA[i].rfid.meanWait)),
+                    r_p95Wait: summarize(resultsB.map((r, i) => r.rfid.p95Wait - resultsA[i].rfid.p95Wait)),
+                    r_maxQueue: summarize(resultsB.map((r, i) => r.rfid.maxQueue - resultsA[i].rfid.maxQueue)),
+                    r_util: summarize(resultsB.map((r, i) => r.rfid.utilisation - resultsA[i].rfid.utilisation)),
+                    r_throughput: summarize(resultsB.map((r, i) => r.rfid.throughput - resultsA[i].rfid.throughput)),
+                    r_backlog: summarize(resultsB.map((r, i) => r.rfid.backlog - resultsA[i].rfid.backlog))
+                };
+
+                resHtml += `
+                <div class="summary-sub" style="margin-top:20px; text-align:center;">
+                    <strong>Perbandingan Berpasangan (${nReps} run, Skenario B &minus; A)</strong> &mdash; Evaluasi Signifikansi (95% CI)
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metrik</th>
+                            <th style="color:var(--karcis-signal-bright)">Karcis (B &minus; A)</th>
+                            <th style="color:var(--karcis-signal-bright)">Signifikansi Karcis</th>
+                            <th style="color:var(--uin-moss-bright)">RFID (B &minus; A)</th>
+                            <th style="color:var(--uin-moss-bright)">Signifikansi RFID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Rata-rata tunggu (s)</td>
+                            <td>${formatDiff(pairedDiffs.k_meanWait, 's', 1)}</td>
+                            <td>${renderVerdict(pairedDiffs.k_meanWait)}</td>
+                            <td>${formatDiff(pairedDiffs.r_meanWait, 's', 1)}</td>
+                            <td>${renderVerdict(pairedDiffs.r_meanWait)}</td>
+                        </tr>
+                        <tr>
+                            <td>P95 tunggu (s)</td>
+                            <td>${formatDiff(pairedDiffs.k_p95Wait, 's', 1)}</td>
+                            <td>${renderVerdict(pairedDiffs.k_p95Wait)}</td>
+                            <td>${formatDiff(pairedDiffs.r_p95Wait, 's', 1)}</td>
+                            <td>${renderVerdict(pairedDiffs.r_p95Wait)}</td>
+                        </tr>
+                        <tr>
+                            <td>Maks antrian</td>
+                            <td>${formatDiff(pairedDiffs.k_maxQueue, '', 1)}</td>
+                            <td>${renderVerdict(pairedDiffs.k_maxQueue)}</td>
+                            <td>${formatDiff(pairedDiffs.r_maxQueue, '', 1)}</td>
+                            <td>${renderVerdict(pairedDiffs.r_maxQueue)}</td>
+                        </tr>
+                        <tr>
+                            <td>Utilisasi</td>
+                            <td>${formatDiff(pairedDiffs.k_util, '', 3)}</td>
+                            <td>${renderVerdict(pairedDiffs.k_util)}</td>
+                            <td>${formatDiff(pairedDiffs.r_util, '', 3)}</td>
+                            <td>${renderVerdict(pairedDiffs.r_util)}</td>
+                        </tr>
+                        <tr>
+                            <td>Throughput</td>
+                            <td>${formatDiff(pairedDiffs.k_throughput, '', 1)}</td>
+                            <td>${renderVerdict(pairedDiffs.k_throughput)}</td>
+                            <td>${formatDiff(pairedDiffs.r_throughput, '', 1)}</td>
+                            <td>${renderVerdict(pairedDiffs.r_throughput)}</td>
+                        </tr>
+                        <tr>
+                            <td>Backlog</td>
+                            <td>${formatDiff(pairedDiffs.k_backlog, '', 1)}</td>
+                            <td>${renderVerdict(pairedDiffs.k_backlog)}</td>
+                            <td>${formatDiff(pairedDiffs.r_backlog, '', 1)}</td>
+                            <td>${renderVerdict(pairedDiffs.r_backlog)}</td>
+                        </tr>
+                    </tbody>
+                </table>`;
+            }
+
+            if (resultsArea) resultsArea.innerHTML = resHtml;
+        };
+
+        if (this.compareMode) {
+            const cfgB = getScenarioConfig(session, this.scenarioB, this.baseLanesK, this.baseLanesR);
+            const configB = {
+                lamK: cfgB.lamK,
+                lamR: cfgB.lamR,
+                kLanes: cfgB.kLanes,
+                rLanes: cfgB.rLanes,
+                serviceTimes: this.data.service_times,
+                simDuration: this.simDuration,
+                dynamicLanes: this.dynamicLanes,
+                dynThreshold: this.dynThreshold,
+                dynRevert: this.dynRevert,
+                dynCooldown: this.dynCooldown
+            };
+            runPairedReplicationsChunked(configA, configB, nReps, this.seed, onProgress, 5)
+                .then(({ resultsA, resultsB }) => onFinish(resultsA, resultsB));
+        } else {
+            runReplicationsChunked(configA, nReps, this.seed, onProgress, 5)
+                .then(resultsA => onFinish(resultsA));
+        }
+    },
+
+    downloadCsv() {
+        if (!this.lastRepData) return;
+        const { nReps, session, scenarioA, scenarioB, compareMode, resultsA, resultsB } = this.lastRepData;
+
+        let csv = '\uFEFF'; // UTF-8 BOM
+        csv += '# ============================================================\n';
+        csv += '# LAPORAN REPLIKASI SIMULASI GERBANG TAP-OUT UIN JAKARTA\n';
+        csv += '# ============================================================\n';
+        csv += `Hari,${session.hari}\n`;
+        csv += `Sesi,${session.sesi}\n`;
+        csv += `Jumlah_Replikasi,${nReps}\n`;
+        csv += `Seed_Awal,${this.seed}\n`;
+        csv += `Jalur_Dinamis,${this.dynamicLanes ? 'Aktif' : 'Nonaktif'}\n`;
+        csv += `Ambang_Dinamis,${this.dynThreshold}\n`;
+        csv += `Batas_Kembali_Dinamis,${this.dynRevert}\n`;
+        csv += `Jeda_Dinamis_s,${this.dynCooldown}\n`;
+        csv += `Skenario_A,${scenarioA} (${SCENARIO_LABELS[scenarioA]})\n`;
+        if (compareMode && scenarioB) {
+            csv += `Skenario_B,${scenarioB} (${SCENARIO_LABELS[scenarioB]})\n`;
+        }
+        csv += '\n';
+
+        const metricsToExport = [
+            { key: 'meanWait', label: 'RataRataTunggu_detik' },
+            { key: 'p95Wait', label: 'P95Tunggu_detik' },
+            { key: 'maxWait', label: 'MaksTunggu_detik' },
+            { key: 'maxQueue', label: 'MaksAntrian' },
+            { key: 'utilisation', label: 'Utilisasi' },
+            { key: 'throughput', label: 'Throughput_kendaraan' },
+            { key: 'backlog', label: 'Backlog_kendaraan' }
+        ];
+
+        // Section: CI Summary
+        csv += '# ============================================================\n';
+        csv += '# 1. RINGKASAN STATISTIK 95% CONFIDENCE INTERVAL (STUDENT-T)\n';
+        csv += '# ============================================================\n';
+        csv += 'Skenario,Gardu,Metrik,Rata_Rata,Half_Width_95CI,CI95_Bawah,CI95_Atas,Standar_Deviasi,Min,Maks\n';
+
+        const appendSummaryRows = (scenKey, res) => {
+            for (const gate of ['karcis', 'rfid']) {
+                for (const m of metricsToExport) {
+                    const vals = res.map(r => r[gate][m.key]);
+                    const s = summarize(vals);
+                    csv += `${scenKey},${gate.toUpperCase()},${m.label},${s.mean.toFixed(4)},${s.halfWidth.toFixed(4)},${s.ci95Low.toFixed(4)},${s.ci95High.toFixed(4)},${s.sd.toFixed(4)},${s.min.toFixed(4)},${s.max.toFixed(4)}\n`;
+                }
+            }
+        };
+
+        appendSummaryRows(scenarioA, resultsA);
+        if (compareMode && resultsB) {
+            appendSummaryRows(scenarioB, resultsB);
+        }
+        csv += '\n';
+
+        // Section: Paired Differences if compareMode
+        if (compareMode && resultsB) {
+            csv += '# ============================================================\n';
+            csv += '# 2. PERBANDINGAN BERPASANGAN (SKENARIO B - SKENARIO A)\n';
+            csv += '# ============================================================\n';
+            csv += 'Gardu,Metrik,Mean_Diff,Half_Width_95CI,CI95_Bawah,CI95_Atas,Standar_Deviasi,Signifikansi\n';
+            for (const gate of ['karcis', 'rfid']) {
+                for (const m of metricsToExport) {
+                    const diffs = resultsB.map((r, i) => r[gate][m.key] - resultsA[i][gate][m.key]);
+                    const s = summarize(diffs);
+                    const isSig = (s.ci95Low > 0) || (s.ci95High < 0);
+                    const verdict = isSig ? 'berbeda signifikan' : 'tidak berbeda signifikan';
+                    csv += `${gate.toUpperCase()},${m.label},${s.mean.toFixed(4)},${s.halfWidth.toFixed(4)},${s.ci95Low.toFixed(4)},${s.ci95High.toFixed(4)},${s.sd.toFixed(4)},"${verdict}"\n`;
+                }
+            }
+            csv += '\n';
+        }
+
+        // Section: Raw Data Per Replication
+        csv += '# ============================================================\n';
+        csv += '# 3. DATA DETAIL PER REPLIKASI\n';
+        csv += '# ============================================================\n';
+        csv += 'Replikasi,Seed,Skenario,K_RataRataTunggu_s,K_P95Tunggu_s,K_MaksTunggu_s,K_MaksAntrian,K_Utilisasi,K_Throughput,K_Backlog,R_RataRataTunggu_s,R_P95Tunggu_s,R_MaksTunggu_s,R_MaksAntrian,R_Utilisasi,R_Throughput,R_Backlog\n';
+
+        const appendRawRows = (scenKey, res) => {
+            for (let i = 0; i < nReps; i++) {
+                const r = res[i];
+                csv += `${i + 1},${r.seed},${scenKey},${r.karcis.meanWait.toFixed(3)},${r.karcis.p95Wait.toFixed(3)},${r.karcis.maxWait.toFixed(3)},${r.karcis.maxQueue},${r.karcis.utilisation.toFixed(4)},${r.karcis.throughput},${r.karcis.backlog},${r.rfid.meanWait.toFixed(3)},${r.rfid.p95Wait.toFixed(3)},${r.rfid.maxWait.toFixed(3)},${r.rfid.maxQueue},${r.rfid.utilisation.toFixed(4)},${r.rfid.throughput},${r.rfid.backlog}\n`;
+            }
+        };
+
+        appendRawRows(scenarioA, resultsA);
+        if (compareMode && resultsB) {
+            appendRawRows(scenarioB, resultsB);
+        }
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const scenTag = compareMode ? `${scenarioA}_vs_${scenarioB}` : scenarioA;
+        a.download = `replikasi_${session.label}_${scenTag}_N${nReps}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     },
 
     // ========================================================================
@@ -3594,36 +4301,41 @@ const App = {
 
     runValidation() {
         const btn = document.getElementById('btn-validate');
-        btn.textContent = 'Sedang validasi…';
-        btn.disabled = true;
+        if (btn) {
+            btn.textContent = 'Sedang validasi…';
+            btn.disabled = true;
+        }
 
-        setTimeout(() => {
-            const results = [];
-            const session = this.data.sessions[0]; // Use first session
-            const cfg = getScenarioConfig(session, 'as_is', this.baseLanesK, this.baseLanesR);
+        const session = this.data.sessions[this.sessionIndex];
+        const cfg = getScenarioConfig(session, this.scenarioA || 'as_is', this.baseLanesK, this.baseLanesR);
 
-            for (let rep = 0; rep < 200; rep++) {
-                const sim = runSimulation({
-                    lamK: cfg.lamK,
-                    lamR: cfg.lamR,
-                    kLanes: cfg.kLanes,
-                    rLanes: cfg.rLanes,
-                    serviceTimes: this.data.service_times,
-                    seed: rep + 1,
-                    simDuration: this.simDuration
-                });
-                results.push({
-                    seed: rep + 1,
-                    kMeanWait: sim.stats.karcis.meanWait,
-                    kMaxWait: sim.stats.karcis.maxWait,
-                    kThroughput: sim.stats.karcis.throughput,
-                    kUtil: sim.stats.karcis.utilisation,
-                    rMeanWait: sim.stats.rfid.meanWait,
-                    rMaxWait: sim.stats.rfid.maxWait,
-                    rThroughput: sim.stats.rfid.throughput,
-                    rUtil: sim.stats.rfid.utilisation,
-                });
-            }
+        const config = {
+            lamK: cfg.lamK,
+            lamR: cfg.lamR,
+            kLanes: cfg.kLanes,
+            rLanes: cfg.rLanes,
+            serviceTimes: this.data.service_times,
+            simDuration: this.simDuration,
+            dynamicLanes: this.dynamicLanes,
+            dynThreshold: this.dynThreshold,
+            dynRevert: this.dynRevert,
+            dynCooldown: this.dynCooldown
+        };
+
+        runReplicationsChunked(config, 200, 1, (done, total) => {
+            if (btn) btn.textContent = `Sedang validasi… (${done}/${total})`;
+        }, 5).then((repResults) => {
+            const results = repResults.map(r => ({
+                seed: r.seed,
+                kMeanWait: r.karcis.meanWait,
+                kMaxWait: r.karcis.maxWait,
+                kThroughput: r.karcis.throughput,
+                kUtil: r.karcis.utilisation,
+                rMeanWait: r.rfid.meanWait,
+                rMaxWait: r.rfid.maxWait,
+                rThroughput: r.rfid.throughput,
+                rUtil: r.rfid.utilisation,
+            }));
 
             // Compute averages
             const avg = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
@@ -3644,16 +4356,21 @@ const App = {
             console.table(summary);
             console.log('Detail per replikasi:', results);
 
-            btn.textContent = 'Validasi selesai (lihat console)';
-            btn.disabled = false;
+            if (btn) {
+                btn.textContent = 'Validasi selesai (lihat console)';
+                btn.disabled = false;
+            }
 
             alert(
                 'Validasi 200 replikasi selesai!\n\n' +
+                `Sesi: ${session.hari} ${session.sesi} (${session.label})\n` +
+                `Skenario: ${this.scenarioA || 'as_is'}\n` +
+                `Jalur Dinamis: ${this.dynamicLanes ? 'AKTIF' : 'NONAKTIF'}\n\n` +
                 `Karcis - Rata-rata tunggu: ${summary.kMeanWait.toFixed(2)}s, Utilisasi: ${summary.kUtil.toFixed(3)}\n` +
                 `RFID - Rata-rata tunggu: ${summary.rMeanWait.toFixed(2)}s, Utilisasi: ${summary.rUtil.toFixed(3)}\n\n` +
                 'Detail lengkap ada di console (F12).'
             );
-        }, 50);
+        });
     }
 };
 
